@@ -1,0 +1,40 @@
+{
+  "name": "hallyupix",
+  "version": "0.0.1-beta",
+  "scripts": {
+    "dev": "bun run --hot server/index.ts",
+    "build": "bun build ./server/index.ts --outdir ./dist --minify --splitting --sourcemap --target bun",
+    "start": "bun run dist/index.js",
+    "format": "bunx prettier --write \"server/**/*.ts\"",
+    "generate:drizzle": "bunx drizzle-kit generate",
+    "migrate:drizzle": "bunx drizzle-kit migrate",
+    "up:drizzle": "bunx drizzle-kit up",
+    "check:drizzle": "bunx drizzle-kit check",
+    "push:drizzle": "bunx drizzle-kit push",
+    "pull:drizzle": "bunx drizzle-kit pull",
+    "studio": "bunx drizzle-kit studio --verbose --port=3001",
+    "generate:auth": "npx @better-auth/cli generate --config server/lib/auth.ts",
+    "migrate:auth": "npx @better-auth/cli migrate --config server/lib/auth.ts"
+  },
+  "dependencies": {
+    "@hono/eslint-config": "^1.0.2",
+    "@hono/zod-openapi": "^0.16.4",
+    "@scalar/hono-api-reference": "^0.5.165",
+    "better-auth": "^1.1.4",
+    "drizzle-orm": "^0.38.3",
+    "drizzle-zod": "^0.6.1",
+    "hono": "^4.6.15",
+    "hono-rate-limiter": "^0.4.2",
+    "pg": "^8.13.1",
+    "resend": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.30.1",
+    "prettier": "^3.4.2"
+  },
+  "engines": {
+    "bun": ">=1.1.42"
+  }
+}
