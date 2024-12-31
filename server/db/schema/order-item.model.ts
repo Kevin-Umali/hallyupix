@@ -14,8 +14,8 @@ export const orderItems = pgTable("order_items", {
     .notNull(),
   quantity: text("quantity").notNull(),
   price: text("price").notNull(),
-  createdDate: timestamp("created_date"),
-  updatedDate: timestamp("updated_date"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const selectOrderItemSchema = createSelectSchema(orderItems);

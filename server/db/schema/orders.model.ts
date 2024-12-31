@@ -18,8 +18,8 @@ export const orders = pgTable("orders", {
   isf: text("isf"),
   isfPaymentStatus: isfPaymentEnum("isf_payment_status"),
   orderDate: text("order_date").notNull(),
-  createdDate: timestamp("created_date"),
-  updatedDate: timestamp("updated_date"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const selectOrderSchema = createSelectSchema(orders);

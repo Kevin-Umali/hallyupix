@@ -39,7 +39,6 @@ export type EnvironmentSchemaType = z.infer<typeof envSchema>;
 
 declare global {
   namespace NodeJS {
-    // Use intersection type to merge with existing ProcessEnv
     interface ProcessEnv extends EnvironmentSchemaType {}
   }
 }

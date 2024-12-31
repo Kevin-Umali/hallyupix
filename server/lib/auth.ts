@@ -1,9 +1,31 @@
-import { betterAuth, z } from "better-auth";
-import { openAPI, username } from "better-auth/plugins";
+import { betterAuth } from "better-auth";
+import { oAuthProxy, openAPI, username } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db/index";
-import { schema } from "../db/schema/index.model";
+import { schema } from "../db/schema/better-auth.model";
 import resend from "./resend";
+import { populateTemplate } from "./email-templates";
+
+const emailConfig = {
+  verification: {
+    subject: "Welcome to H A L L Y U P I X - Verify Your Email",
+    template: {
+      emailTitle: "Welcome to H A L L Y U P I X!",
+      mainHeading: "Verify Your Email Address",
+      message: "Thanks for signing up! To complete your registration and start selling or buying K-pop merchandise, please verify your email address.",
+      buttonText: "Verify Email Address",
+    },
+  },
+  passwordReset: {
+    subject: "Reset Your H A L L Y U P I X Password",
+    template: {
+      emailTitle: "Password Reset Request",
+      mainHeading: "Reset Your Password",
+      message: "We received a request to reset your password. Click the button below to choose a new password for your account.",
+      buttonText: "Reset Password",
+    },
+  },
+};
 
 export const auth = betterAuth({
   basePath: "/api/v1/auth",
@@ -34,31 +56,42 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: false,
     sendResetPassword: async ({ user, url }) => {
       await resend.emails.send({
-        from: "Acme <onboarding@resend.dev>",
+        from: "Acme <onboarding@resend.dev>", // TODO: Change this to the actual email address
         to: user.email,
-        subject: "Reset your password",
-        html: `<h1>Reset your password</h1><p>Please click the link below to reset your password.</p><p><a href="${url}">${url}</a></p>`,
+        subject: emailConfig.passwordReset.subject,
+        html: populateTemplate("forgotPasswordEmailTemplate", {
+          ...emailConfig.passwordReset.template,
+          resetUrl: url,
+          currentYear: new Date().getFullYear(),
+          supportUrl: `/support`,
+        }),
       });
     },
   },
   emailVerification: {
-    sendOnSignUp: true,
+    sendOnSignUp: false,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, token }) => {
       const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/v1/auth/verify-email?token=${token}&callBackUrl=${process.env.BETTER_AUTH_URL}/api/v1/auth/verify-email`;
 
       await resend.emails.send({
-        from: "Acme <onboarding@resend.dev>",
+        from: `H A L L Y U P I X <onboarding@resend.dev>`, // TODO: Change this to the actual email address
         to: user.email,
-        subject: "Verify your email",
-        html: `<h1>Verify your email</h1><p>Please click the link below to verify your email address.</p><p><a href="${verificationUrl}">${verificationUrl}</a></p>`,
+        subject: emailConfig.verification.subject,
+        html: populateTemplate("verificationEmailTemplate", {
+          ...emailConfig.verification.template,
+          actionUrl: verificationUrl.toString(),
+          currentYear: new Date().getFullYear(),
+          supportUrl: `/support`,
+        }),
       });
     },
   },
-  plugins: [username(), openAPI()],
+  trustedOrigins: ["http://localhost:3000", "http://localhost:5173"],
+  plugins: [username(), openAPI(), oAuthProxy()],
   advanced: {
     defaultCookieAttributes: {
       sameSite: "none",

@@ -1,4 +1,4 @@
-import { pgTable, serial, text, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, serial } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { products } from "./products.model";
 import { z } from "zod";
@@ -11,9 +11,8 @@ export const productVariants = pgTable("product_variants", {
   variantName: varchar("variant_name", { length: 255 }).notNull(),
   price: text("price").notNull(),
   quantityAvailable: text("quantity_available").notNull(),
-  image: text("image"),
-  createdDate: timestamp("created_date"),
-  updatedDate: timestamp("updated_date"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const selectProductVariantSchema = createSelectSchema(productVariants);

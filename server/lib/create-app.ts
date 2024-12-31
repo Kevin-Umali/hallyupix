@@ -10,6 +10,7 @@ import { enhancedLogger } from "../middlewares/custom-logger";
 import { auth } from "./auth";
 import type { HonoOpenAPIConfig } from "./types";
 import { BASE_PATH } from "../constants";
+import { protect } from "../middlewares/auth-guard";
 
 const createRouter = () => {
   return new OpenAPIHono<HonoOpenAPIConfig>({
@@ -51,7 +52,7 @@ const createApp = () => {
     .basePath(BASE_PATH);
 
   app.use(secureHeaders());
-  app.use(enhancedLogger({ level: "debug" }));
+  app.use(enhancedLogger({ level: "debug", excludePaths: ["/health"], mode: "pretty" }));
   app.use(
     cors({
       origin: "*",
@@ -83,20 +84,24 @@ const createApp = () => {
 
   app.use("*", async (c, next) => {
     const session = await auth.api.getSession({
-      headers: c.req.raw.headers as unknown as Headers,
       // Type 'Headers' is missing the following properties from type 'Headers': toJSON, count, getAll - https://github.com/oven-sh/bun/issues/9412
+      headers: c.req.raw.headers as unknown as Headers,
     });
 
     if (!session) {
       c.set("user", null);
       c.set("session", null);
+      c.set("isAuthenticated", false);
       return next();
     }
 
     c.set("user", session.user);
     c.set("session", session.session);
+    c.set("isAuthenticated", true);
     return next();
   });
+
+  app.use(protect({ protectedPaths: ["/api/v1/auth/use-session"] }));
 
   app.notFound((c) => {
     return c.json(

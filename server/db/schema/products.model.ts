@@ -1,4 +1,4 @@
-import { pgTable, serial, text, varchar, jsonb, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, jsonb, timestamp, serial } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { productStatusEnum } from "./enums";
 import { users } from "./users.model";
@@ -18,8 +18,8 @@ export const products = pgTable("products", {
   tax: text("tax"),
   deadlineOfDownPayment: text("deadline_of_down_payment"),
   estimatedTimeOfArrival: text("estimated_time_of_arrival"),
-  createdDate: timestamp("created_date"),
-  updatedDate: timestamp("updated_date"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const selectProductSchema = createSelectSchema(products);
