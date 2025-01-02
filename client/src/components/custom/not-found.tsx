@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowLeft, Home } from "lucide-react";
+import { ACRONYM_APP_NAME, APP_NAME } from "@/constant";
 
 const NotFound = () => {
   return (
@@ -9,8 +10,8 @@ const NotFound = () => {
       <div className="container px-4 py-16 text-center">
         {/* Logo */}
         <div className="mb-8 inline-flex items-center gap-3">
-          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-2xl font-bold text-white">HP</div>
-          <span className="text-2xl font-semibold">Hallyupix</span>
+          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-2xl font-bold text-white">{ACRONYM_APP_NAME}</div>
+          <span className="text-2xl font-semibold">{APP_NAME}</span>
         </div>
 
         {/* 404 Text */}

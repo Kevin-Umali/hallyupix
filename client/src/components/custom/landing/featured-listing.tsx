@@ -1,5 +1,5 @@
 // components/landing/product-showcase.tsx
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ProductCard } from "@/components/custom/product-card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -115,45 +115,54 @@ export const FeaturedListing = () => {
       <div className="container mx-auto px-4">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Featured Listings</h2>
-          <p className="text-muted-foreground">Browse through our curated collection of K-pop merchandise</p>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Discover our carefully curated collection of authentic K-pop merchandise from verified sellers
+          </p>
         </motion.div>
 
         {/* Filter Options */}
-        <div className="flex flex-wrap gap-2 mb-8 justify-center">
-          <Button variant={activeFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setActiveFilter("all")} className="min-w-[100px]">
-            All Items
-          </Button>
-          <Button
-            variant={activeFilter === "pre-order" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveFilter("pre-order")}
-            className="min-w-[100px]"
-          >
-            Pre-orders
-          </Button>
-          <Button variant={activeFilter === "on-hand" ? "default" : "outline"} size="sm" onClick={() => setActiveFilter("on-hand")} className="min-w-[100px]">
-            On-hand
-          </Button>
-          <Button variant={activeFilter === "sale" ? "default" : "outline"} size="sm" onClick={() => setActiveFilter("sale")} className="min-w-[100px]">
-            Sale Items
-          </Button>
-          <Button variant={activeFilter === "new" ? "default" : "outline"} size="sm" onClick={() => setActiveFilter("new")} className="min-w-[100px]">
-            New Arrivals
-          </Button>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex flex-wrap gap-2 mb-8 justify-center"
+        >
+          {["all", "pre-order", "on-hand", "sale", "new"].map((filter) => (
+            <Button
+              key={filter}
+              variant={activeFilter === filter ? "default" : "outline"}
+              size="sm"
+              onClick={() => setActiveFilter(filter as FilterType)}
+              className={`min-w-[100px] capitalize transition-all ${activeFilter === filter ? "shadow-lg" : ""}`}
+            >
+              {filter === "all" ? "All Items" : filter.replace("-", " ")}
+            </Button>
+          ))}
+        </motion.div>
 
         {/* Products Grid */}
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product, index) => (
-              <div key={index} className="h-full">
-                <ProductCard {...product} index={index} />
-              </div>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12 text-muted-foreground">No items found for the selected filter.</div>
-          )}
-        </div>
+        <motion.div layout className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <AnimatePresence mode="wait">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product, index) => (
+                <motion.div
+                  key={product.title}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.2, delay: index * 0.05 }}
+                  className="h-full"
+                >
+                  <ProductCard {...product} index={index} />
+                </motion.div>
+              ))
+            ) : (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-full text-center py-12 text-muted-foreground">
+                No items found for the selected filter.
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </section>
   );

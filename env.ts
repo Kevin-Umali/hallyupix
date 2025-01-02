@@ -9,7 +9,7 @@ const envSchema = z.object({
   POSTGRES_PASSWORD: z.string().default("user"),
   DATABASE_URL: z.string().url(),
   BETTER_AUTH_SECRET: z.string().default("secret"),
-  BETTER_AUTH_URL: z.string().default("http://localhost:3000"),
+  BETTER_AUTH_URL: z.string().default("http://localhost:5173"),
   RESEND_API_KEY: z.string().default("re_XozCfTSX_EktrFiBo47kb2dC4Xkeysm7z"),
 });
 

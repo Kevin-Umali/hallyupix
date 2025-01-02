@@ -2,6 +2,7 @@ import { ErrorComponent, type ErrorComponentProps, Link, rootRouteId, useMatch, 
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowLeft, Home } from "lucide-react";
+import { ACRONYM_APP_NAME, APP_NAME } from "@/constant";
 
 export const DefaultCatchBoundary: React.FC<ErrorComponentProps> = ({ error, info }) => {
   const router = useRouter();
@@ -10,18 +11,13 @@ export const DefaultCatchBoundary: React.FC<ErrorComponentProps> = ({ error, inf
     select: (state) => state.id === rootRouteId,
   });
 
-  if (process.env.NODE_ENV !== "production") {
-    console.error(error);
-    console.log(info);
-  }
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-secondary/5">
       <div className="container px-4 py-16 text-center">
         {/* Logo */}
         <div className="mb-8 inline-flex items-center gap-3">
-          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-2xl font-bold text-white">HP</div>
-          <span className="text-2xl font-semibold">Hallyupix</span>
+          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-2xl font-bold text-white">{ACRONYM_APP_NAME}</div>
+          <span className="text-2xl font-semibold">{APP_NAME}</span>
         </div>
 
         {/* Error Content */}
@@ -31,6 +27,14 @@ export const DefaultCatchBoundary: React.FC<ErrorComponentProps> = ({ error, inf
           <div className="text-muted-foreground">
             <ErrorComponent error={error} />
           </div>
+
+          {process.env.NODE_ENV !== "production" && (
+            <div>
+              <h2 className="text-2xl font-semibold">Error Details</h2>
+              <pre className="text-muted-foreground">{JSON.stringify(info, null, 2)}</pre>
+              <div className="text-muted-foreground">{error.stack}</div>
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">

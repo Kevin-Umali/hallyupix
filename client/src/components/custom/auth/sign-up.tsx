@@ -1,28 +1,86 @@
 import { CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-
-import { ShoppingBag, Store } from "lucide-react";
-import RoleSelector, { RoleOption } from "./role-selector";
+import { Loader2 } from "lucide-react";
+import RoleSelector from "@/components/custom/auth/role-selector";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
+import { useForm } from "@tanstack/react-form";
+import { z } from "zod";
+import FieldInfo from "@/components/custom/field-info";
+import { PrivacyDialog, TermsDialog } from "@/components/custom/legal-dialog";
+import { ROLES } from "@/constant";
+import { signUp } from "@/lib/api";
+import { useQueryClient } from "@tanstack/react-query";
+
+const signUpSchema = z
+  .object({
+    username: z.string().min(5, "Username must be at least 5 characters").max(20, "Username must be less than 20 characters"),
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/\d/, "Password must contain at least one number"),
+    confirmPassword: z.string(),
+    role: z.enum(["Buyer", "Seller"]),
+    terms: z.boolean().refine((val) => val === true, "You must accept the terms and conditions"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+type SignUpFormType = z.infer<typeof signUpSchema>;
 
 const SignUpForm = () => {
-  const roles: RoleOption[] = [
-    {
-      value: "buyer",
-      label: "K-pop Fan & Collector",
-      description: "Browse and purchase authentic K-pop merchandise and collectibles",
-      icon: ShoppingBag,
+  const navigate = useNavigate();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const form = useForm<SignUpFormType>({
+    defaultValues: {
+      username: "",
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "Seller",
+      terms: false,
     },
-    {
-      value: "seller",
-      label: "K-pop Store Owner",
-      description: "List and sell K-pop merchandise to fans worldwide",
-      icon: Store,
+    onSubmit: async ({ value }) => {
+      console.log(value);
+      // simulate async call
+
+      await signUp.email({
+        email: value.email,
+        password: value.password,
+        username: value.username,
+        name: value.name,
+        role: value.role,
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ["session"] });
+      await queryClient.refetchQueries({ queryKey: ["session"] });
+      router.invalidate();
+      form.reset({
+        username: "",
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        role: "Seller",
+        terms: false,
+      });
+      navigate({ to: "/verify-email" });
     },
-  ];
+    validators: {
+      onChange: signUpSchema,
+    },
+  });
 
   return (
     <>
@@ -32,80 +90,183 @@ const SignUpForm = () => {
       </CardHeader>
 
       <CardContent className="px-0 space-y-8">
-        <div className="space-y-3">
-          <Label className="text-base font-semibold">Choose your role</Label>
-          <RoleSelector roles={roles} selectedRole="buyer" onRoleChange={() => {}} className="mt-2" />
-        </div>
-
-        <form className="space-y-6">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            // e.stopPropagation();
+            void form.handleSubmit();
+          }}
+          className="space-y-6"
+        >
+          {/* Role */}
+          <form.Field
+            name="role"
+            children={(field) => (
+              <div className="space-y-2">
+                <Label htmlFor={field.name} className="text-base font-semibold">
+                  Choose your role
+                </Label>
+                <RoleSelector
+                  roles={ROLES}
+                  selectedRole={field.state.value}
+                  onRoleChange={(role) => field.handleChange(role as "Buyer" | "Seller")}
+                  className="mt-2"
+                />
+              </div>
+            )}
+          />
           <div className="grid md:grid-cols-2 gap-6">
             {/* Username */}
-            <div className="space-y-2">
-              <Label htmlFor="username" className="text-base">
-                Username
-              </Label>
-              <Input id="username" placeholder="Choose a username" className="h-11" />
-            </div>
+            <form.Field
+              name="username"
+              children={(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor={field.name} className="text-base">
+                    Username
+                  </Label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    placeholder="Choose a username"
+                    className="h-11"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <FieldInfo field={field} />
+                </div>
+              )}
+            />
 
-            {/* Full Name */}
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-base">
-                Full Name
-              </Label>
-              <Input id="name" placeholder="Enter your full name" className="h-11" />
-            </div>
+            {/*  Name */}
+            <form.Field
+              name="name"
+              children={(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor={field.name} className="text-base">
+                    Name
+                  </Label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    placeholder="Enter your name"
+                    className="h-11"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <FieldInfo field={field} />
+                </div>
+              )}
+            />
           </div>
 
           {/* Email */}
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-base">
-              Email Address
-            </Label>
-            <Input type="email" id="email" placeholder="Enter your email" className="h-11" />
-          </div>
+          <form.Field
+            name="email"
+            children={(field) => (
+              <div className="space-y-2">
+                <Label htmlFor={field.name} className="text-base">
+                  Email Address
+                </Label>
+                <Input
+                  type="email"
+                  id={field.name}
+                  name={field.name}
+                  placeholder="Enter your email"
+                  className="h-11"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FieldInfo field={field} />
+              </div>
+            )}
+          />
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Password */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-base">
-                Password
-              </Label>
-              <Input type="password" id="password" placeholder="Create a password" className="h-11" />
-            </div>
+            <form.Field
+              name="password"
+              children={(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor={field.name} className="text-base">
+                    Password
+                  </Label>
+                  <Input
+                    type="password"
+                    id={field.name}
+                    name={field.name}
+                    placeholder="Create a password"
+                    className="h-11"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <FieldInfo field={field} />
+                </div>
+              )}
+            />
 
             {/* Confirm Password */}
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-base">
-                Confirm Password
-              </Label>
-              <Input type="password" id="confirmPassword" placeholder="Confirm your password" className="h-11" />
-            </div>
+            <form.Field
+              name="confirmPassword"
+              children={(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor={field.name} className="text-base">
+                    Confirm Password
+                  </Label>
+                  <Input
+                    type="password"
+                    id={field.name}
+                    name={field.name}
+                    placeholder="Confirm your password"
+                    className="h-11"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <FieldInfo field={field} />
+                </div>
+              )}
+            />
           </div>
 
           {/* Terms & Conditions */}
-          <div className="flex items-center space-x-2">
-            <Checkbox id="terms" />
-            <Label htmlFor="terms" className="text-sm text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              I agree to the{" "}
-              <a href="#terms" className="text-primary hover:underline">
-                Terms of Service
-              </a>
-              and{" "}
-              <a href="#privacy" className="text-primary hover:underline">
-                Privacy Policy
-              </a>
-            </Label>
-          </div>
+          <form.Field
+            name="terms"
+            children={(field) => (
+              <div className="flex items-center space-x-2">
+                <Checkbox id={field.name} name={field.name} checked={field.state.value} onCheckedChange={(checked) => field.handleChange(checked === true)} />
+                <Label htmlFor={field.name} className="text-sm text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  I agree to the <TermsDialog /> and <PrivacyDialog />
+                </Label>
+              </div>
+            )}
+          />
 
           {/* Submit Button */}
           <div className="flex flex-col items-center space-y-4">
-            <Button type="submit" size="lg" className="w-full">
-              Create Account
-            </Button>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
+              children={([canSubmit, isSubmitting, isValidating]) => (
+                <Button type="submit" size="lg" className="w-full" disabled={!canSubmit || isSubmitting || isValidating}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Creating Account...
+                    </>
+                  ) : (
+                    "Create Account"
+                  )}
+                </Button>
+              )}
+            />
 
             <div className="text-center text-sm text-muted-foreground">
               Already have an account?
               <Link to="/sign-in" className="text-primary hover:underline font-medium">
+                {" "}
                 Sign in
               </Link>
             </div>

@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { ErrorComponent, RouterProvider, createRouter } from "@tanstack/react-router";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 import "./index.css";
 
 // Import the generated route tree
@@ -8,7 +8,7 @@ import { routeTree } from "./routeTree.gen";
 import { QueryClient } from "@tanstack/react-query";
 import TanstackQueryProvider from "@/context/tanstack-context";
 import NotFound from "@/components/custom/not-found";
-import DefaultCatchBoundary from "./components/custom/default-catch-boundary";
+import DefaultCatchBoundary from "@/components/custom/default-catch-boundary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,7 +30,7 @@ const router = createRouter({
   ),
   defaultErrorComponent: DefaultCatchBoundary,
   defaultNotFoundComponent: NotFound,
-  context: { queryClient },
+  context: { queryClient, auth: undefined },
   defaultPreload: "intent",
   defaultPreloadStaleTime: 0,
 });
@@ -41,13 +41,17 @@ declare module "@tanstack/react-router" {
   }
 }
 
+function App() {
+  return <RouterProvider router={router} />;
+}
+
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = createRoot(rootElement);
   root.render(
     <StrictMode>
       <TanstackQueryProvider queryClient={queryClient}>
-        <RouterProvider router={router} />
+        <App />
       </TanstackQueryProvider>
     </StrictMode>
   );

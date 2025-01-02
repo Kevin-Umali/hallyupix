@@ -9,9 +9,7 @@ import {
   MessageSquare,
   FileText,
   ListChecks,
-  Truck,
   Receipt,
-  Users,
   Wallet,
   Calendar,
   LucideIcon,
@@ -70,7 +68,7 @@ const sellerFeatures = [
     description: "Manage and respond to buyer reviews to improve your service",
     color: "text-indigo-500",
   },
-];
+] as const;
 
 const buyerFeatures = [
   {
@@ -109,58 +107,99 @@ const buyerFeatures = [
     description: "View verified seller ratings and shop reviews before purchasing",
     color: "text-purple-500",
   },
-];
+] as const;
 
 export const FeaturesSection = () => {
   return (
     <section className="py-20 bg-secondary/5">
       <div className="container mx-auto px-4">
-        {/* Seller Features */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <h2 className="text-3xl font-bold mb-4">Powerful Tools for Sellers</h2>
-          <p className="text-muted-foreground">Everything you need to manage your K-pop shop efficiently</p>
-        </motion.div>
+        <FeatureGroup
+          title="Powerful Tools for Sellers"
+          description="Everything you need to manage your K-pop shop efficiently"
+          features={sellerFeatures}
+          columns="lg:grid-cols-4"
+        />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-          {sellerFeatures.map((feature, index) => (
-            <FeatureCard key={index} {...feature} />
-          ))}
-        </div>
+        <div className="my-20 border-t" />
 
-        {/* Buyer Features */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <h2 className="text-3xl font-bold mb-4">Easy Tracking for Buyers</h2>
-          <p className="text-muted-foreground">Keep track of all your K-pop purchases in one place</p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {buyerFeatures.map((feature, index) => (
-            <FeatureCard key={index} {...feature} />
-          ))}
-        </div>
+        <FeatureGroup
+          title="Easy Tracking for Buyers"
+          description="Keep track of all your K-pop purchases in one place"
+          features={buyerFeatures}
+          columns="lg:grid-cols-3"
+        />
       </div>
     </section>
   );
 };
 
-const FeatureCard = ({ icon: Icon, title, description, color }: { icon: LucideIcon; title: string; description: string; color: string }) => {
+const FeatureGroup = ({
+  title,
+  description,
+  features,
+  columns,
+}: {
+  title: string;
+  description: string;
+  features: ReadonlyArray<{
+    icon: LucideIcon;
+    title: string;
+    description: string;
+    color: string;
+  }>;
+  columns: string;
+}) => {
   return (
-    <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
-      <Card className="h-full hover:shadow-lg transition-shadow">
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        className="text-center max-w-3xl mx-auto mb-16"
+      >
+        <h2 className="text-3xl font-bold mb-4">{title}</h2>
+        <p className="text-muted-foreground">{description}</p>
+      </motion.div>
+
+      <div className={`grid md:grid-cols-2 ${columns} gap-6`}>
+        {features.map((feature, index) => (
+          <FeatureCard key={feature.title} {...feature} index={index} />
+        ))}
+      </div>
+    </>
+  );
+};
+
+const FeatureCard = ({
+  icon: Icon,
+  title,
+  description,
+  color,
+  index,
+}: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  color: string;
+  index: number;
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.3, delay: index * 0.1 }}
+    >
+      <Card className="h-full group hover:shadow-lg transition-all duration-300 border-secondary/50">
         <CardContent className="p-6">
-          <Icon className={`w-12 h-12 ${color} mb-4`} />
-          <h3 className="font-semibold text-lg mb-2">{title}</h3>
-          <p className="text-muted-foreground text-sm">{description}</p>
+          <div className="mb-4 relative">
+            <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 300 }}>
+              <Icon className={`w-12 h-12 text-${color}-500 transition-transform duration-300 group-hover:scale-110`} />
+            </motion.div>
+            <div className={`absolute -inset-2 bg-${color}-500/10 rounded-lg blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+          </div>
+          <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors duration-300">{title}</h3>
+          <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
         </CardContent>
       </Card>
     </motion.div>

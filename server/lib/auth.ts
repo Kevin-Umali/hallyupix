@@ -75,7 +75,7 @@ export const auth = betterAuth({
     sendOnSignUp: false,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, token }) => {
-      const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/v1/auth/verify-email?token=${token}&callBackUrl=${process.env.BETTER_AUTH_URL}/api/v1/auth/verify-email`;
+      const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/v1/auth/verify-email?token=${token}&callBackUrl=${process.env.BETTER_AUTH_URL}/verified-email`;
 
       await resend.emails.send({
         from: `H A L L Y U P I X <onboarding@resend.dev>`, // TODO: Change this to the actual email address
@@ -97,5 +97,6 @@ export const auth = betterAuth({
       sameSite: "none",
       secure: true,
     },
+    cookiePrefix: "hallyupix",
   },
 });

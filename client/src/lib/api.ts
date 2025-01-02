@@ -1,11 +1,16 @@
 import { hc } from "hono/client";
 import { type HonoAppType } from "@/server/routes/index.routes";
-
-import { createAuthClient } from "better-auth/client";
+import { createAuthClient } from "better-auth/react";
 import { inferAdditionalFields, usernameClient } from "better-auth/client/plugins";
 import { auth } from "@/server/lib/auth";
 
-export const client = hc<HonoAppType>("/");
+export const client = hc<HonoAppType>("/", {
+  fetch: (input: RequestInfo | URL, init?: RequestInit) =>
+    fetch(input, {
+      ...init,
+      credentials: "include",
+    }),
+});
 export const authClient = createAuthClient({
   baseURL: "http://localhost:3000/api/v1/auth",
   plugins: [usernameClient(), inferAdditionalFields<typeof auth>()],
