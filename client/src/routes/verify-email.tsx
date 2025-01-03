@@ -1,33 +1,39 @@
 import { Button } from "@/components/ui/button";
-import { createFileRoute, Link, useRouteContext } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useRouterState } from "@tanstack/react-router";
 import AuthCard from "@/components/custom/auth/auth-card";
 import { CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { APP_NAME } from "@/constant";
+import { useSendVerificationEmailMutation } from "@/lib/mutation";
+import { Loader2 } from "lucide-react";
+import { maskEmail } from "@/lib/utils";
 
 // Check Email Component
-export const Route = createFileRoute("/_authenticated/verify-email")({
+export const Route = createFileRoute("/verify-email")({
   component: CheckEmail,
 });
 
 function CheckEmail() {
-  const context = useRouteContext({
-    strict: false,
+  const email = useRouterState({
+    select: (state) => state.location.state.email,
   });
 
-  const email = context.auth?.user?.email;
-  const maskedEmail = email
-    ? (() => {
-        const [localPart, domain] = email.split("@");
-        const first = localPart[0]; // First character
-        const last = localPart.slice(-1); // Last character
-        const middleLength = localPart.length - 2; // Number of characters to mask
-        const maskedMiddle = Array(middleLength).fill("*").join(""); // Mask middle characters
-        return `${first}${maskedMiddle}${last}@${domain}`;
-      })()
-    : "your email address";
+  if (!email) {
+    throw redirect({
+      to: "/sign-up",
+      state: { email: undefined },
+    });
+  }
+
+  const { mutate: sendVerificationEmailMutation, isPending } = useSendVerificationEmailMutation();
+
+  const maskedEmail = maskEmail(email ?? "", {
+    minVisible: 0.4,
+    maskChar: "*",
+    preserveDots: true,
+  });
 
   const resendEmail = () => {
-    console.log("Resend email");
+    sendVerificationEmailMutation(email ?? "");
   };
 
   return (
@@ -49,11 +55,17 @@ function CheckEmail() {
       </CardHeader>
       <CardContent className="px-0 space-y-8">
         <div className="space-y-4">
-          <Button size="lg" className="w-full" onClick={resendEmail}>
-            Resend Verification Email
+          <Button size="lg" className="w-full" onClick={resendEmail} disabled={isPending}>
+            {isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Resending...
+              </>
+            ) : (
+              "Resend Verification Email"
+            )}
           </Button>
           <div className="text-center">
-            <Button variant="link" asChild>
+            <Button variant="link" asChild disabled={isPending}>
               <Link to="/sign-in">Back to Sign In</Link>
             </Button>
           </div>

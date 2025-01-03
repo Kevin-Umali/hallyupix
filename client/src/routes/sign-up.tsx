@@ -19,7 +19,7 @@ export const Route = createFileRoute("/sign-up")({
       }
 
       throw redirect({
-        to: search.redirect ?? "/dashboard",
+        to: search.redirect ?? "/shop",
       });
     }
   },

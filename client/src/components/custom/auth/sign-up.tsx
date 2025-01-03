@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import FieldInfo from "@/components/custom/field-info";
@@ -52,9 +52,6 @@ const SignUpForm = () => {
       terms: false,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
-      // simulate async call
-
       await signUp.email({
         email: value.email,
         password: value.password,
@@ -75,7 +72,7 @@ const SignUpForm = () => {
         role: "Seller",
         terms: false,
       });
-      navigate({ to: "/verify-email" });
+      navigate({ to: "/verify-email", state: { email: value.email } });
     },
     validators: {
       onChange: signUpSchema,
@@ -93,7 +90,7 @@ const SignUpForm = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            // e.stopPropagation();
+            e.stopPropagation();
             void form.handleSubmit();
           }}
           className="space-y-6"

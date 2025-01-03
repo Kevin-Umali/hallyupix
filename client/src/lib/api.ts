@@ -20,4 +20,4 @@ export type Session = typeof authClient.$Infer.Session;
 
 export const api = client.api.v1;
 export const authApi = authClient;
-export const { signIn, signUp, signOut, useSession, getSession } = authClient;
+export const { signIn, signUp, signOut, sendVerificationEmail, getSession } = authClient;

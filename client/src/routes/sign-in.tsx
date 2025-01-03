@@ -20,7 +20,7 @@ export const Route = createFileRoute("/sign-in")({
 
       if (auth.isAuthenticated) {
         throw redirect({
-          to: search.redirect ?? "/dashboard",
+          to: search.redirect ?? "/shop",
         });
       }
     }

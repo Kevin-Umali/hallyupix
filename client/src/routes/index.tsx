@@ -59,10 +59,10 @@ function Landing() {
           </Link>
           <div className="flex items-center gap-4">
             <Button variant="ghost" asChild>
-              <Link to="/dashboard">Sign In</Link>
+              <Link to="/shop">Sign In</Link>
             </Button>
             <Button asChild className="shadow-lg hover:shadow-primary/25 transition-all">
-              <Link to="/dashboard">Get Started</Link>
+              <Link to="/shop">Get Started</Link>
             </Button>
           </div>
         </div>

@@ -22,7 +22,14 @@ function EmailVerified() {
       </CardHeader>
       <CardContent className="px-0 space-y-8">
         <Button size="lg" className="w-full" asChild>
-          <Link to="/dashboard">Go to Dashboard</Link>
+          <Link
+            to="/shop"
+            state={{
+              email: undefined,
+            }}
+          >
+            Go to Shop
+          </Link>
         </Button>
       </CardContent>
     </AuthCard>

@@ -1,6 +1,6 @@
 {
   "name": "hallyupix",
-  "version": "0.0.2-beta",
+  "version": "0.0.3-beta",
   "scripts": {
     "dev": "bun run --hot server/index.ts",
     "build": "bun build ./server/index.ts --outdir ./dist --minify --splitting --sourcemap --target bun",

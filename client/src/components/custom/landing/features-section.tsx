@@ -18,6 +18,7 @@ import {
   MessageCircle,
   Star,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const sellerFeatures = [
   {
@@ -194,7 +195,7 @@ const FeatureCard = ({
         <CardContent className="p-6">
           <div className="mb-4 relative">
             <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 300 }}>
-              <Icon className={`w-12 h-12 text-${color}-500 transition-transform duration-300 group-hover:scale-110`} />
+              <Icon className={cn(color, "w-12 h-12 transition-transform duration-300 group-hover:scale-110")} />
             </motion.div>
             <div className={`absolute -inset-2 bg-${color}-500/10 rounded-lg blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
           </div>

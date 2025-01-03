@@ -56,7 +56,7 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false,
+    requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
       await resend.emails.send({
         from: "Acme <onboarding@resend.dev>", // TODO: Change this to the actual email address
@@ -72,10 +72,10 @@ export const auth = betterAuth({
     },
   },
   emailVerification: {
-    sendOnSignUp: false,
+    sendOnSignUp: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, token }) => {
-      const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/v1/auth/verify-email?token=${token}&callBackUrl=${process.env.BETTER_AUTH_URL}/verified-email`;
+      const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/v1/auth/verify-email?token=${token}&callbackURL=${process.env.BETTER_AUTH_URL}/verified-email`;
 
       await resend.emails.send({
         from: `H A L L Y U P I X <onboarding@resend.dev>`, // TODO: Change this to the actual email address
