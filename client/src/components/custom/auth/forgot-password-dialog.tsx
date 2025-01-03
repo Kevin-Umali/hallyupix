@@ -11,7 +11,7 @@ import { Loader2, Mail, CheckCircle, AlertCircle } from "lucide-react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { maskEmail } from "@/lib/utils";
 
-const COOLDOWN_PERIOD = 10; // 5 minutes
+const COOLDOWN_PERIOD = 300;
 const DAILY_LIMIT = 3;
 
 const forgotPasswordSchema = z.object({
@@ -91,7 +91,7 @@ const ForgotPasswordDialog = ({ open, onOpenChange }: { open: boolean; onOpenCha
     const timer = setInterval(updateStatus, 1000);
     updateStatus(); // Initial update
     return () => clearInterval(timer);
-  }, [getAttempts, setAttempts]);
+  }, [DAILY_LIMIT]);
 
   const form = useForm<ForgotPasswordFormType>({
     defaultValues: { email: "" },
@@ -196,6 +196,8 @@ const ForgotPasswordDialog = ({ open, onOpenChange }: { open: boolean; onOpenCha
                 <li>Add no-reply@hallyupix.com to your contacts</li>
                 <li>Check all email folders</li>
                 <li>Wait a few minutes and refresh your inbox</li>
+                <li>If you don't still receive any email that means you don't have an email address associated with your account</li>
+                <li>Please contact us at support@hallyupix.com to resolve this issue</li>
               </ul>
             </div>
           </div>

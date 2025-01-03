@@ -1,114 +1,9 @@
 // components/landing/features-section.tsx
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  ShoppingBag,
-  Package,
-  Bell,
-  BarChart2,
-  MessageSquare,
-  FileText,
-  ListChecks,
-  Receipt,
-  Wallet,
-  Calendar,
-  LucideIcon,
-  Medal,
-  ThumbsUp,
-  MessageCircle,
-  Star,
-} from "lucide-react";
+import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const sellerFeatures = [
-  {
-    icon: ListChecks,
-    title: "Order Management",
-    description: "Track orders, manage status updates, and organize customer information in one place",
-    color: "text-blue-500",
-  },
-  {
-    icon: Package,
-    title: "Inventory System",
-    description: "Manage your pre-orders, track stock levels, and get low stock alerts",
-    color: "text-pink-500",
-  },
-  {
-    icon: BarChart2,
-    title: "Shop Analytics",
-    description: "View sales trends, popular items, and customer insights",
-    color: "text-purple-500",
-  },
-  {
-    icon: MessageSquare,
-    title: "Customer Updates",
-    description: "Send automated updates about order status and shipping information",
-    color: "text-green-500",
-  },
-  {
-    icon: Receipt,
-    title: "Payment Tracking",
-    description: "Track payments, generate invoices, and manage payment statuses",
-    color: "text-orange-500",
-  },
-  {
-    icon: Calendar,
-    title: "Pre-order Management",
-    description: "Organize pre-order schedules and manage customer reservations",
-    color: "text-yellow-500",
-  },
-  {
-    icon: Star,
-    title: "Shop Reviews",
-    description: "Build trust with verified buyer reviews and showcase your shop's reputation",
-    color: "text-amber-500",
-  },
-  {
-    icon: MessageCircle,
-    title: "Buyer Feedback",
-    description: "Manage and respond to buyer reviews to improve your service",
-    color: "text-indigo-500",
-  },
-] as const;
-
-const buyerFeatures = [
-  {
-    icon: ShoppingBag,
-    title: "Order Tracking",
-    description: "Track all your orders from different shops in one dashboard",
-    color: "text-indigo-500",
-  },
-  {
-    icon: Bell,
-    title: "Status Notifications",
-    description: "Get real-time updates about your order status and shipping",
-    color: "text-teal-500",
-  },
-  {
-    icon: FileText,
-    title: "Order History",
-    description: "Access your complete purchase history and digital receipts",
-    color: "text-cyan-500",
-  },
-  {
-    icon: Wallet,
-    title: "Payment Records",
-    description: "Keep track of your payments and pending balances",
-    color: "text-red-500",
-  },
-  {
-    icon: ThumbsUp,
-    title: "Product Reviews",
-    description: "Share your experience and help other buyers make informed decisions",
-    color: "text-emerald-500",
-  },
-  {
-    icon: Medal,
-    title: "Seller Ratings",
-    description: "View verified seller ratings and shop reviews before purchasing",
-    color: "text-purple-500",
-  },
-] as const;
+import { SELLER_FEATURES } from "@/constant";
 
 export const FeaturesSection = () => {
   return (
@@ -117,22 +12,15 @@ export const FeaturesSection = () => {
         <FeatureGroup
           title="Powerful Tools for Sellers"
           description="Everything you need to manage your K-pop shop efficiently"
-          features={sellerFeatures}
+          features={SELLER_FEATURES}
           columns="lg:grid-cols-4"
-        />
-
-        <div className="my-20 border-t" />
-
-        <FeatureGroup
-          title="Easy Tracking for Buyers"
-          description="Keep track of all your K-pop purchases in one place"
-          features={buyerFeatures}
-          columns="lg:grid-cols-3"
         />
       </div>
     </section>
   );
 };
+
+FeaturesSection.displayName = "FeaturesSection";
 
 const FeatureGroup = ({
   title,
@@ -171,6 +59,8 @@ const FeatureGroup = ({
   );
 };
 
+FeatureGroup.displayName = "FeatureGroup";
+
 const FeatureCard = ({
   icon: Icon,
   title,
@@ -206,3 +96,5 @@ const FeatureCard = ({
     </motion.div>
   );
 };
+
+FeatureCard.displayName = "FeatureCard";

@@ -8,6 +8,7 @@ export interface RoleOption {
   label: string;
   description: string;
   icon: React.ElementType;
+  disabled?: boolean;
 }
 
 interface RoleSelectorProps {
@@ -26,9 +27,14 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({ roles, selectedRole, onRole
           return (
             <div
               key={role.value}
-              className={`relative flex items-start gap-2 rounded-lg border border-input p-4 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring hover:border-ring/50 transition-colors`}
+              className={cn(
+                role.disabled && "bg-muted border-muted/50",
+                !role.disabled && "hover:border-ring/50",
+                `relative flex items-start gap-2 rounded-lg border border-input p-4 shadow-black/5 has-[[data-state=checked]]:border-ring  transition-colors`
+              )}
             >
               <RadioGroupItem
+                disabled={role.disabled}
                 value={role.value}
                 id={`radio-${role.value}`}
                 aria-describedby={`radio-${role.value}-description`}

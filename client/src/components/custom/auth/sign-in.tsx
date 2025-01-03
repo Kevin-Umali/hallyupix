@@ -64,7 +64,7 @@ const SignInForm = () => {
         password: "",
         rememberMe: false,
       });
-      navigate({ to: search.redirect ?? "/shop" });
+      navigate({ to: search.redirect ?? "/dashboard" });
     },
     validators: {
       onChange: signInSchema,

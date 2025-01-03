@@ -4,7 +4,7 @@ import { FeaturesSection } from "@/components/custom/landing/features-section";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Testimonials } from "@/components/custom/landing/testimonials";
-import { FeaturedListing } from "@/components/custom/landing/featured-listing";
+import { WorkflowSection } from "@/components/custom/landing/workflows-section";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -59,10 +59,10 @@ function Landing() {
           </Link>
           <div className="flex items-center gap-4">
             <Button variant="ghost" asChild>
-              <Link to="/shop">Sign In</Link>
+              <Link to="/dashboard">Sign In</Link>
             </Button>
             <Button asChild className="shadow-lg hover:shadow-primary/25 transition-all">
-              <Link to="/shop">Get Started</Link>
+              <Link to="/dashboard">Get Started</Link>
             </Button>
           </div>
         </div>
@@ -72,7 +72,7 @@ function Landing() {
         <HeroSection />
         <TrackingTimelineDemo />
         <FeaturesSection />
-        <FeaturedListing />
+        <WorkflowSection />
         <Testimonials />
       </main>
 

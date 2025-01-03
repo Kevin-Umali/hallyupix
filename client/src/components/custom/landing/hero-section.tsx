@@ -17,7 +17,6 @@ import {
   ArrowRight,
   Check,
   X,
-  StarIcon,
   BadgeCheck,
   Medal,
   ThumbsUp,
@@ -45,13 +44,13 @@ export const HeroSection = () => {
         <motion.div initial="initial" animate="animate" variants={staggerChildren} className="relative z-10 text-center max-w-3xl mx-auto mb-16">
           <motion.div variants={fadeInUp}>
             <Badge variant="secondary" className="mb-4">
-              Built for Philippine K-pop Community
+              Built for K-pop Shop Sellers
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Simplify Your K-pop Shop Management
+              Streamline Your Shop Operations
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              A better way to manage your K-pop shop orders and help buyers track their purchases. Say goodbye to complicated spreadsheets!
+              A better way to manage your K-pop shop orders, track inventory, and handle customer order statuses. Perfect for pre-order and on-hand items.
             </p>
           </motion.div>
 
@@ -60,23 +59,30 @@ export const HeroSection = () => {
               {
                 title: "Excel Sheets",
                 benefits: [
-                  "Manual updates",
-                  "Prone to errors",
-                  "Hard to share status",
-                  "No real-time updates",
-                  "No inventory tracking",
+                  "Manual status updates",
+                  "Hard to track inventory",
+                  "No payment proof system",
+                  "Difficult order tracking",
+                  "Manual customer updates",
                   "Limited accessibility",
                 ],
                 recommended: false,
               },
               {
                 title: "Social Media DMs",
-                benefits: ["Mixed conversations", "Hard to track orders", "Easy to miss updates", "No organization", "No review system"],
+                benefits: ["Mixed conversations", "Hard to track orders", "No organized system", "Manual status sharing", "No payment tracking"],
                 recommended: false,
               },
               {
                 title: APP_NAME,
-                benefits: ["Automated tracking", "Real-time updates", "Organized orders", "Easy status sharing", "Verified reviews", "Rating system"],
+                benefits: [
+                  "Custom status flows",
+                  "Inventory management",
+                  "Payment proof system",
+                  "Automated status links",
+                  "Easy tracking sharing",
+                  "Multi-platform orders",
+                ],
                 recommended: true,
               },
             ].map((card, index) => (
@@ -87,28 +93,28 @@ export const HeroSection = () => {
 
         <motion.div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto" variants={staggerChildren} initial="initial" animate="animate">
           <FeatureCard
-            title="For Sellers"
-            description="Manage your K-pop shop efficiently"
+            title="Order Management"
+            description="Everything you need to manage your shop"
             features={[
-              { icon: ListChecks, title: "Order Management", description: "Track all your orders in one place" },
-              { icon: Package, title: "Inventory Tracking", description: "Manage your pre-orders and stock" },
-              { icon: MessageSquare, title: "Customer Updates", description: "Send updates with one click" },
-              { icon: BarChart, title: "Sales Analytics", description: "Track your shop's performance" },
-              { icon: StarIcon, title: "Shop Reviews", description: "Build trust with verified buyer reviews" },
-              { icon: BadgeCheck, title: "Seller Rating", description: "Showcase your reliability" },
+              { icon: ListChecks, title: "Custom Status Flows", description: "Create your own order status workflow" },
+              { icon: Package, title: "Inventory System", description: "Track pre-orders and on-hand items" },
+              { icon: FileText, title: "Payment Proofs", description: "Easy payment verification system" },
+              { icon: MessageSquare, title: "Status Links", description: "Share tracking links with buyers" },
+              { icon: BarChart, title: "Order Analytics", description: "Track your shop's performance" },
+              { icon: BadgeCheck, title: "Multi-Platform", description: "Manage orders from different platforms" },
             ]}
           />
 
           <FeatureCard
-            title="For Buyers"
-            description="Track your K-pop purchases easily"
+            title="Customer Management"
+            description="Streamline buyer interactions"
             features={[
-              { icon: Clock, title: "Real-time Updates", description: "Get instant order status updates" },
-              { icon: ShoppingBag, title: "Order History", description: "View all your purchases in one place" },
-              { icon: Bell, title: "Notifications", description: "Get alerts for order updates" },
-              { icon: FileText, title: "Digital Receipts", description: "Access your receipts anytime" },
-              { icon: ThumbsUp, title: "Product Reviews", description: "Share your experience" },
-              { icon: Medal, title: "Buyer Reputation", description: "Build your profile as a reliable buyer" },
+              { icon: Clock, title: "Status Updates", description: "Share real-time order progress" },
+              { icon: Bell, title: "Custom Statuses", description: "Create your own status workflow" },
+              { icon: ShoppingBag, title: "Order Tracking", description: "Easy-to-share tracking links" },
+              { icon: FileText, title: "Payment System", description: "Verify payment proofs easily" },
+              { icon: ThumbsUp, title: "Easy Sharing", description: "Share order updates via link" },
+              { icon: Medal, title: "Platform Support", description: "Handle orders from any platform" },
             ]}
           />
         </motion.div>
@@ -116,18 +122,20 @@ export const HeroSection = () => {
         <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
           <Button size="lg" className="group" asChild>
             <Link to="/sign-up" className="flex items-center gap-2">
-              Start Managing Orders
+              Start Managing Your Shop
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
           <Button size="lg" variant="outline" className="group">
-            See How It Works
+            View Features
           </Button>
         </motion.div>
       </div>
     </section>
   );
 };
+
+HeroSection.displayName = "HeroSection";
 
 const ComparisonCard = ({ title, benefits, recommended, index }: { title: string; benefits: string[]; recommended: boolean; index: number }) => {
   return (
@@ -157,6 +165,8 @@ const ComparisonCard = ({ title, benefits, recommended, index }: { title: string
     </motion.div>
   );
 };
+
+ComparisonCard.displayName = "ComparisonCard";
 
 const FeatureCard = ({
   title,
@@ -190,6 +200,8 @@ const FeatureCard = ({
   );
 };
 
+FeatureCard.displayName = "FeatureCard";
+
 const FeatureItem = ({ icon: Icon, title, description }: { icon: LucideIcon; title: string; description: string }) => {
   return (
     <div className="flex items-start gap-3 group">
@@ -203,3 +215,5 @@ const FeatureItem = ({ icon: Icon, title, description }: { icon: LucideIcon; tit
     </div>
   );
 };
+
+FeatureItem.displayName = "FeatureItem";
