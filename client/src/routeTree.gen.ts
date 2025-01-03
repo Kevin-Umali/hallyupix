@@ -15,6 +15,7 @@ import { Route as VerifyEmailImport } from './routes/verify-email'
 import { Route as VerifiedEmailImport } from './routes/verified-email'
 import { Route as SignUpImport } from './routes/sign-up'
 import { Route as SignInImport } from './routes/sign-in'
+import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedShopImport } from './routes/_authenticated/shop'
@@ -43,6 +44,12 @@ const SignUpRoute = SignUpImport.update({
 const SignInRoute = SignInImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ResetPasswordRoute = ResetPasswordImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -86,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AuthenticatedImport
+      parentRoute: typeof rootRoute
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordImport
       parentRoute: typeof rootRoute
     }
     '/sign-in': {
@@ -152,6 +166,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthenticatedRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verified-email': typeof VerifiedEmailRoute
@@ -163,6 +178,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AuthenticatedRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verified-email': typeof VerifiedEmailRoute
@@ -175,6 +191,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/verified-email': typeof VerifiedEmailRoute
@@ -188,6 +205,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | ''
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
     | '/verified-email'
@@ -198,6 +216,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | ''
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
     | '/verified-email'
@@ -208,6 +227,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
     | '/verified-email'
@@ -220,6 +240,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   VerifiedEmailRoute: typeof VerifiedEmailRoute
@@ -229,6 +250,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  ResetPasswordRoute: ResetPasswordRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   VerifiedEmailRoute: VerifiedEmailRoute,
@@ -247,6 +269,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_authenticated",
+        "/reset-password",
         "/sign-in",
         "/sign-up",
         "/verified-email",
@@ -262,6 +285,9 @@ export const routeTree = rootRoute
         "/_authenticated/shop",
         "/_authenticated/_seller/dashboard"
       ]
+    },
+    "/reset-password": {
+      "filePath": "reset-password.tsx"
     },
     "/sign-in": {
       "filePath": "sign-in.tsx"
