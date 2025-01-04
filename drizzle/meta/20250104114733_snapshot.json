@@ -1,5 +1,5 @@
 {
-  "id": "4acf40bd-14f2-4673-ad48-33aeebcd4e99",
+  "id": "053880fb-6fbc-4bce-916d-9c3c28634f2b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -129,13 +129,15 @@
         },
         "discount_type": {
           "name": "discount_type",
-          "type": "text",
+          "type": "discount_type",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'Flat'"
         },
         "value": {
           "name": "value",
-          "type": "text",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
@@ -225,7 +227,7 @@
         },
         "image_url": {
           "name": "image_url",
-          "type": "text",
+          "type": "varchar(1000)",
           "primaryKey": false,
           "notNull": true
         },
@@ -303,15 +305,28 @@
         },
         "quantity": {
           "name": "quantity",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "price": {
           "name": "price",
-          "type": "text",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
+        },
+        "total_price": {
+          "name": "total_price",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'"
         },
         "created_at": {
           "name": "created_at",
@@ -328,7 +343,38 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "order_items_order_id_idx": {
+          "name": "order_items_order_id_idx",
+          "columns": [
+            {
+              "expression": "order_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "order_items_variant_id_idx": {
+          "name": "order_items_variant_id_idx",
+          "columns": [
+            {
+              "expression": "variant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "order_items_order_id_orders_id_fk": {
           "name": "order_items_order_id_orders_id_fk",
@@ -375,7 +421,7 @@
         },
         "order_number": {
           "name": "order_number",
-          "type": "text",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true
         },
@@ -393,7 +439,7 @@
         },
         "current_status": {
           "name": "current_status",
-          "type": "text",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true
         },
@@ -406,13 +452,13 @@
         },
         "buyer_email": {
           "name": "buyer_email",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
         "buyer_name": {
           "name": "buyer_name",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
@@ -428,29 +474,18 @@
           "type": "payment_status",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
-        },
-        "payment_proof": {
-          "name": "payment_proof",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "payment_proof_submitted_at": {
-          "name": "payment_proof_submitted_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "'Pending'"
         },
         "tracking_number": {
           "name": "tracking_number",
-          "type": "text",
+          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": false
         },
         "tracking_link": {
           "name": "tracking_link",
-          "type": "text",
+          "type": "varchar(1000)",
           "primaryKey": false,
           "notNull": false
         },
@@ -458,32 +493,35 @@
           "name": "additional_links",
           "type": "jsonb",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'[]'"
         },
         "total_amount": {
           "name": "total_amount",
-          "type": "text",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
-        "fees": {
-          "name": "fees",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "fees_payment_status": {
-          "name": "fees_payment_status",
-          "type": "sf_payment_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false
-        },
         "isf": {
           "name": "isf",
-          "type": "text",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'0.00'"
+        },
+        "lsf": {
+          "name": "lsf",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'0.00'"
+        },
+        "pf": {
+          "name": "pf",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'0.00'"
         },
         "isf_payment_status": {
           "name": "isf_payment_status",
@@ -492,9 +530,23 @@
           "primaryKey": false,
           "notNull": false
         },
+        "lsf_payment_status": {
+          "name": "lsf_payment_status",
+          "type": "sf_payment_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pf_payment_status": {
+          "name": "pf_payment_status",
+          "type": "pf_payment_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
         "notes": {
           "name": "notes",
-          "type": "text",
+          "type": "varchar(1000)",
           "primaryKey": false,
           "notNull": false
         },
@@ -519,7 +571,83 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "orders_order_number_idx": {
+          "name": "orders_order_number_idx",
+          "columns": [
+            {
+              "expression": "order_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "orders_seller_id_idx": {
+          "name": "orders_seller_id_idx",
+          "columns": [
+            {
+              "expression": "seller_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "orders_status_idx": {
+          "name": "orders_status_idx",
+          "columns": [
+            {
+              "expression": "current_status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "orders_payment_status_idx": {
+          "name": "orders_payment_status_idx",
+          "columns": [
+            {
+              "expression": "payment_status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "orders_date_idx": {
+          "name": "orders_date_idx",
+          "columns": [
+            {
+              "expression": "order_date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "orders_seller_id_users_id_fk": {
           "name": "orders_seller_id_users_id_fk",
@@ -580,25 +708,25 @@
         },
         "submission_url": {
           "name": "submission_url",
-          "type": "text",
+          "type": "varchar(1000)",
           "primaryKey": false,
           "notNull": true
         },
         "proof_image_url": {
           "name": "proof_image_url",
-          "type": "text",
+          "type": "varchar(1000)",
           "primaryKey": false,
           "notNull": false
         },
         "amount": {
           "name": "amount",
-          "type": "text",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
         "notes": {
           "name": "notes",
-          "type": "text",
+          "type": "varchar(1000)",
           "primaryKey": false,
           "notNull": false
         },
@@ -679,17 +807,31 @@
           "primaryKey": false,
           "notNull": true
         },
+        "sku": {
+          "name": "sku",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "price": {
           "name": "price",
-          "type": "text",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
         "quantity_available": {
           "name": "quantity_available",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": 0
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'"
         },
         "created_at": {
           "name": "created_at",
@@ -706,7 +848,74 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "product_variants_sku_idx": {
+          "name": "product_variants_sku_idx",
+          "columns": [
+            {
+              "expression": "sku",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "product_variants_product_id_idx": {
+          "name": "product_variants_product_id_idx",
+          "columns": [
+            {
+              "expression": "product_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "product_variants_quantity_idx": {
+          "name": "product_variants_quantity_idx",
+          "columns": [
+            {
+              "expression": "quantity_available",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "price_quantity_idx": {
+          "name": "price_quantity_idx",
+          "columns": [
+            {
+              "expression": "price",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "quantity_available",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "product_variants_product_id_products_id_fk": {
           "name": "product_variants_product_id_products_id_fk",
@@ -723,7 +932,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "product_variants_sku_unique": {
+          "name": "product_variants_sku_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "sku"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -760,19 +977,21 @@
           "name": "tags",
           "type": "jsonb",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'[]'"
         },
         "platforms": {
           "name": "platforms",
           "type": "jsonb",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'[]'"
         },
         "origin_category": {
           "name": "origin_category",
-          "type": "text",
+          "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "product_status": {
           "name": "product_status",
@@ -792,31 +1011,33 @@
         },
         "inventory_status": {
           "name": "inventory_status",
-          "type": "text",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true
         },
         "minimum_stock_alert": {
           "name": "minimum_stock_alert",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": 0
         },
-        "tax": {
-          "name": "tax",
-          "type": "text",
+        "fee": {
+          "name": "fee",
+          "type": "numeric(5, 2)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'0.00'"
         },
         "deadline_of_down_payment": {
           "name": "deadline_of_down_payment",
-          "type": "text",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },
         "estimated_time_of_arrival": {
           "name": "estimated_time_of_arrival",
-          "type": "text",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },
@@ -835,7 +1056,68 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "products_seller_id_idx": {
+          "name": "products_seller_id_idx",
+          "columns": [
+            {
+              "expression": "seller_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "products_title_idx": {
+          "name": "products_title_idx",
+          "columns": [
+            {
+              "expression": "title",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "products_status_idx": {
+          "name": "products_status_idx",
+          "columns": [
+            {
+              "expression": "product_status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "products_visibility_idx": {
+          "name": "products_visibility_idx",
+          "columns": [
+            {
+              "expression": "visibility",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "products_seller_id_users_id_fk": {
           "name": "products_seller_id_users_id_fk",
@@ -980,7 +1262,23 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "seller_status_flows_seller_id_idx": {
+          "name": "seller_status_flows_seller_id_idx",
+          "columns": [
+            {
+              "expression": "seller_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "seller_status_flows_seller_id_users_id_fk": {
           "name": "seller_status_flows_seller_id_users_id_fk",
@@ -1160,6 +1458,14 @@
     }
   },
   "enums": {
+    "public.discount_type": {
+      "name": "discount_type",
+      "schema": "public",
+      "values": [
+        "Percentage",
+        "Flat"
+      ]
+    },
     "public.isf_payment_status": {
       "name": "isf_payment_status",
       "schema": "public",
@@ -1180,14 +1486,25 @@
         "For Review"
       ]
     },
+    "public.pf_payment_status": {
+      "name": "pf_payment_status",
+      "schema": "public",
+      "values": [
+        "Paid",
+        "Free",
+        "Pending",
+        "For Review"
+      ]
+    },
     "public.platform": {
       "name": "platform",
       "schema": "public",
       "values": [
         "Facebook",
-        "Xianyu",
+        "Twitter",
         "Discord",
-        "Website"
+        "Website",
+        "Others"
       ]
     },
     "public.product_status": {
