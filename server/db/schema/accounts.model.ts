@@ -1,3 +1,4 @@
+// accounts.model.ts
 import { text, timestamp, pgTable } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { users } from "./users.model";
@@ -9,15 +10,15 @@ export const accounts = pgTable("accounts", {
     .notNull()
     .references(() => users.id),
   accountId: text("account_id").notNull(),
-  providerId: text("provider_id"), // e.g., "google", "github", "credentials"
-  accessToken: text("access_token"), // OAuth access token
-  refreshToken: text("refresh_token"), // OAuth refresh token
+  providerId: text("provider_id"),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
   accessTokenExpiresAt: timestamp("access_token_expires_at"),
   refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
-  scope: text("scope"), // OAuth scope
+  scope: text("scope"),
   password: text("password").notNull(),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const selectAccountSchema = createSelectSchema(accounts);

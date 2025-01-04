@@ -1,5 +1,5 @@
 {
-  "id": "7d211b8c-a7e7-4ec2-9c67-faa9e60bcd49",
+  "id": "4acf40bd-14f2-4673-ad48-33aeebcd4e99",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -72,13 +72,15 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -89,6 +91,180 @@
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.discounts": {
+      "name": "discounts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "variant_id": {
+          "name": "variant_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "discount_type": {
+          "name": "discount_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "discounts_product_id_products_id_fk": {
+          "name": "discounts_product_id_products_id_fk",
+          "tableFrom": "discounts",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "discounts_variant_id_product_variants_id_fk": {
+          "name": "discounts_variant_id_product_variants_id_fk",
+          "tableFrom": "discounts",
+          "tableTo": "product_variants",
+          "columnsFrom": [
+            "variant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.images": {
+      "name": "images",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "variant_id": {
+          "name": "variant_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "images_product_id_products_id_fk": {
+          "name": "images_product_id_products_id_fk",
+          "tableFrom": "images",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "images_variant_id_product_variants_id_fk": {
+          "name": "images_variant_id_product_variants_id_fk",
+          "tableFrom": "images",
+          "tableTo": "product_variants",
+          "columnsFrom": [
+            "variant_id"
           ],
           "columnsTo": [
             "id"
@@ -137,17 +313,19 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_date": {
-          "name": "created_date",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
-        "updated_date": {
-          "name": "updated_date",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -195,15 +373,46 @@
           "primaryKey": true,
           "notNull": true
         },
-        "buyer_id": {
-          "name": "buyer_id",
+        "order_number": {
+          "name": "order_number",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "status_flow_id": {
-          "name": "status_flow_id",
+        "seller_id": {
+          "name": "seller_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "seller_status_flow_id": {
+          "name": "seller_status_flow_id",
           "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "current_status": {
+          "name": "current_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status_history": {
+          "name": "status_history",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'"
+        },
+        "buyer_email": {
+          "name": "buyer_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "buyer_name": {
+          "name": "buyer_name",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -214,22 +423,46 @@
           "primaryKey": false,
           "notNull": true
         },
-        "buyer_name": {
-          "name": "buyer_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "payment_status": {
           "name": "payment_status",
           "type": "payment_status",
           "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_proof": {
+          "name": "payment_proof",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payment_proof_submitted_at": {
+          "name": "payment_proof_submitted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tracking_number": {
+          "name": "tracking_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tracking_link": {
+          "name": "tracking_link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "additional_links": {
+          "name": "additional_links",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_amount": {
+          "name": "total_amount",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -259,33 +492,41 @@
           "primaryKey": false,
           "notNull": false
         },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "order_date": {
           "name": "order_date",
-          "type": "text",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true
         },
-        "created_date": {
-          "name": "created_date",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
-        "updated_date": {
-          "name": "updated_date",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "orders_buyer_id_users_id_fk": {
-          "name": "orders_buyer_id_users_id_fk",
+        "orders_seller_id_users_id_fk": {
+          "name": "orders_seller_id_users_id_fk",
           "tableFrom": "orders",
           "tableTo": "users",
           "columnsFrom": [
-            "buyer_id"
+            "seller_id"
           ],
           "columnsTo": [
             "id"
@@ -293,12 +534,115 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "orders_status_flow_id_seller_status_flows_id_fk": {
-          "name": "orders_status_flow_id_seller_status_flows_id_fk",
+        "orders_seller_status_flow_id_seller_status_flows_id_fk": {
+          "name": "orders_seller_status_flow_id_seller_status_flows_id_fk",
           "tableFrom": "orders",
           "tableTo": "seller_status_flows",
           "columnsFrom": [
-            "status_flow_id"
+            "seller_status_flow_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "orders_order_number_unique": {
+          "name": "orders_order_number_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "order_number"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payment_submissions": {
+      "name": "payment_submissions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "submission_url": {
+          "name": "submission_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "proof_image_url": {
+          "name": "proof_image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "submitted_at": {
+          "name": "submitted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "verified_at": {
+          "name": "verified_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "payment_submissions_order_id_orders_id_fk": {
+          "name": "payment_submissions_order_id_orders_id_fk",
+          "tableFrom": "payment_submissions",
+          "tableTo": "orders",
+          "columnsFrom": [
+            "order_id"
           ],
           "columnsTo": [
             "id"
@@ -347,23 +691,19 @@
           "primaryKey": false,
           "notNull": true
         },
-        "image": {
-          "name": "image",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_date": {
-          "name": "created_date",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
-        "updated_date": {
-          "name": "updated_date",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -442,6 +782,26 @@
           "notNull": false,
           "default": "'Pre-order'"
         },
+        "visibility": {
+          "name": "visibility",
+          "type": "product_visibility",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Private'"
+        },
+        "inventory_status": {
+          "name": "inventory_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "minimum_stock_alert": {
+          "name": "minimum_stock_alert",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "tax": {
           "name": "tax",
           "type": "text",
@@ -460,17 +820,19 @@
           "primaryKey": false,
           "notNull": false
         },
-        "created_date": {
-          "name": "created_date",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
-        "updated_date": {
-          "name": "updated_date",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -539,13 +901,15 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -598,20 +962,22 @@
           "name": "statuses",
           "type": "jsonb",
           "primaryKey": false,
-          "notNull": false,
-          "default": "'[\"Pending\",\"For Review\",\"Completed\"]'"
+          "notNull": true,
+          "default": "'[{\"name\":\"Pending\",\"order\":1,\"allowedTransitions\":[\"For Review\",\"Processing\"],\"requiresPaymentVerification\":true},{\"name\":\"For Review\",\"order\":2,\"allowedTransitions\":[\"Processing\",\"Pending\"]},{\"name\":\"Processing\",\"order\":3,\"allowedTransitions\":[\"Shipped\",\"For Review\"]},{\"name\":\"Shipped\",\"order\":4,\"allowedTransitions\":[\"Completed\"]},{\"name\":\"Completed\",\"order\":5,\"allowedTransitions\":[]}]'"
         },
-        "created_date": {
-          "name": "created_date",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
-        "updated_date": {
-          "name": "updated_date",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -682,7 +1048,8 @@
           "type": "role",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'Seller'"
         },
         "bio": {
           "name": "bio",
@@ -706,13 +1073,15 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -770,13 +1139,15 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -829,11 +1200,19 @@
         "Sold Out"
       ]
     },
+    "public.product_visibility": {
+      "name": "product_visibility",
+      "schema": "public",
+      "values": [
+        "Public",
+        "Private",
+        "Hidden"
+      ]
+    },
     "public.role": {
       "name": "role",
       "schema": "public",
       "values": [
-        "Buyer",
         "Seller"
       ]
     },

@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { createFileRoute, Link, redirect, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import AuthCard from "@/components/custom/auth/auth-card";
 import { CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { APP_NAME } from "@/constant";
 import { useSendVerificationEmailMutation } from "@/lib/mutation";
 import { Loader2 } from "lucide-react";
 import { maskEmail } from "@/lib/utils";
+import { toast } from "sonner";
 
 // Check Email Component
 export const Route = createFileRoute("/verify-email")({
@@ -13,12 +14,13 @@ export const Route = createFileRoute("/verify-email")({
 });
 
 function CheckEmail() {
+  const navigate = useNavigate();
   const email = useRouterState({
     select: (state) => state.location.state.email,
   });
 
   if (!email) {
-    throw redirect({
+    throw navigate({
       to: "/sign-up",
       state: { email: undefined },
     });
@@ -33,7 +35,19 @@ function CheckEmail() {
   });
 
   const resendEmail = () => {
-    sendVerificationEmailMutation(email ?? "");
+    toast.dismiss();
+    sendVerificationEmailMutation(email ?? "", {
+      onSuccess: () => {
+        toast.success("Verification email sent", {
+          description: "Please check your inbox and follow the link to verify your account.",
+        });
+      },
+      onError: (error) => {
+        toast.error(error.code || "Error", {
+          description: error.message || "Something went wrong",
+        });
+      },
+    });
   };
 
   return (

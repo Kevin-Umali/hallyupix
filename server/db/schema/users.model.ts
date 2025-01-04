@@ -1,3 +1,4 @@
+// users.model.ts
 import { boolean, pgTable, text, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { roleEnum } from "./enums";
@@ -10,12 +11,12 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   image: text("image"),
-  role: roleEnum("role").notNull(),
+  role: roleEnum("role").notNull().default("Seller"),
   bio: text("bio"),
   termsAndConditions: text("terms_and_conditions"),
   customDetails: jsonb("custom_details"),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const selectUserSchema = createSelectSchema(users);

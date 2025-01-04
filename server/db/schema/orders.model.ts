@@ -1,4 +1,5 @@
-import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+// orders.model.ts
+import { jsonb, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { users } from "./users.model";
 import { sellerStatusFlows } from "./status-flow.model";
@@ -7,17 +8,31 @@ import { z } from "zod";
 
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
-  buyerId: text("buyer_id").references(() => users.id),
-  sellerStatusFlowId: serial("status_flow_id").references(() => sellerStatusFlows.id),
-  platform: platformEnum("platform").notNull(),
+  orderNumber: text("order_number").notNull().unique(),
+  sellerId: text("seller_id")
+    .references(() => users.id)
+    .notNull(),
+  sellerStatusFlowId: serial("seller_status_flow_id")
+    .references(() => sellerStatusFlows.id)
+    .notNull(),
+  currentStatus: text("current_status").notNull(),
+  statusHistory: jsonb("status_history").notNull().default(JSON.stringify([])), // Array of {status, timestamp, note}
+  buyerEmail: text("buyer_email").notNull(),
   buyerName: text("buyer_name").notNull(),
-  status: text("status").notNull(),
+  platform: platformEnum("platform").notNull(),
   paymentStatus: paymentStatusEnum("payment_status").notNull(),
+  paymentProof: text("payment_proof"),
+  paymentProofSubmittedAt: timestamp("payment_proof_submitted_at"),
+  trackingNumber: text("tracking_number"),
+  trackingLink: text("tracking_link"),
+  additionalLinks: jsonb("additional_links"),
+  totalAmount: text("total_amount").notNull(),
   fees: text("fees"),
   feesPaymentStatus: sfPaymentEnum("fees_payment_status"),
   isf: text("isf"),
   isfPaymentStatus: isfPaymentEnum("isf_payment_status"),
-  orderDate: text("order_date").notNull(),
+  notes: text("notes"),
+  orderDate: timestamp("order_date").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

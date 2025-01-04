@@ -13,19 +13,43 @@ import { signIn } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import FieldInfo from "@/components/custom/field-info";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const signInSchema = z.object({
   emailOrUsername: z
     .string()
-    .nonempty("This field is required")
-    .refine(
-      (value) =>
-        /^[a-zA-Z0-9]{3,20}$/.test(value) || // Username: 3-20 alphanumeric characters
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), // Email: basic email pattern
-      {
-        message: "Must be a valid email address or username (3-20 alphanumeric characters)",
+    .min(1, "This field is required")
+    .superRefine((value, ctx) => {
+      const usernamePattern = /^[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?$/;
+      const usernameLength = value.length >= 3 && value.length <= 20;
+
+      const emailPattern =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+      const isEmail = value.includes("@");
+
+      if (isEmail) {
+        if (!emailPattern.test(value)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Please enter a valid email address",
+          });
+        }
+      } else {
+        if (!usernameLength) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Username must be between 3 and 20 characters",
+          });
+        }
+
+        if (!usernamePattern.test(value)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Username can only contain letters, numbers, dots, underscores, and hyphens. It must start and end with a letter or number",
+          });
+        }
       }
-    ),
+    }),
   password: z.string(),
   rememberMe: z.boolean().optional(),
 });
@@ -48,23 +72,37 @@ const SignInForm = () => {
     },
     onSubmit: async ({ value }) => {
       const isEmail = value.emailOrUsername.includes("@");
-      isEmail
-        ? await signIn.email({ email: value.emailOrUsername, password: value.password, rememberMe: value.rememberMe })
+      const { data, error } = isEmail
+        ? await signIn.email({
+            email: value.emailOrUsername,
+            password: value.password,
+            rememberMe: value.rememberMe,
+          })
         : await signIn.username({
             username: value.emailOrUsername,
             password: value.password,
             rememberMe: value.rememberMe,
           });
 
-      await queryClient.invalidateQueries({ queryKey: ["session"] });
-      await queryClient.refetchQueries({ queryKey: ["session"] });
-      router.invalidate();
-      form.reset({
-        emailOrUsername: "",
-        password: "",
-        rememberMe: false,
-      });
-      navigate({ to: search.redirect ?? "/dashboard" });
+      if (error) {
+        toast.error(error.code || "Sign in failed", {
+          description: error.message || "Please check your credentials and try again",
+        });
+        return;
+      }
+
+      if (data) {
+        toast.success("Signed in successfully!");
+        await queryClient.invalidateQueries({ queryKey: ["session"] });
+        await queryClient.refetchQueries({ queryKey: ["session"] });
+        router.invalidate();
+        form.reset({
+          emailOrUsername: "",
+          password: "",
+          rememberMe: false,
+        });
+        navigate({ to: search.redirect ?? "/dashboard" });
+      }
     },
     validators: {
       onChange: signInSchema,

@@ -13,20 +13,45 @@ import { PrivacyDialog, TermsDialog } from "@/components/custom/legal-dialog";
 import { ROLES } from "@/constant";
 import { signUp } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const signUpSchema = z
   .object({
-    username: z.string().min(5, "Username must be at least 5 characters").max(20, "Username must be less than 20 characters"),
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Invalid email address"),
+    username: z
+      .string()
+      .min(5, "Username must be at least 5 characters")
+      .max(20, "Username must be less than 20 characters")
+      .superRefine((value, ctx) => {
+        const usernamePattern = /^[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?$/;
+
+        if (!usernamePattern.test(value)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Username can only contain letters, numbers, dots, underscores, and hyphens. It must start and end with a letter or number",
+          });
+        }
+      }),
+    name: z
+      .string()
+      .min(2, "Name must be at least 2 characters")
+      .max(50, "Name must be less than 50 characters")
+      .refine((value) => /^[a-zA-Z\s'-]+$/.test(value), "Name can only contain letters, spaces, hyphens, and apostrophes"),
+    email: z
+      .string()
+      .email("Invalid email address")
+      .toLowerCase()
+      .refine((value) => value.length <= 255, "Email must be less than 255 characters"),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/\d/, "Password must contain at least one number"),
+      .max(64, "Password must be less than 64 characters")
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:'",.<>?/`~\\])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};:'",.<>?/`~\\]{8,}$/, {
+        message: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      }),
     confirmPassword: z.string(),
-    role: z.enum(["Buyer", "Seller"]),
+    role: z.enum(["Buyer", "Seller"], {
+      errorMap: () => ({ message: "Please select a valid role" }),
+    }),
     terms: z.boolean().refine((val) => val === true, "You must accept the terms and conditions"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -52,7 +77,7 @@ const SignUpForm = () => {
       terms: false,
     },
     onSubmit: async ({ value }) => {
-      await signUp.email({
+      const { data, error } = await signUp.email({
         email: value.email,
         password: value.password,
         username: value.username,
@@ -60,19 +85,29 @@ const SignUpForm = () => {
         role: value.role,
       });
 
-      await queryClient.invalidateQueries({ queryKey: ["session"] });
-      await queryClient.refetchQueries({ queryKey: ["session"] });
-      router.invalidate();
-      form.reset({
-        username: "",
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        role: "Seller",
-        terms: false,
-      });
-      navigate({ to: "/verify-email", state: { email: value.email } });
+      if (error) {
+        toast.error(error.code || "Sign up failed", {
+          description: error.message || "Please check your credentials and try again",
+        });
+        return;
+      }
+
+      if (data) {
+        toast.success("Signed up successfully!");
+        await queryClient.invalidateQueries({ queryKey: ["session"] });
+        await queryClient.refetchQueries({ queryKey: ["session"] });
+        router.invalidate();
+        form.reset({
+          username: "",
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          role: "Seller",
+          terms: false,
+        });
+        navigate({ to: "/verify-email", state: { email: value.email } });
+      }
     },
     validators: {
       onChange: signUpSchema,

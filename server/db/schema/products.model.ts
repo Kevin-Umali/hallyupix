@@ -1,6 +1,7 @@
+// products.model.ts
 import { pgTable, text, varchar, jsonb, timestamp, serial } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
-import { productStatusEnum } from "./enums";
+import { productStatusEnum, productVisibilityEnum } from "./enums";
 import { users } from "./users.model";
 import { z } from "zod";
 
@@ -15,6 +16,9 @@ export const products = pgTable("products", {
   platforms: jsonb("platforms"),
   originCategory: text("origin_category"),
   productStatus: productStatusEnum("product_status").default("Pre-order"),
+  visibility: productVisibilityEnum("visibility").default("Private"),
+  inventoryStatus: text("inventory_status").notNull(),
+  minimumStockAlert: text("minimum_stock_alert"),
   tax: text("tax"),
   deadlineOfDownPayment: text("deadline_of_down_payment"),
   estimatedTimeOfArrival: text("estimated_time_of_arrival"),

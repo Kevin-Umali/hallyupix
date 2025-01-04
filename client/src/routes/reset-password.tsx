@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import FieldInfo from "@/components/custom/field-info";
 import { Loader2 } from "lucide-react";
 import { resetPassword } from "@/lib/api";
+import { toast } from "sonner";
 
 const resetPasswordSchema = z
   .object({
@@ -28,10 +29,14 @@ type ResetFormType = z.infer<typeof resetPasswordSchema>;
 
 export const Route = createFileRoute("/reset-password")({
   validateSearch: z.object({
-    token: z.string().catch(""),
+    token: z.string().optional().catch(""),
+    error: z.string().optional().catch(""),
   }),
   beforeLoad: ({ search }) => {
-    if (!search.token) {
+    if (!search.token || search.error) {
+      toast.error("INVALID_TOKEN_OR_EXPIRED_LINK", {
+        description: "Invalid token or expired link",
+      });
       throw redirect({
         to: "/sign-in",
         state: { email: undefined },
@@ -52,9 +57,17 @@ function ResetPassword() {
       confirmPassword: "",
     },
     onSubmit: async ({ value }) => {
-      const { data } = await resetPassword({ newPassword: value.password, token: search.token });
+      const { data, error } = await resetPassword({ newPassword: value.password, token: search.token });
+
+      if (error) {
+        toast.error(error.code || "Reset password failed", {
+          description: error.message || "Invalid token or password",
+        });
+        return;
+      }
 
       if (data?.status) {
+        toast.success("Password reset successfully!");
         router.invalidate();
         navigate({
           to: "/sign-in",

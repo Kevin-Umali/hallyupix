@@ -175,15 +175,17 @@ export const PRIVACY_CONTENT = {
 export const ROLES = [
   {
     value: "Buyer",
-    label: "K-pop Fan & Collector",
-    description: "Browse and purchase authentic K-pop merchandise and collectibles",
+    label: "Buyer (Unavailable)",
+    // description: "Browse and purchase authentic K-pop merchandise and collectibles (Coming Soon)",
+    description: "(Coming Soon)",
     icon: ShoppingBag,
     disabled: true,
   },
   {
     value: "Seller",
     label: "K-pop Store Owner",
-    description: "List and sell K-pop merchandise to fans worldwide",
+    // description: "List and sell K-pop merchandise to fans worldwide",
+    description: "List, manage and track your orders, inventory, and payments",
     icon: Store,
     disabled: false,
   },

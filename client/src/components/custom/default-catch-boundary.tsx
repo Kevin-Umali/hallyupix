@@ -29,11 +29,13 @@ export const DefaultCatchBoundary: React.FC<ErrorComponentProps> = ({ error, inf
           </div>
 
           {process.env.NODE_ENV !== "production" && (
-            <div>
-              <h2 className="text-2xl font-semibold">Error Details</h2>
-              <pre className="text-muted-foreground">{JSON.stringify(info, null, 2)}</pre>
-              <div className="text-muted-foreground">{error.stack}</div>
-            </div>
+            <>
+              <h2 className="text-lg font-semibold">Error Details</h2>
+              <div className="space-y-2 bg-muted/50">
+                <pre className="text-muted-foreground text-sm">{JSON.stringify(info, null, 2)}</pre>
+                <code className="text-muted-foreground  ">{error.stack}</code>
+              </div>
+            </>
           )}
 
           {/* Action Buttons */}

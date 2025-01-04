@@ -17,6 +17,13 @@ export const authClient = createAuthClient({
 });
 
 export type Session = typeof authClient.$Infer.Session;
+export type ApiError = {
+  code?: string;
+  message?: string;
+  status: number;
+  statusText: string;
+};
+export type CommonApiResponse = { status: boolean | string };
 
 export const api = client.api.v1;
 export const authApi = authClient;

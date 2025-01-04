@@ -1,3 +1,4 @@
+// product-variants.model.ts
 import { pgTable, text, varchar, timestamp, serial } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { products } from "./products.model";

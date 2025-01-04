@@ -1,3 +1,4 @@
+// images.model.ts
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { products } from "./products.model";

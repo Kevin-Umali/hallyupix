@@ -14,6 +14,9 @@ export default function TanstackQueryProvider({ queryClient, children }: Readonl
             refetchOnMount: false,
             refetchOnWindowFocus: false,
           },
+          mutations: {
+            retry: 0,
+          },
         },
       })
   );
