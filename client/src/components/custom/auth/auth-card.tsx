@@ -1,5 +1,6 @@
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { ACRONYM_APP_NAME, APP_NAME } from "@/constant";
+import { Link } from "@tanstack/react-router";
 
 interface AuthCardProps {
   children: React.ReactNode;
@@ -17,8 +18,10 @@ const AuthCard = ({ children, sideContent }: AuthCardProps) => {
         <CardContent className="w-full md:w-[60%] p-6 md:p-10">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center text-white text-xl font-bold">{ACRONYM_APP_NAME}</div>
-            <span className="text-xl font-semibold">{APP_NAME}</span>
+            <Link to="/">
+              <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center text-white text-xl font-bold">{ACRONYM_APP_NAME}</div>
+              <span className="text-xl font-semibold">{APP_NAME}</span>
+            </Link>
           </div>
           {children}
         </CardContent>

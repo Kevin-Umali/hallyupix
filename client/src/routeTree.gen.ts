@@ -18,7 +18,7 @@ import { Route as SignInImport } from './routes/sign-in'
 import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthenticatedSellerDashboardImport } from './routes/_authenticated/_seller/dashboard'
+import { Route as AuthenticatedDashboardImport } from './routes/_authenticated/dashboard'
 
 // Create/Update Routes
 
@@ -63,12 +63,11 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedSellerDashboardRoute =
-  AuthenticatedSellerDashboardImport.update({
-    id: '/_seller/dashboard',
-    path: '/dashboard',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -123,11 +122,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyEmailImport
       parentRoute: typeof rootRoute
     }
-    '/_authenticated/_seller/dashboard': {
-      id: '/_authenticated/_seller/dashboard'
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedSellerDashboardImport
+      preLoaderRoute: typeof AuthenticatedDashboardImport
       parentRoute: typeof AuthenticatedImport
     }
   }
@@ -136,11 +135,11 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedSellerDashboardRoute: typeof AuthenticatedSellerDashboardRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedSellerDashboardRoute: AuthenticatedSellerDashboardRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -155,7 +154,7 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof SignUpRoute
   '/verified-email': typeof VerifiedEmailRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/dashboard': typeof AuthenticatedSellerDashboardRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
 }
 
 export interface FileRoutesByTo {
@@ -166,7 +165,7 @@ export interface FileRoutesByTo {
   '/sign-up': typeof SignUpRoute
   '/verified-email': typeof VerifiedEmailRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/dashboard': typeof AuthenticatedSellerDashboardRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
 }
 
 export interface FileRoutesById {
@@ -178,7 +177,7 @@ export interface FileRoutesById {
   '/sign-up': typeof SignUpRoute
   '/verified-email': typeof VerifiedEmailRoute
   '/verify-email': typeof VerifyEmailRoute
-  '/_authenticated/_seller/dashboard': typeof AuthenticatedSellerDashboardRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
 }
 
 export interface FileRouteTypes {
@@ -211,7 +210,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/verified-email'
     | '/verify-email'
-    | '/_authenticated/_seller/dashboard'
+    | '/_authenticated/dashboard'
   fileRoutesById: FileRoutesById
 }
 
@@ -260,7 +259,7 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
-        "/_authenticated/_seller/dashboard"
+        "/_authenticated/dashboard"
       ]
     },
     "/reset-password": {
@@ -278,8 +277,8 @@ export const routeTree = rootRoute
     "/verify-email": {
       "filePath": "verify-email.tsx"
     },
-    "/_authenticated/_seller/dashboard": {
-      "filePath": "_authenticated/_seller/dashboard.tsx",
+    "/_authenticated/dashboard": {
+      "filePath": "_authenticated/dashboard.tsx",
       "parent": "/_authenticated"
     }
   }
