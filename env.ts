@@ -10,7 +10,11 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   BETTER_AUTH_SECRET: z.string().default("secret"),
   BETTER_AUTH_URL: z.string().default("http://localhost:5173"),
-  RESEND_API_KEY: z.string().default("re_XozCfTSX_EktrFiBo47kb2dC4Xkeysm7z"),
+  RESEND_API_KEY: z.string().default("secret"),
+  CLOUDINARY_CLOUD_NAME: z.string().default("secret"),
+  CLOUDINARY_API_KEY: z.string().default("secret"),
+  CLOUDINARY_API_SECRET: z.string().default("secret"),
+  CLOUDINARY_API_URL: z.string().default("secret"),
 });
 
 const env = {
@@ -24,6 +28,10 @@ const env = {
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
   BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
   RESEND_API_KEY: process.env.RESEND_API_KEY,
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+  CLOUDINARY_API_URL: process.env.CLOUDINARY_API_URL,
 };
 
 const parsedEnvResults = envSchema.safeParse(env);

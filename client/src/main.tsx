@@ -1,16 +1,18 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import "./index.css";
-
-// Import the generated route tree
-import { routeTree } from "./routeTree.gen";
 import { QueryClient } from "@tanstack/react-query";
 import TanstackQueryProvider from "@/context/tanstack-context";
 import NotFound from "@/components/custom/not-found";
 import DefaultCatchBoundary from "@/components/custom/default-catch-boundary";
 import CustomLoader from "@/components/custom/custom-loader";
 import { Toaster } from "sonner";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import "./index.css";
+
+// Import the generated route tree
+import { routeTree } from "./routeTree.gen";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,7 +49,14 @@ declare module "@tanstack/react-router" {
 }
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <TanstackQueryProvider queryClient={queryClient}>
+      <Toaster position="top-right" duration={5000} closeButton={true} />
+      <RouterProvider router={router} />
+      <ReactQueryDevtools initialIsOpen={false} />
+      <TanStackRouterDevtools router={router} />
+    </TanstackQueryProvider>
+  );
 }
 
 const rootElement = document.getElementById("root")!;
@@ -55,10 +64,7 @@ if (!rootElement.innerHTML) {
   const root = createRoot(rootElement);
   root.render(
     <StrictMode>
-      <TanstackQueryProvider queryClient={queryClient}>
-        <App />
-        <Toaster position="top-right" duration={5000} closeButton={true} />
-      </TanstackQueryProvider>
+      <App />
     </StrictMode>
   );
 }

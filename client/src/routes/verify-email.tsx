@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/re
 import AuthCard from "@/components/custom/auth/auth-card";
 import { CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { APP_NAME } from "@/constant";
-import { useSendVerificationEmailMutation } from "@/lib/mutation";
+import { useSendVerificationEmailMutation } from "@/lib/mutation/auth.mutation";
 import { Loader2 } from "lucide-react";
 import { maskEmail } from "@/lib/utils";
 import { toast } from "sonner";

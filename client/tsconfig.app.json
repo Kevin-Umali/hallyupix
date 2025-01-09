@@ -29,5 +29,5 @@
       "@/server/*": ["../server/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "../env.ts"]
 }

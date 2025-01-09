@@ -34,3 +34,17 @@ export const maskEmail = (
 
   return `${maskedChars.join("")}@${domain}`;
 };
+
+export const extractPathSegment = (url: string, baseSegment: string = "hallyupix") => {
+  const startIndex = url.indexOf(baseSegment);
+  if (startIndex === -1) {
+    return "";
+  }
+
+  const endIndex = url.lastIndexOf(".");
+  if (endIndex === -1) {
+    return "";
+  }
+
+  return url.substring(startIndex, endIndex);
+};

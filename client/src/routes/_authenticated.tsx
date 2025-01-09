@@ -1,9 +1,9 @@
 import AppSidebar from "@/components/custom/sidebar/app-sidebar";
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { getSessionQueryOptions } from "@/lib/queries";
+import { getSessionQueryOptions } from "@/lib/queries/auth.queries";
 
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect, useLocation } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ context }) => {
@@ -31,6 +31,14 @@ export const Route = createFileRoute("/_authenticated")({
   },
   component: () => {
     const { auth } = Route.useRouteContext();
+    const location = useLocation();
+
+    const segments = location.pathname.replace(/\/$/, "").split("/").filter(Boolean);
+    const breadcrumbItems = segments.map((segment, index) => ({
+      label: segment.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()),
+      path: "/" + segments.slice(0, index + 1).join("/"),
+      isLast: index === segments.length - 1,
+    }));
 
     return (
       <SidebarProvider
@@ -39,20 +47,20 @@ export const Route = createFileRoute("/_authenticated")({
             "--sidebar-width": "305px",
           } as React.CSSProperties
         }
+        defaultOpen={false}
       >
         <AppSidebar user={auth?.user} />
         <SidebarInset>
-          <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-4">
+          <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-4 z-50">
             <SidebarTrigger className="-ml-1" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">All Inboxes</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Inbox</BreadcrumbPage>
-                </BreadcrumbItem>
+                {breadcrumbItems.map(({ label, path, isLast }) => (
+                  <BreadcrumbItem key={path}>
+                    {isLast ? <BreadcrumbPage>{label}</BreadcrumbPage> : <BreadcrumbLink>{label}</BreadcrumbLink>}
+                    {!isLast && <BreadcrumbSeparator />}
+                  </BreadcrumbItem>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
           </header>

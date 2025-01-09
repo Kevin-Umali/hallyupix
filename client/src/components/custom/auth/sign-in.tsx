@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
 import { signIn } from "@/lib/api";
-import { useQueryClient } from "@tanstack/react-query";
 import FieldInfo from "@/components/custom/field-info";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -62,7 +61,6 @@ const SignInForm = () => {
   const search = useSearch({ strict: false });
   const navigate = useNavigate();
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const form = useForm<SignInFormType>({
     defaultValues: {
@@ -93,8 +91,6 @@ const SignInForm = () => {
 
       if (data) {
         toast.success("Signed in successfully!");
-        await queryClient.invalidateQueries({ queryKey: ["session"] });
-        await queryClient.refetchQueries({ queryKey: ["session"] });
         router.invalidate();
         form.reset({
           emailOrUsername: "",

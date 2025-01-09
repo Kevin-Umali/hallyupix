@@ -107,10 +107,10 @@ const OrderItems = ({ items }: { items: Array<(typeof ORDER_ITEMS)[number]> }) =
     <h5 className="font-medium mb-3">Order Items</h5>
     <div className="space-y-3">
       {items.map((item, index) => (
-        <>
+        <div key={index}>
           <TimelineOrderItem key={index} {...item} />
           {index < items.length - 1 && <div className="border-separate" />}
-        </>
+        </div>
       ))}
     </div>
   </div>

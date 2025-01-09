@@ -11,6 +11,7 @@ import { auth } from "./auth";
 import type { HonoOpenAPIConfig } from "./types";
 import { BASE_PATH } from "../constants";
 import { protect } from "../middlewares/auth-guard";
+import { CustomHTTPException } from "./custom-error";
 
 const createRouter = () => {
   return new OpenAPIHono<HonoOpenAPIConfig>({
@@ -112,6 +113,14 @@ const createApp = () => {
     );
   });
   app.onError((err, c) => {
+    if (process.env.NODE_ENV === "development") {
+      console.error(err);
+    }
+
+    if (err instanceof CustomHTTPException) {
+      return err.getResponse();
+    }
+
     if (err instanceof HTTPException) {
       return err.getResponse();
     }

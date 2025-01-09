@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { ApiError, CommonApiResponse, resetPassword, sendVerificationEmail } from "@/lib/api";
+import { ApiError, CommonApiResponse, resetPassword, sendVerificationEmail } from "../api";
 
 export const useSendVerificationEmailMutation = () => {
   return useMutation<CommonApiResponse, ApiError, string>({

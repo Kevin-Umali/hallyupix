@@ -141,6 +141,46 @@ CREATE TABLE "sessions" (
 	CONSTRAINT "sessions_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
+CREATE TABLE "shop_payment" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"payment_methods" jsonb DEFAULT '[]'::jsonb,
+	"payment_instructions" text,
+	"deadline_settings" jsonb DEFAULT '{"preOrderPayment":0,"regularOrderPayment":0,"paymentReminderInterval":0}'::jsonb,
+	"payment_policies" jsonb DEFAULT '{"refundPolicy":"","cancellationPolicy":"","partialPaymentAllowed":false}'::jsonb,
+	"custom_policies" jsonb DEFAULT '[]'::jsonb,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "shop_payment_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
+CREATE TABLE "shop_profiles" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"shop_name" text NOT NULL,
+	"description" text,
+	"banner_image" text,
+	"profile_image" text,
+	"social_links" jsonb DEFAULT '{}'::jsonb,
+	"is_verified" boolean DEFAULT false,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "shop_profiles_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
+CREATE TABLE "shop_shipping" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"domestic_shipping" jsonb DEFAULT '{"description":"","processingTime":"","estimatedDelivery":"","cost":0,"restrictions":[],"notes":""}'::jsonb,
+	"international_shipping" jsonb DEFAULT '{"description":"","processingTime":"","estimatedDelivery":"","cost":0,"restrictions":[],"notes":""}'::jsonb,
+	"processing_times" jsonb DEFAULT '{"preOrder":"","regular":"","express":"","customRules":[]}'::jsonb,
+	"shipping_policies" jsonb DEFAULT '{}'::jsonb,
+	"custom_policies" jsonb DEFAULT '[]'::jsonb,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "shop_shipping_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
 CREATE TABLE "seller_status_flows" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"seller_id" text NOT NULL,
@@ -158,10 +198,9 @@ CREATE TABLE "users" (
 	"image" text,
 	"role" "role" DEFAULT 'Seller' NOT NULL,
 	"bio" text,
-	"terms_and_conditions" text,
-	"custom_details" jsonb,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "users_name_unique" UNIQUE("name"),
 	CONSTRAINT "users_username_unique" UNIQUE("username"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
@@ -188,6 +227,9 @@ ALTER TABLE "payment_submissions" ADD CONSTRAINT "payment_submissions_order_id_o
 ALTER TABLE "product_variants" ADD CONSTRAINT "product_variants_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "products" ADD CONSTRAINT "products_seller_id_users_id_fk" FOREIGN KEY ("seller_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "shop_payment" ADD CONSTRAINT "shop_payment_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "shop_profiles" ADD CONSTRAINT "shop_profiles_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "shop_shipping" ADD CONSTRAINT "shop_shipping_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "seller_status_flows" ADD CONSTRAINT "seller_status_flows_seller_id_users_id_fk" FOREIGN KEY ("seller_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "order_items_order_id_idx" ON "order_items" USING btree ("order_id");--> statement-breakpoint
 CREATE INDEX "order_items_variant_id_idx" ON "order_items" USING btree ("variant_id");--> statement-breakpoint

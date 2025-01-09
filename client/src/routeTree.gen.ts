@@ -19,6 +19,26 @@ import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedDashboardImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedOrdersIndexImport } from './routes/_authenticated/orders/index'
+import { Route as AuthenticatedStatusFlowsTrackingImport } from './routes/_authenticated/status-flows/tracking'
+import { Route as AuthenticatedStatusFlowsTemplatesImport } from './routes/_authenticated/status-flows/templates'
+import { Route as AuthenticatedStatusFlowsRulesImport } from './routes/_authenticated/status-flows/rules'
+import { Route as AuthenticatedShopVerificationImport } from './routes/_authenticated/shop/verification'
+import { Route as AuthenticatedShopShippingImport } from './routes/_authenticated/shop/shipping'
+import { Route as AuthenticatedShopProfileImport } from './routes/_authenticated/shop/profile'
+import { Route as AuthenticatedShopPaymentsImport } from './routes/_authenticated/shop/payments'
+import { Route as AuthenticatedSettingsSecurityImport } from './routes/_authenticated/settings/security'
+import { Route as AuthenticatedSettingsProfileImport } from './routes/_authenticated/settings/profile'
+import { Route as AuthenticatedSettingsGeneralImport } from './routes/_authenticated/settings/general'
+import { Route as AuthenticatedProductsPricingImport } from './routes/_authenticated/products/pricing'
+import { Route as AuthenticatedProductsPreOrdersImport } from './routes/_authenticated/products/pre-orders'
+import { Route as AuthenticatedProductsMediaImport } from './routes/_authenticated/products/media'
+import { Route as AuthenticatedProductsInventoryImport } from './routes/_authenticated/products/inventory'
+import { Route as AuthenticatedProductsCategoriesImport } from './routes/_authenticated/products/categories'
+import { Route as AuthenticatedOrdersStatusImport } from './routes/_authenticated/orders/status'
+import { Route as AuthenticatedOrdersShippingImport } from './routes/_authenticated/orders/shipping'
+import { Route as AuthenticatedOrdersPreOrdersImport } from './routes/_authenticated/orders/pre-orders'
+import { Route as AuthenticatedOrdersPaymentsImport } from './routes/_authenticated/orders/payments'
 
 // Create/Update Routes
 
@@ -68,6 +88,142 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+
+const AuthenticatedOrdersIndexRoute = AuthenticatedOrdersIndexImport.update({
+  id: '/orders/',
+  path: '/orders/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedStatusFlowsTrackingRoute =
+  AuthenticatedStatusFlowsTrackingImport.update({
+    id: '/status-flows/tracking',
+    path: '/status-flows/tracking',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedStatusFlowsTemplatesRoute =
+  AuthenticatedStatusFlowsTemplatesImport.update({
+    id: '/status-flows/templates',
+    path: '/status-flows/templates',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedStatusFlowsRulesRoute =
+  AuthenticatedStatusFlowsRulesImport.update({
+    id: '/status-flows/rules',
+    path: '/status-flows/rules',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedShopVerificationRoute =
+  AuthenticatedShopVerificationImport.update({
+    id: '/shop/verification',
+    path: '/shop/verification',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedShopShippingRoute = AuthenticatedShopShippingImport.update({
+  id: '/shop/shipping',
+  path: '/shop/shipping',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedShopProfileRoute = AuthenticatedShopProfileImport.update({
+  id: '/shop/profile',
+  path: '/shop/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedShopPaymentsRoute = AuthenticatedShopPaymentsImport.update({
+  id: '/shop/payments',
+  path: '/shop/payments',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedSettingsSecurityRoute =
+  AuthenticatedSettingsSecurityImport.update({
+    id: '/settings/security',
+    path: '/settings/security',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedSettingsProfileRoute =
+  AuthenticatedSettingsProfileImport.update({
+    id: '/settings/profile',
+    path: '/settings/profile',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedSettingsGeneralRoute =
+  AuthenticatedSettingsGeneralImport.update({
+    id: '/settings/general',
+    path: '/settings/general',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedProductsPricingRoute =
+  AuthenticatedProductsPricingImport.update({
+    id: '/products/pricing',
+    path: '/products/pricing',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedProductsPreOrdersRoute =
+  AuthenticatedProductsPreOrdersImport.update({
+    id: '/products/pre-orders',
+    path: '/products/pre-orders',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedProductsMediaRoute = AuthenticatedProductsMediaImport.update(
+  {
+    id: '/products/media',
+    path: '/products/media',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any,
+)
+
+const AuthenticatedProductsInventoryRoute =
+  AuthenticatedProductsInventoryImport.update({
+    id: '/products/inventory',
+    path: '/products/inventory',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedProductsCategoriesRoute =
+  AuthenticatedProductsCategoriesImport.update({
+    id: '/products/categories',
+    path: '/products/categories',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedOrdersStatusRoute = AuthenticatedOrdersStatusImport.update({
+  id: '/orders/status',
+  path: '/orders/status',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedOrdersShippingRoute =
+  AuthenticatedOrdersShippingImport.update({
+    id: '/orders/shipping',
+    path: '/orders/shipping',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedOrdersPreOrdersRoute =
+  AuthenticatedOrdersPreOrdersImport.update({
+    id: '/orders/pre-orders',
+    path: '/orders/pre-orders',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedOrdersPaymentsRoute =
+  AuthenticatedOrdersPaymentsImport.update({
+    id: '/orders/payments',
+    path: '/orders/payments',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -129,6 +285,146 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/orders/payments': {
+      id: '/_authenticated/orders/payments'
+      path: '/orders/payments'
+      fullPath: '/orders/payments'
+      preLoaderRoute: typeof AuthenticatedOrdersPaymentsImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/orders/pre-orders': {
+      id: '/_authenticated/orders/pre-orders'
+      path: '/orders/pre-orders'
+      fullPath: '/orders/pre-orders'
+      preLoaderRoute: typeof AuthenticatedOrdersPreOrdersImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/orders/shipping': {
+      id: '/_authenticated/orders/shipping'
+      path: '/orders/shipping'
+      fullPath: '/orders/shipping'
+      preLoaderRoute: typeof AuthenticatedOrdersShippingImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/orders/status': {
+      id: '/_authenticated/orders/status'
+      path: '/orders/status'
+      fullPath: '/orders/status'
+      preLoaderRoute: typeof AuthenticatedOrdersStatusImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/products/categories': {
+      id: '/_authenticated/products/categories'
+      path: '/products/categories'
+      fullPath: '/products/categories'
+      preLoaderRoute: typeof AuthenticatedProductsCategoriesImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/products/inventory': {
+      id: '/_authenticated/products/inventory'
+      path: '/products/inventory'
+      fullPath: '/products/inventory'
+      preLoaderRoute: typeof AuthenticatedProductsInventoryImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/products/media': {
+      id: '/_authenticated/products/media'
+      path: '/products/media'
+      fullPath: '/products/media'
+      preLoaderRoute: typeof AuthenticatedProductsMediaImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/products/pre-orders': {
+      id: '/_authenticated/products/pre-orders'
+      path: '/products/pre-orders'
+      fullPath: '/products/pre-orders'
+      preLoaderRoute: typeof AuthenticatedProductsPreOrdersImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/products/pricing': {
+      id: '/_authenticated/products/pricing'
+      path: '/products/pricing'
+      fullPath: '/products/pricing'
+      preLoaderRoute: typeof AuthenticatedProductsPricingImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/settings/general': {
+      id: '/_authenticated/settings/general'
+      path: '/settings/general'
+      fullPath: '/settings/general'
+      preLoaderRoute: typeof AuthenticatedSettingsGeneralImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/settings/profile': {
+      id: '/_authenticated/settings/profile'
+      path: '/settings/profile'
+      fullPath: '/settings/profile'
+      preLoaderRoute: typeof AuthenticatedSettingsProfileImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/settings/security': {
+      id: '/_authenticated/settings/security'
+      path: '/settings/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof AuthenticatedSettingsSecurityImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/shop/payments': {
+      id: '/_authenticated/shop/payments'
+      path: '/shop/payments'
+      fullPath: '/shop/payments'
+      preLoaderRoute: typeof AuthenticatedShopPaymentsImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/shop/profile': {
+      id: '/_authenticated/shop/profile'
+      path: '/shop/profile'
+      fullPath: '/shop/profile'
+      preLoaderRoute: typeof AuthenticatedShopProfileImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/shop/shipping': {
+      id: '/_authenticated/shop/shipping'
+      path: '/shop/shipping'
+      fullPath: '/shop/shipping'
+      preLoaderRoute: typeof AuthenticatedShopShippingImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/shop/verification': {
+      id: '/_authenticated/shop/verification'
+      path: '/shop/verification'
+      fullPath: '/shop/verification'
+      preLoaderRoute: typeof AuthenticatedShopVerificationImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/status-flows/rules': {
+      id: '/_authenticated/status-flows/rules'
+      path: '/status-flows/rules'
+      fullPath: '/status-flows/rules'
+      preLoaderRoute: typeof AuthenticatedStatusFlowsRulesImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/status-flows/templates': {
+      id: '/_authenticated/status-flows/templates'
+      path: '/status-flows/templates'
+      fullPath: '/status-flows/templates'
+      preLoaderRoute: typeof AuthenticatedStatusFlowsTemplatesImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/status-flows/tracking': {
+      id: '/_authenticated/status-flows/tracking'
+      path: '/status-flows/tracking'
+      fullPath: '/status-flows/tracking'
+      preLoaderRoute: typeof AuthenticatedStatusFlowsTrackingImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/orders/': {
+      id: '/_authenticated/orders/'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof AuthenticatedOrdersIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
   }
 }
 
@@ -136,10 +432,51 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedOrdersPaymentsRoute: typeof AuthenticatedOrdersPaymentsRoute
+  AuthenticatedOrdersPreOrdersRoute: typeof AuthenticatedOrdersPreOrdersRoute
+  AuthenticatedOrdersShippingRoute: typeof AuthenticatedOrdersShippingRoute
+  AuthenticatedOrdersStatusRoute: typeof AuthenticatedOrdersStatusRoute
+  AuthenticatedProductsCategoriesRoute: typeof AuthenticatedProductsCategoriesRoute
+  AuthenticatedProductsInventoryRoute: typeof AuthenticatedProductsInventoryRoute
+  AuthenticatedProductsMediaRoute: typeof AuthenticatedProductsMediaRoute
+  AuthenticatedProductsPreOrdersRoute: typeof AuthenticatedProductsPreOrdersRoute
+  AuthenticatedProductsPricingRoute: typeof AuthenticatedProductsPricingRoute
+  AuthenticatedSettingsGeneralRoute: typeof AuthenticatedSettingsGeneralRoute
+  AuthenticatedSettingsProfileRoute: typeof AuthenticatedSettingsProfileRoute
+  AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
+  AuthenticatedShopPaymentsRoute: typeof AuthenticatedShopPaymentsRoute
+  AuthenticatedShopProfileRoute: typeof AuthenticatedShopProfileRoute
+  AuthenticatedShopShippingRoute: typeof AuthenticatedShopShippingRoute
+  AuthenticatedShopVerificationRoute: typeof AuthenticatedShopVerificationRoute
+  AuthenticatedStatusFlowsRulesRoute: typeof AuthenticatedStatusFlowsRulesRoute
+  AuthenticatedStatusFlowsTemplatesRoute: typeof AuthenticatedStatusFlowsTemplatesRoute
+  AuthenticatedStatusFlowsTrackingRoute: typeof AuthenticatedStatusFlowsTrackingRoute
+  AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedOrdersPaymentsRoute: AuthenticatedOrdersPaymentsRoute,
+  AuthenticatedOrdersPreOrdersRoute: AuthenticatedOrdersPreOrdersRoute,
+  AuthenticatedOrdersShippingRoute: AuthenticatedOrdersShippingRoute,
+  AuthenticatedOrdersStatusRoute: AuthenticatedOrdersStatusRoute,
+  AuthenticatedProductsCategoriesRoute: AuthenticatedProductsCategoriesRoute,
+  AuthenticatedProductsInventoryRoute: AuthenticatedProductsInventoryRoute,
+  AuthenticatedProductsMediaRoute: AuthenticatedProductsMediaRoute,
+  AuthenticatedProductsPreOrdersRoute: AuthenticatedProductsPreOrdersRoute,
+  AuthenticatedProductsPricingRoute: AuthenticatedProductsPricingRoute,
+  AuthenticatedSettingsGeneralRoute: AuthenticatedSettingsGeneralRoute,
+  AuthenticatedSettingsProfileRoute: AuthenticatedSettingsProfileRoute,
+  AuthenticatedSettingsSecurityRoute: AuthenticatedSettingsSecurityRoute,
+  AuthenticatedShopPaymentsRoute: AuthenticatedShopPaymentsRoute,
+  AuthenticatedShopProfileRoute: AuthenticatedShopProfileRoute,
+  AuthenticatedShopShippingRoute: AuthenticatedShopShippingRoute,
+  AuthenticatedShopVerificationRoute: AuthenticatedShopVerificationRoute,
+  AuthenticatedStatusFlowsRulesRoute: AuthenticatedStatusFlowsRulesRoute,
+  AuthenticatedStatusFlowsTemplatesRoute:
+    AuthenticatedStatusFlowsTemplatesRoute,
+  AuthenticatedStatusFlowsTrackingRoute: AuthenticatedStatusFlowsTrackingRoute,
+  AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -155,6 +492,26 @@ export interface FileRoutesByFullPath {
   '/verified-email': typeof VerifiedEmailRoute
   '/verify-email': typeof VerifyEmailRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/orders/payments': typeof AuthenticatedOrdersPaymentsRoute
+  '/orders/pre-orders': typeof AuthenticatedOrdersPreOrdersRoute
+  '/orders/shipping': typeof AuthenticatedOrdersShippingRoute
+  '/orders/status': typeof AuthenticatedOrdersStatusRoute
+  '/products/categories': typeof AuthenticatedProductsCategoriesRoute
+  '/products/inventory': typeof AuthenticatedProductsInventoryRoute
+  '/products/media': typeof AuthenticatedProductsMediaRoute
+  '/products/pre-orders': typeof AuthenticatedProductsPreOrdersRoute
+  '/products/pricing': typeof AuthenticatedProductsPricingRoute
+  '/settings/general': typeof AuthenticatedSettingsGeneralRoute
+  '/settings/profile': typeof AuthenticatedSettingsProfileRoute
+  '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/shop/payments': typeof AuthenticatedShopPaymentsRoute
+  '/shop/profile': typeof AuthenticatedShopProfileRoute
+  '/shop/shipping': typeof AuthenticatedShopShippingRoute
+  '/shop/verification': typeof AuthenticatedShopVerificationRoute
+  '/status-flows/rules': typeof AuthenticatedStatusFlowsRulesRoute
+  '/status-flows/templates': typeof AuthenticatedStatusFlowsTemplatesRoute
+  '/status-flows/tracking': typeof AuthenticatedStatusFlowsTrackingRoute
+  '/orders': typeof AuthenticatedOrdersIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -166,6 +523,26 @@ export interface FileRoutesByTo {
   '/verified-email': typeof VerifiedEmailRoute
   '/verify-email': typeof VerifyEmailRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/orders/payments': typeof AuthenticatedOrdersPaymentsRoute
+  '/orders/pre-orders': typeof AuthenticatedOrdersPreOrdersRoute
+  '/orders/shipping': typeof AuthenticatedOrdersShippingRoute
+  '/orders/status': typeof AuthenticatedOrdersStatusRoute
+  '/products/categories': typeof AuthenticatedProductsCategoriesRoute
+  '/products/inventory': typeof AuthenticatedProductsInventoryRoute
+  '/products/media': typeof AuthenticatedProductsMediaRoute
+  '/products/pre-orders': typeof AuthenticatedProductsPreOrdersRoute
+  '/products/pricing': typeof AuthenticatedProductsPricingRoute
+  '/settings/general': typeof AuthenticatedSettingsGeneralRoute
+  '/settings/profile': typeof AuthenticatedSettingsProfileRoute
+  '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/shop/payments': typeof AuthenticatedShopPaymentsRoute
+  '/shop/profile': typeof AuthenticatedShopProfileRoute
+  '/shop/shipping': typeof AuthenticatedShopShippingRoute
+  '/shop/verification': typeof AuthenticatedShopVerificationRoute
+  '/status-flows/rules': typeof AuthenticatedStatusFlowsRulesRoute
+  '/status-flows/templates': typeof AuthenticatedStatusFlowsTemplatesRoute
+  '/status-flows/tracking': typeof AuthenticatedStatusFlowsTrackingRoute
+  '/orders': typeof AuthenticatedOrdersIndexRoute
 }
 
 export interface FileRoutesById {
@@ -178,6 +555,26 @@ export interface FileRoutesById {
   '/verified-email': typeof VerifiedEmailRoute
   '/verify-email': typeof VerifyEmailRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/orders/payments': typeof AuthenticatedOrdersPaymentsRoute
+  '/_authenticated/orders/pre-orders': typeof AuthenticatedOrdersPreOrdersRoute
+  '/_authenticated/orders/shipping': typeof AuthenticatedOrdersShippingRoute
+  '/_authenticated/orders/status': typeof AuthenticatedOrdersStatusRoute
+  '/_authenticated/products/categories': typeof AuthenticatedProductsCategoriesRoute
+  '/_authenticated/products/inventory': typeof AuthenticatedProductsInventoryRoute
+  '/_authenticated/products/media': typeof AuthenticatedProductsMediaRoute
+  '/_authenticated/products/pre-orders': typeof AuthenticatedProductsPreOrdersRoute
+  '/_authenticated/products/pricing': typeof AuthenticatedProductsPricingRoute
+  '/_authenticated/settings/general': typeof AuthenticatedSettingsGeneralRoute
+  '/_authenticated/settings/profile': typeof AuthenticatedSettingsProfileRoute
+  '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/_authenticated/shop/payments': typeof AuthenticatedShopPaymentsRoute
+  '/_authenticated/shop/profile': typeof AuthenticatedShopProfileRoute
+  '/_authenticated/shop/shipping': typeof AuthenticatedShopShippingRoute
+  '/_authenticated/shop/verification': typeof AuthenticatedShopVerificationRoute
+  '/_authenticated/status-flows/rules': typeof AuthenticatedStatusFlowsRulesRoute
+  '/_authenticated/status-flows/templates': typeof AuthenticatedStatusFlowsTemplatesRoute
+  '/_authenticated/status-flows/tracking': typeof AuthenticatedStatusFlowsTrackingRoute
+  '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -191,6 +588,26 @@ export interface FileRouteTypes {
     | '/verified-email'
     | '/verify-email'
     | '/dashboard'
+    | '/orders/payments'
+    | '/orders/pre-orders'
+    | '/orders/shipping'
+    | '/orders/status'
+    | '/products/categories'
+    | '/products/inventory'
+    | '/products/media'
+    | '/products/pre-orders'
+    | '/products/pricing'
+    | '/settings/general'
+    | '/settings/profile'
+    | '/settings/security'
+    | '/shop/payments'
+    | '/shop/profile'
+    | '/shop/shipping'
+    | '/shop/verification'
+    | '/status-flows/rules'
+    | '/status-flows/templates'
+    | '/status-flows/tracking'
+    | '/orders'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -201,6 +618,26 @@ export interface FileRouteTypes {
     | '/verified-email'
     | '/verify-email'
     | '/dashboard'
+    | '/orders/payments'
+    | '/orders/pre-orders'
+    | '/orders/shipping'
+    | '/orders/status'
+    | '/products/categories'
+    | '/products/inventory'
+    | '/products/media'
+    | '/products/pre-orders'
+    | '/products/pricing'
+    | '/settings/general'
+    | '/settings/profile'
+    | '/settings/security'
+    | '/shop/payments'
+    | '/shop/profile'
+    | '/shop/shipping'
+    | '/shop/verification'
+    | '/status-flows/rules'
+    | '/status-flows/templates'
+    | '/status-flows/tracking'
+    | '/orders'
   id:
     | '__root__'
     | '/'
@@ -211,6 +648,26 @@ export interface FileRouteTypes {
     | '/verified-email'
     | '/verify-email'
     | '/_authenticated/dashboard'
+    | '/_authenticated/orders/payments'
+    | '/_authenticated/orders/pre-orders'
+    | '/_authenticated/orders/shipping'
+    | '/_authenticated/orders/status'
+    | '/_authenticated/products/categories'
+    | '/_authenticated/products/inventory'
+    | '/_authenticated/products/media'
+    | '/_authenticated/products/pre-orders'
+    | '/_authenticated/products/pricing'
+    | '/_authenticated/settings/general'
+    | '/_authenticated/settings/profile'
+    | '/_authenticated/settings/security'
+    | '/_authenticated/shop/payments'
+    | '/_authenticated/shop/profile'
+    | '/_authenticated/shop/shipping'
+    | '/_authenticated/shop/verification'
+    | '/_authenticated/status-flows/rules'
+    | '/_authenticated/status-flows/templates'
+    | '/_authenticated/status-flows/tracking'
+    | '/_authenticated/orders/'
   fileRoutesById: FileRoutesById
 }
 
@@ -259,7 +716,27 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
-        "/_authenticated/dashboard"
+        "/_authenticated/dashboard",
+        "/_authenticated/orders/payments",
+        "/_authenticated/orders/pre-orders",
+        "/_authenticated/orders/shipping",
+        "/_authenticated/orders/status",
+        "/_authenticated/products/categories",
+        "/_authenticated/products/inventory",
+        "/_authenticated/products/media",
+        "/_authenticated/products/pre-orders",
+        "/_authenticated/products/pricing",
+        "/_authenticated/settings/general",
+        "/_authenticated/settings/profile",
+        "/_authenticated/settings/security",
+        "/_authenticated/shop/payments",
+        "/_authenticated/shop/profile",
+        "/_authenticated/shop/shipping",
+        "/_authenticated/shop/verification",
+        "/_authenticated/status-flows/rules",
+        "/_authenticated/status-flows/templates",
+        "/_authenticated/status-flows/tracking",
+        "/_authenticated/orders/"
       ]
     },
     "/reset-password": {
@@ -279,6 +756,86 @@ export const routeTree = rootRoute
     },
     "/_authenticated/dashboard": {
       "filePath": "_authenticated/dashboard.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/orders/payments": {
+      "filePath": "_authenticated/orders/payments.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/orders/pre-orders": {
+      "filePath": "_authenticated/orders/pre-orders.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/orders/shipping": {
+      "filePath": "_authenticated/orders/shipping.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/orders/status": {
+      "filePath": "_authenticated/orders/status.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/products/categories": {
+      "filePath": "_authenticated/products/categories.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/products/inventory": {
+      "filePath": "_authenticated/products/inventory.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/products/media": {
+      "filePath": "_authenticated/products/media.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/products/pre-orders": {
+      "filePath": "_authenticated/products/pre-orders.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/products/pricing": {
+      "filePath": "_authenticated/products/pricing.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/settings/general": {
+      "filePath": "_authenticated/settings/general.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/settings/profile": {
+      "filePath": "_authenticated/settings/profile.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/settings/security": {
+      "filePath": "_authenticated/settings/security.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/shop/payments": {
+      "filePath": "_authenticated/shop/payments.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/shop/profile": {
+      "filePath": "_authenticated/shop/profile.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/shop/shipping": {
+      "filePath": "_authenticated/shop/shipping.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/shop/verification": {
+      "filePath": "_authenticated/shop/verification.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/status-flows/rules": {
+      "filePath": "_authenticated/status-flows/rules.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/status-flows/templates": {
+      "filePath": "_authenticated/status-flows/templates.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/status-flows/tracking": {
+      "filePath": "_authenticated/status-flows/tracking.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/orders/": {
+      "filePath": "_authenticated/orders/index.tsx",
       "parent": "/_authenticated"
     }
   }

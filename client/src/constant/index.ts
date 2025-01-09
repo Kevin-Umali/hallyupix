@@ -1,4 +1,38 @@
-import { BarChart2, Calendar, Clock, FileText, ListChecks, MessageCircle, MessageSquare, Package, Receipt, ShoppingBag, Store } from "lucide-react";
+import {
+  BadgeCheck,
+  BarChart2,
+  Bell,
+  Boxes,
+  BoxesIcon,
+  Calendar,
+  ClipboardList,
+  Clock,
+  CreditCard,
+  FileStack,
+  FileText,
+  Gauge,
+  ImageIcon,
+  LayoutDashboard,
+  LayoutTemplate,
+  ListChecks,
+  ListTodo,
+  MessageCircle,
+  MessageSquare,
+  Package,
+  Receipt,
+  ScrollText,
+  Settings,
+  ShieldCheck,
+  ShoppingBag,
+  ShoppingCart,
+  Store,
+  Tag,
+  TrendingUp,
+  Truck,
+  UserCircle,
+  Users,
+  Wallet,
+} from "lucide-react";
 
 export const ACRONYM_APP_NAME = "HP";
 export const APP_NAME = "H A L L Y U P I X";
@@ -356,5 +390,80 @@ export const WORKFLOW_STEPS = [
     step: "Step 4",
     description: "Monitor orders and keep buyers updated automatically",
     steps: ["Update order status", "Buyer gets notified", "Share shipping details"],
+  },
+];
+
+export const NAV_ITEMS = [
+  {
+    title: "Dashboard",
+    to: "/dashboard",
+    icon: LayoutDashboard,
+    description: "Overview of your shop performance",
+    subItems: [],
+  },
+  {
+    title: "Orders",
+    icon: ShoppingCart,
+    description: "Track and manage customer orders",
+    subItems: [
+      { title: "All Orders", to: "/orders", icon: ListTodo },
+      { title: "Pre-orders", to: "/orders/pre-orders", icon: Clock },
+      { title: "Payment Verifications", to: "/orders/payments", icon: CreditCard },
+      { title: "Order Status", to: "/orders/status", icon: ClipboardList },
+      { title: "Shipping Management", to: "/orders/shipping", icon: Truck },
+    ],
+  },
+  {
+    title: "Products",
+    icon: Package,
+    description: "Manage your product inventory",
+    subItems: [
+      { title: "Inventory", to: "/products/inventory", icon: Boxes },
+      { title: "Pre-order Items", to: "/products/pre-orders", icon: Clock },
+      { title: "Categories", to: "/products/categories", icon: Tag },
+      { title: "Price Management", to: "/products/pricing", icon: Wallet },
+      { title: "Media Library", to: "/products/media", icon: ImageIcon },
+    ],
+  },
+  {
+    title: "Status Flows",
+    icon: LayoutTemplate,
+    description: "Customize order status workflows",
+    subItems: [
+      { title: "Flow Templates", to: "/status-flows/templates", icon: FileStack },
+      { title: "Status Rules", to: "/status-flows/rules", icon: ScrollText },
+      { title: "Tracking Setup", to: "/status-flows/tracking", icon: TrendingUp },
+    ],
+  },
+  // {
+  //   title: "Analytics", // NOT PRIORITY
+  //   icon: Receipt,
+  //   description: "View shop performance metrics",
+  //   subItems: [
+  //     { title: "Sales Overview", to: "/analytics/sales", icon: TrendingUp },
+  //     { title: "Inventory Analysis", to: "/analytics/inventory", icon: BoxesIcon },
+  //     { title: "Customer Stats", to: "/analytics/customers", icon: Users },
+  //   ],
+  // },
+  {
+    title: "Shop",
+    icon: Store,
+    description: "Manage your shop profile",
+    subItems: [
+      { title: "Shop Profile", to: "/shop/profile", icon: FileText },
+      { title: "Shop Payments", to: "/shop/payments", icon: CreditCard },
+      { title: "Shop Shipping", to: "/shop/shipping", icon: Truck },
+      { title: "Verification", to: "/shop/verification", icon: BadgeCheck },
+    ],
+  },
+  {
+    title: "Settings",
+    icon: Settings,
+    description: "Configure account settings",
+    subItems: [
+      { title: "General", to: "/settings/general", icon: Gauge },
+      { title: "Profile", to: "/settings/profile", icon: UserCircle },
+      { title: "Security", to: "/settings/security", icon: ShieldCheck },
+    ],
   },
 ];

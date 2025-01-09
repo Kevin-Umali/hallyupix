@@ -9,10 +9,9 @@ import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import FieldInfo from "@/components/custom/field-info";
-import { PrivacyDialog, TermsDialog } from "@/components/custom/legal-dialog";
+import { PrivacyDialog, TermsDialog } from "@/components/custom/auth/legal-dialog";
 import { ROLES } from "@/constant";
 import { signUp } from "@/lib/api";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const signUpSchema = z
@@ -64,7 +63,6 @@ type SignUpFormType = z.infer<typeof signUpSchema>;
 const SignUpForm = () => {
   const navigate = useNavigate();
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const form = useForm<SignUpFormType>({
     defaultValues: {
@@ -94,8 +92,6 @@ const SignUpForm = () => {
 
       if (data) {
         toast.success("Signed up successfully!");
-        await queryClient.invalidateQueries({ queryKey: ["session"] });
-        await queryClient.refetchQueries({ queryKey: ["session"] });
         router.invalidate();
         form.reset({
           username: "",

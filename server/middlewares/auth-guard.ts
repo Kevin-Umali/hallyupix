@@ -32,7 +32,9 @@ export function protect({
 
     const isAuthenticated = ctx.get("isAuthenticated");
     if (!isAuthenticated) {
-      return ignoreRedirectProtectedPaths.includes(requestPath) ? ctx.json({ error: "Unauthorized" }, 401) : ctx.redirect(onFailRedirectTo, 302);
+      return ignoreRedirectProtectedPaths.includes(requestPath)
+        ? ctx.json({ status: "UNAUTHORIZED", message: "Unauthorized, you must be logged in to access this resource" }, 401)
+        : ctx.redirect(onFailRedirectTo, 302);
     }
 
     return next();
