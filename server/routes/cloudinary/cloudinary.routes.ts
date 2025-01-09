@@ -1,4 +1,6 @@
-import { createRoute, z } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import { z } from "zod";
+import DEFAULT_RESPONSE from "../../constants";
 
 export const cloudinarySignedURL = createRoute({
   method: "get",
@@ -7,6 +9,7 @@ export const cloudinarySignedURL = createRoute({
   description: "Generate cloudinary signed url for uploading image",
   request: {},
   responses: {
+    ...DEFAULT_RESPONSE,
     200: {
       content: {
         "application/json": {
@@ -33,17 +36,6 @@ export const cloudinarySignedURL = createRoute({
       },
       description: "Cloudinary signed url",
     },
-    500: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            code: z.string(),
-            message: z.string(),
-          }),
-        },
-      },
-      description: "Generic error response",
-    },
   },
 });
 
@@ -58,45 +50,13 @@ export const deleteUserCloudinaryAssets = createRoute({
         "application/json": {
           schema: z.object({
             publicId: z.string(),
-            isBanner: z.boolean().optional().default(false),
-            shouldUpdateProfile: z.boolean().optional().default(false),
           }),
         },
       },
     },
   },
   responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z
-            .object({
-              data: z.object({
-                status: z.boolean(),
-              }),
-            })
-            .openapi({
-              example: {
-                data: {
-                  status: true,
-                },
-              },
-            }),
-        },
-      },
-      description: "Successful response",
-    },
-    500: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            code: z.string(),
-            message: z.string(),
-          }),
-        },
-      },
-      description: "Generic error response",
-    },
+    ...DEFAULT_RESPONSE,
   },
 });
 

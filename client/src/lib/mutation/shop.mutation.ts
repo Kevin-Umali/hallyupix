@@ -24,3 +24,25 @@ export const useSaveProfileMutation = () => {
     },
   });
 };
+
+export type UpdateShopProfileImageRequest = APIInferRequestType<typeof api.shop.profile.image.$patch>["json"];
+export const useUpdateProfileImageMutation = () => {
+  return useMutation<CommonApiResponse, ApiError, UpdateShopProfileImageRequest>({
+    mutationFn: async (data: UpdateShopProfileImageRequest) => {
+      const response = await api.shop.profile.image.$patch({
+        json: data,
+      });
+      if (!response.ok) {
+        const responseError = await response.json();
+        const error = {
+          code: responseError.code,
+          message: responseError.message,
+          status: response.status,
+          statusText: response.statusText,
+        };
+        throw error;
+      }
+      return (await response.json()).data;
+    },
+  });
+};

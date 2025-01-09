@@ -1,5 +1,6 @@
 import { createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
+import DEFAULT_RESPONSE from "../../constants";
 
 export const saveShopProfile = createRoute({
   method: "post",
@@ -13,8 +14,6 @@ export const saveShopProfile = createRoute({
           schema: z.object({
             shopName: z.string(),
             description: z.string().optional(),
-            bannerImage: z.string().optional(),
-            profileImage: z.string().optional(),
             socialLinks: z.object({
               facebook: z.string().optional(),
               instagram: z.string().optional(),
@@ -28,48 +27,7 @@ export const saveShopProfile = createRoute({
     },
   },
   responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z
-            .object({
-              data: z.object({
-                status: z.boolean(),
-              }),
-            })
-            .openapi({
-              example: {
-                data: {
-                  status: true,
-                },
-              },
-            }),
-        },
-      },
-      description: "Successful response",
-    },
-    400: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            code: z.string(),
-            message: z.string(),
-          }),
-        },
-      },
-      description: "Bad request",
-    },
-    500: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            code: z.string(),
-            message: z.string(),
-          }),
-        },
-      },
-      description: "Generic error response",
-    },
+    ...DEFAULT_RESPONSE,
   },
 });
 
@@ -80,6 +38,7 @@ export const getShopProfile = createRoute({
   description: "Get shop profile",
   request: {},
   responses: {
+    ...DEFAULT_RESPONSE,
     200: {
       content: {
         "application/json": {
@@ -105,16 +64,16 @@ export const getShopProfile = createRoute({
             .openapi({
               example: {
                 data: {
-                  shopName: "Hally's Upix",
-                  description: "Hally's Upix is a unique online store that offers a wide range of products for all ages.",
+                  shopName: "Hallyupix",
+                  description: "Hallyupix is a unique online store that offers a wide range of products for all ages.",
                   bannerImage: "https://res.cloudinary.com/hallyupix/image/upload/v1679528400/hallyupix/123456.jpg",
                   profileImage: "https://res.cloudinary.com/hallyupix/image/upload/v1679528400/hallyupix/123456.jpg",
                   socialLinks: {
-                    facebook: "https://www.facebook.com/hallysupix",
-                    instagram: "https://www.instagram.com/hallysupix",
-                    twitter: "https://twitter.com/hallysupix",
-                    discord: "https://discord.gg/hallysupix",
-                    website: "https://hallysupix.com",
+                    facebook: "https://www.facebook.com/hallyupix",
+                    instagram: "https://www.instagram.com/hallyupix",
+                    twitter: "https://twitter.com/hallyupix",
+                    discord: "https://discord.gg/hallyupix",
+                    website: "https://hallyupix.com",
                   },
                   isVerified: true,
                   createdAt: "2023-01-01T00:00:00.000Z",
@@ -137,19 +96,31 @@ export const getShopProfile = createRoute({
       },
       description: "Shop profile not found",
     },
-    500: {
+  },
+});
+
+export const updateShopProfileImage = createRoute({
+  method: "patch",
+  path: "/profile/image",
+  summary: "Update profile image",
+  description: "Update profile image",
+  request: {
+    body: {
       content: {
         "application/json": {
           schema: z.object({
-            code: z.string(),
-            message: z.string(),
+            url: z.string().nullable().optional(),
+            isBanner: z.boolean().optional().default(false),
           }),
         },
       },
-      description: "Generic error response",
     },
+  },
+  responses: {
+    ...DEFAULT_RESPONSE,
   },
 });
 
 export type SaveShopProfile = typeof saveShopProfile;
 export type GetShopProfile = typeof getShopProfile;
+export type UpdateShopProfileImage = typeof updateShopProfileImage;

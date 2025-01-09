@@ -1,6 +1,6 @@
 import ShopProfileSettings from "@/components/custom/shop/profile";
 import { getShopProfileQueryOptions } from "@/lib/queries/shop.queries";
-import { extractPathSegment } from "@/lib/utils";
+import { createImageData, extractPathSegment } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/shop/profile")({
@@ -23,18 +23,6 @@ export const Route = createFileRoute("/_authenticated/shop/profile")({
 
 function RouteComponent() {
   const data = Route.useLoaderData();
-
-  const createImageData = (imageUrl: string | null | undefined) => {
-    if (!imageUrl) return undefined;
-
-    const publicId = extractPathSegment(imageUrl);
-    return publicId
-      ? {
-          url: imageUrl,
-          publicId: publicId,
-        }
-      : undefined;
-  };
 
   return (
     <ShopProfileSettings

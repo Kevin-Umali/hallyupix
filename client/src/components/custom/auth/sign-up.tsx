@@ -81,6 +81,7 @@ const SignUpForm = () => {
         username: value.username,
         name: value.name,
         role: value.role,
+        bio: null,
       });
 
       if (error) {

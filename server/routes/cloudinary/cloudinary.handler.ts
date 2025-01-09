@@ -2,9 +2,6 @@ import type { HonoRouteHandler } from "../../lib/types";
 import { v2 as cloudinary } from "cloudinary";
 import type { CloudinarySignedURL, DeleteUserCloudinaryAssets } from "./cloudinary.routes";
 import { CustomHTTPException } from "../../lib/custom-error";
-import { db } from "../../db";
-import { shopProfiles } from "../../db/schema/shop-profiles.model";
-import { eq } from "drizzle-orm";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -46,8 +43,7 @@ export const getCloudinarySignedUploadURL: HonoRouteHandler<CloudinarySignedURL>
 };
 
 export const deleteUserCloudinaryAssets: HonoRouteHandler<DeleteUserCloudinaryAssets> = async (c) => {
-  const { publicId, isBanner = false, shouldUpdateProfile = false } = c.req.valid("json");
-  const userId = c.get("user")?.id ?? "";
+  const { publicId } = c.req.valid("json");
 
   const result = await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
 
@@ -56,15 +52,6 @@ export const deleteUserCloudinaryAssets: HonoRouteHandler<DeleteUserCloudinaryAs
       code: "CLOUDINARY_ASSET_NOT_FOUND",
       message: "Cloudinary asset not found",
     });
-  }
-
-  if (shouldUpdateProfile) {
-    await db
-      .update(shopProfiles)
-      .set({
-        [isBanner ? "bannerImage" : "profileImage"]: null,
-      })
-      .where(eq(shopProfiles.userId, userId));
   }
 
   return c.json(

@@ -35,16 +35,12 @@ export const useDeleteImageMutation = () => {
     ApiError,
     {
       publicId: string;
-      isBanner?: boolean;
-      shouldUpdateProfile?: boolean;
     }
   >({
-    mutationFn: async ({ publicId, isBanner = false, shouldUpdateProfile = false }) => {
+    mutationFn: async ({ publicId }) => {
       const response = await api.cloudinary["delete-user-cloudinary-assets"].$delete({
         json: {
           publicId,
-          isBanner,
-          shouldUpdateProfile,
         },
       });
 

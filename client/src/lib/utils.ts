@@ -48,3 +48,15 @@ export const extractPathSegment = (url: string, baseSegment: string = "hallyupix
 
   return url.substring(startIndex, endIndex);
 };
+
+export const createImageData = (imageUrl: string | null | undefined) => {
+  if (!imageUrl) return undefined;
+
+  const publicId = extractPathSegment(imageUrl);
+  return publicId
+    ? {
+        url: imageUrl,
+        publicId: publicId,
+      }
+    : undefined;
+};

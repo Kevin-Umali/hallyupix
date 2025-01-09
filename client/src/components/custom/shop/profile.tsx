@@ -7,12 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import ImageUploadSection from "@/components/custom/shop/image-upload";
-import ShopInformation from "@/components/custom/shop/shop-information";
-import SocialLinksSection from "@/components/custom/shop/social-links";
-import { useSaveProfileMutation } from "@/lib/mutation/shop.mutation";
 import { useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
+
+import ImageUploadSection from "./image-upload";
+import ShopInformation from "./shop-information";
+import SocialLinksSection from "./social-links";
+import { useSaveProfileMutation } from "@/lib/mutation/shop.mutation";
 import { ShopProfileResponse } from "@/lib/queries/shop.queries";
 
 export interface ImageData {
@@ -41,18 +42,9 @@ export interface ShopProfileSettingsProps {
   initialData: Partial<ShopProfile>;
 }
 
-export const imageDataSchema = z
-  .object({
-    url: z.string().url("Must be a valid URL"),
-    publicId: z.string(),
-  })
-  .nullable();
-
 export const shopProfileSchema = z.object({
   shopName: z.string().min(1, "Shop name is required").max(50, "Shop name must be less than 50 characters"),
   description: z.string().max(500, "Description must be less than 500 characters").optional(),
-  bannerImage: imageDataSchema.optional(),
-  profileImage: imageDataSchema.optional(),
   socialLinks: z.object({
     facebook: z.string().url("Must be a valid URL").optional().or(z.literal("")),
     instagram: z.string().url("Must be a valid URL").optional().or(z.literal("")),
@@ -64,55 +56,46 @@ export const shopProfileSchema = z.object({
 
 export type ShopProfileFormType = z.infer<typeof shopProfileSchema>;
 
-const ShopProfileSettings: React.FC<ShopProfileSettingsProps> = ({ initialData }) => {
+const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { mutateAsync: saveProfile, isPending: isSaving } = useSaveProfileMutation();
 
-  const form = useForm({
+  const form = useForm<ShopProfileFormType>({
     defaultValues: {
       shopName: initialData.shopName ?? "",
       description: initialData.description,
-      bannerImage: initialData.bannerImage,
-      profileImage: initialData.profileImage,
       socialLinks: initialData.socialLinks ?? {},
     },
     onSubmit: async ({ value }) => {
-      await saveProfile(
-        {
-          ...value,
-          profileImage: value.profileImage?.url,
-          bannerImage: value.bannerImage?.url,
-        },
-        {
-          onSuccess: () => {
-            toast.success("Shop profile updated successfully!");
-            queryClient.setQueryData<ShopProfileResponse>(["shop-profile"], (oldData) => {
-              if (!oldData) return undefined;
+      await saveProfile(value, {
+        onSuccess: () => {
+          toast.success("Shop profile updated successfully!");
+          queryClient.setQueryData<ShopProfileResponse>(["shop-profile"], (oldData) => {
+            if (!oldData) return undefined;
 
-              return {
-                ...oldData,
-                shopName: value.shopName ?? oldData.shopName,
-                description: value.description ?? oldData.description,
-                bannerImage: value.bannerImage?.url ?? oldData.bannerImage,
-                profileImage: value.profileImage?.url ?? oldData.profileImage,
-                socialLinks: {
-                  ...oldData.socialLinks,
-                  ...value.socialLinks,
-                },
-              };
-            });
-            router.invalidate({
-              filter: (route) => {
-                return route.routeId === "/_authenticated/shop/profile";
+            return {
+              ...oldData,
+              shopName: value.shopName ?? oldData.shopName,
+              description: value.description ?? oldData.description,
+              socialLinks: {
+                ...oldData.socialLinks,
+                ...value.socialLinks,
               },
-            });
-          },
-          onError: (error) => {
-            toast.error(error.code || "Error", { description: error.message || "Something went wrong" });
-          },
-        }
-      );
+            };
+          });
+          router.invalidate({
+            filter: (route) => {
+              return route.routeId === "/_authenticated/shop/profile";
+            },
+          });
+        },
+        onError: (error) => {
+          toast.error(error.code || "Error", {
+            description: error.message || "Something went wrong",
+          });
+        },
+      });
     },
     validators: {
       onChange: shopProfileSchema,
@@ -120,66 +103,90 @@ const ShopProfileSettings: React.FC<ShopProfileSettingsProps> = ({ initialData }
   });
 
   return (
-    <div className="container max-w-4xl py-8 space-y-8">
-      <div className="flex justify-between items-center">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-bold tracking-tight">Shop Profile</h2>
-          <p className="text-muted-foreground">Manage your shop's profile and online presence</p>
-        </div>
-        <Badge variant={initialData.isVerified ? "default" : "secondary"} className="h-6">
-          {initialData.isVerified ? "Verified Shop" : "Unverified Shop"}
-        </Badge>
+    <div className="mx-auto w-full max-w-screen-xl space-y-8 p-6">
+      {/* Header Section */}
+      <div className="flex flex-col space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight">Shop Profile Settings</h1>
+        <p className="text-muted-foreground">Manage your shop's profile and online presence</p>
+        <Separator className="my-4" />
       </div>
 
-      <Separator />
+      <div className="grid gap-8 lg:grid-cols-12">
+        {/* Left Column */}
+        <div className="space-y-6 lg:col-span-4">
+          {/* Overview Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Overview</CardTitle>
+              <CardDescription>Your shop's account details</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">Verification Status</span>
+                  <Badge variant={initialData.isVerified ? "default" : "destructive"}>{initialData.isVerified ? "Verified" : "Unverified"}</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">Member Since</span>
+                  <span className="text-sm">{new Date().toLocaleDateString()}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-      {!initialData.isVerified && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>Your shop is not verified. Complete your profile to request verification.</AlertDescription>
-        </Alert>
-      )}
+          {/* Banner Image */}
+          <ImageUploadSection type="banner" currentImage={initialData.bannerImage} />
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          void form.handleSubmit();
-        }}
-        className="space-y-8"
-      >
-        <Card>
-          <CardHeader>
-            <CardTitle>Shop Images</CardTitle>
-            <CardDescription>Upload your shop's banner and profile images</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-8">
-            <ImageUploadSection type="banner" form={form} />
-            <ImageUploadSection type="profile" form={form} />
-          </CardContent>
-        </Card>
-
-        <ShopInformation form={form} />
-        <SocialLinksSection form={form} />
-
-        <div className="flex justify-end">
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
-            children={([canSubmit, isSubmitting, isValidating]) => (
-              <Button type="submit" className="w-[200px]" disabled={!canSubmit || isSubmitting || isValidating || isSaving}>
-                {isSubmitting || isSaving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving Changes...
-                  </>
-                ) : (
-                  "Save Changes"
-                )}
-              </Button>
-            )}
-          />
+          {/* Profile Image */}
+          <ImageUploadSection type="profile" currentImage={initialData.profileImage} />
         </div>
-      </form>
+
+        {/* Right Column */}
+        <div className="lg:col-span-8">
+          {!initialData.isVerified && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertDescription className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Your shop is not verified. Complete your profile to request verification.</span>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit();
+            }}
+            className="space-y-6"
+          >
+            {/* Shop Information Section */}
+            <ShopInformation form={form} />
+
+            {/* Social Links Section */}
+            <SocialLinksSection form={form} />
+
+            <div className="flex justify-end gap-4">
+              <Button variant="outline">Cancel</Button>
+              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+                {([canSubmit, isSubmitting]) => (
+                  <Button type="submit" disabled={!canSubmit || isSubmitting || isSaving}>
+                    {isSubmitting || isSaving ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving Changes...
+                      </>
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </Button>
+                )}
+              </form.Subscribe>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

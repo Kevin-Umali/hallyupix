@@ -31,4 +31,4 @@ export type APIInferRequestType<T> = InferRequestType<T>;
 export type APIInferResponseType<T, S extends StatusCode> = InferResponseType<T, S>;
 
 export const authApi = authClient;
-export const { signIn, signUp, signOut, sendVerificationEmail, getSession, forgetPassword, resetPassword } = authClient;
+export const { signIn, signUp, signOut, sendVerificationEmail, getSession, forgetPassword, resetPassword, updateUser } = authClient;

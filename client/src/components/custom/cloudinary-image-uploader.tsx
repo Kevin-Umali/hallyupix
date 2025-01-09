@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,10 @@ interface ImageFile extends File {
   uploadProgress?: number;
 }
 
+type VariantType = "default" | "button";
+
 interface CloudinaryImageUploaderProps {
+  variant?: VariantType;
   multiple?: boolean;
   disabled?: boolean;
   accept?: Record<string, string[]>;
@@ -36,9 +39,11 @@ interface CloudinaryImageUploaderProps {
   apiKey?: string;
   existingPublicId?: string;
   onExistingFileDelete?: () => void;
+  buttonText?: string;
 }
 
 const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
+  variant = "default",
   multiple = false,
   disabled = false,
   accept = {
@@ -54,6 +59,7 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
   apiKey = import.meta.env.VITE_CLOUDINARY_API_KEY,
   existingPublicId,
   onExistingFileDelete,
+  buttonText = "Upload Image",
 }) => {
   const [files, setFiles] = useState<ImageFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -323,6 +329,15 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
       );
     }
 
+    if (variant === "button") {
+      return (
+        <div className="flex items-center gap-2">
+          <ImagePlus className="h-4 w-4" />
+          <span>{buttonText}</span>
+        </div>
+      );
+    }
+
     return (
       <>
         <ImagePlus className="h-10 w-10 text-primary" />
@@ -334,7 +349,7 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       files.forEach((file) => {
         if (file.preview) {
@@ -348,20 +363,29 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
 
   return (
     <div className={cn("w-full space-y-4", className)}>
-      <Card
-        className={cn(
-          "border-2 border-dashed transition-colors duration-200",
-          isDragActive && "border-primary bg-primary/5",
-          isDisabled && "opacity-50 cursor-not-allowed"
-        )}
-      >
-        <CardContent className="p-4">
-          <div {...getRootProps()} className="flex flex-col items-center justify-center gap-4 p-4">
-            <input {...getInputProps()} />
-            <div className="flex flex-col items-center justify-center gap-2 w-full">{renderUploadStatus()}</div>
-          </div>
-        </CardContent>
-      </Card>
+      {variant === "button" ? (
+        <div {...getRootProps()}>
+          <input {...getInputProps()} />
+          <Button disabled={isDisabled} className="w-full sm:w-auto">
+            {renderUploadStatus()}
+          </Button>
+        </div>
+      ) : (
+        <Card
+          className={cn(
+            "border-2 border-dashed transition-colors duration-200",
+            isDragActive && "border-primary bg-primary/5",
+            isDisabled && "opacity-50 cursor-not-allowed"
+          )}
+        >
+          <CardContent className="p-4">
+            <div {...getRootProps()} className="flex flex-col items-center justify-center gap-4 p-4">
+              <input {...getInputProps()} />
+              <div className="flex flex-col items-center justify-center gap-2 w-full">{renderUploadStatus()}</div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {showPreview && files.length > 0 && (
         <div className={cn("grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4", previewClassName)}>

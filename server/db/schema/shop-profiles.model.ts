@@ -45,8 +45,13 @@ export const insertShopProfileSchema = createInsertSchema(shopProfiles, {
     discord: z.string().optional(),
     website: z.string().optional(),
   }),
-});
+}).omit({ bannerImage: true, profileImage: true });
 export const updateShopProfileSchema = createUpdateSchema(shopProfiles);
+export const updateShopProfileImageSchema = updateShopProfileSchema.pick({
+  userId: true,
+  bannerImage: true,
+  profileImage: true,
+});
 
 export type ShopProfile = z.infer<typeof selectShopProfileSchema>;
 export type InsertShopProfile = z.infer<typeof insertShopProfileSchema>;

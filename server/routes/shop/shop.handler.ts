@@ -1,25 +1,23 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../db";
-import { shopProfiles, insertShopProfileSchema, selectShopProfileSchema } from "../../db/schema/shop-profiles.model";
+import { shopProfiles, insertShopProfileSchema, selectShopProfileSchema, updateShopProfileImageSchema } from "../../db/schema/shop-profiles.model";
 import type { HonoRouteHandler } from "../../lib/types";
-import type { GetShopProfile, SaveShopProfile } from "./shop.routes";
+import type { GetShopProfile, SaveShopProfile, UpdateShopProfileImage } from "./shop.routes";
 import { CustomHTTPException } from "../../lib/custom-error";
 
 export const saveShopProfile: HonoRouteHandler<SaveShopProfile> = async (c) => {
-  const { shopName, description, bannerImage, profileImage, socialLinks } = c.req.valid("json");
+  const { shopName, description, socialLinks } = c.req.valid("json");
   const userId = c.get("user")?.id;
 
   const { success, data: parsedData } = await insertShopProfileSchema.safeParseAsync({
     userId,
     shopName,
     description,
-    bannerImage,
-    profileImage,
     socialLinks,
   });
 
   if (!success) {
-    throw new CustomHTTPException(400, { code: "BAD_REQUEST", message: "Invalid date, please check the data" });
+    throw new CustomHTTPException(400, { code: "BAD_REQUEST", message: "Invalid data, please check the data" });
   }
 
   await db
@@ -30,8 +28,6 @@ export const saveShopProfile: HonoRouteHandler<SaveShopProfile> = async (c) => {
       set: {
         shopName: parsedData.shopName,
         description: parsedData.description,
-        bannerImage: parsedData.bannerImage,
-        profileImage: parsedData.profileImage,
         socialLinks: parsedData.socialLinks,
       },
     });
@@ -68,6 +64,51 @@ export const getShopProfile: HonoRouteHandler<GetShopProfile> = async (c) => {
         isVerified: result.isVerified ?? false,
         createdAt: result.createdAt.toDateString(),
         updatedAt: result.updatedAt.toDateString(),
+      },
+    },
+    200
+  );
+};
+
+export const updateShopProfileImage: HonoRouteHandler<UpdateShopProfileImage> = async (c) => {
+  const { url, isBanner = false } = c.req.valid("json");
+  const userId = c.get("user")?.id ?? "";
+
+  const { success, data: parsedData } = await updateShopProfileImageSchema.safeParseAsync({
+    bannerImage: isBanner ? url : undefined,
+    profileImage: isBanner ? undefined : url,
+  });
+
+  if (!success) {
+    throw new CustomHTTPException(400, {
+      code: "BAD_REQUEST",
+      message: "Invalid data, please check the input.",
+    });
+  }
+
+  // Check if the profile exists
+  const [existingProfile] = await db.select().from(shopProfiles).where(eq(shopProfiles.userId, userId));
+
+  if (!existingProfile?.userId) {
+    throw new CustomHTTPException(404, {
+      code: "SHOP_PROFILE_NOT_FOUND",
+      message: "Shop profile not found.",
+    });
+  }
+
+  // Update the profile
+  await db
+    .update(shopProfiles)
+    .set({
+      bannerImage: isBanner ? parsedData.bannerImage : existingProfile.bannerImage,
+      profileImage: isBanner ? existingProfile.profileImage : parsedData.profileImage,
+    })
+    .where(eq(shopProfiles.userId, userId));
+
+  return c.json(
+    {
+      data: {
+        status: true,
       },
     },
     200

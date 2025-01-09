@@ -48,10 +48,10 @@ const ShopInformation: React.FC<ShopInformationProps> = ({ form }) => {
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
               />
-              <div className="flex justify-between items-center text-sm">
-                <FieldInfo field={field} />
-                <span className="text-muted-foreground">{field.state.value?.length || 0}/500</span>
+              <div className="flex justify-end">
+                <span className="text-sm text-muted-foreground">{field.state.value?.length ?? 0}/500</span>
               </div>
+              <FieldInfo field={field} />
             </div>
           )}
         />
