@@ -59,6 +59,7 @@ const SignInForm = () => {
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
 
   const search = useSearch({ strict: false });
+
   const navigate = useNavigate();
   const router = useRouter();
 
@@ -97,7 +98,7 @@ const SignInForm = () => {
           password: "",
           rememberMe: false,
         });
-        navigate({ to: search.redirect ?? "/dashboard" });
+        navigate({ to: search.redirect ?? "/dashboard", replace: true });
       }
     },
     validators: {

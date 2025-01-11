@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Store, Trash2, Loader2 } from "lucide-react";
 import CloudinaryImageUploader from "@/components/custom/cloudinary-image-uploader";

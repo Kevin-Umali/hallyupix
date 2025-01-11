@@ -17,7 +17,6 @@ export const authClient = createAuthClient({
   plugins: [usernameClient(), inferAdditionalFields<typeof auth>()],
 });
 
-export type Session = typeof authClient.$Infer.Session;
 export type ApiError = {
   code?: string;
   message?: string;
@@ -31,4 +30,18 @@ export type APIInferRequestType<T> = InferRequestType<T>;
 export type APIInferResponseType<T, S extends StatusCode> = InferResponseType<T, S>;
 
 export const authApi = authClient;
-export const { signIn, signUp, signOut, sendVerificationEmail, getSession, forgetPassword, resetPassword, updateUser } = authClient;
+export const {
+  signIn,
+  signUp,
+  signOut,
+  sendVerificationEmail,
+  getSession,
+  forgetPassword,
+  resetPassword,
+  updateUser,
+  listSessions,
+  revokeSessions,
+  revokeOtherSessions,
+  revokeSession,
+} = authClient;
+export type Session = typeof authClient.$Infer.Session;

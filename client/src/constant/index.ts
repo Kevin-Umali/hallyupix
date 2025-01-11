@@ -1,9 +1,7 @@
 import {
   BadgeCheck,
   BarChart2,
-  Bell,
   Boxes,
-  BoxesIcon,
   Calendar,
   ClipboardList,
   Clock,
@@ -30,7 +28,6 @@ import {
   TrendingUp,
   Truck,
   UserCircle,
-  Users,
   Wallet,
 } from "lucide-react";
 

@@ -13,6 +13,9 @@ import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import CloudinaryImageUploader from "../cloudinary-image-uploader";
 import { Separator } from "@/components/ui/separator";
+import { Session, updateUser } from "@/lib/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 
 const profileSchema = z.object({
   name: z.string().min(1, "Name is required").max(50, "Name must be less than 50 characters"),
@@ -21,7 +24,6 @@ const profileSchema = z.object({
     .min(3, "Username must be at least 3 characters")
     .max(20, "Username must be less than 20 characters")
     .regex(/^[a-zA-Z0-9](?:[a-zA-Z0-9._-]*[a-zA-Z0-9])?$/, "Username can only contain letters, numbers, dots, underscores, and hyphens"),
-  email: z.string().email("Please enter a valid email address"),
   bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
 });
 
@@ -45,18 +47,48 @@ interface ProfileSettingsProps {
 }
 
 const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
   const form = useForm<ProfileFormType>({
     defaultValues: {
       name: initialData.name,
       username: initialData.username ?? "",
-      email: initialData.email,
       bio: initialData.bio ?? "",
     },
     onSubmit: async ({ value }) => {
-      try {
+      const { data, error } = await updateUser(value);
+
+      if (error) {
+        toast.error(error.code || "Update profile failed", {
+          description: error.message || "Please check your details and try again",
+        });
+        return;
+      }
+
+      if (data) {
+        queryClient.setQueryData<{
+          data: Session;
+        }>(["session"], (oldData) => {
+          if (!oldData?.data?.user) return undefined;
+
+          return {
+            ...oldData,
+            data: {
+              user: {
+                ...oldData?.data?.user,
+                name: value.name,
+                username: value.username,
+                bio: value.bio,
+              },
+              session: {
+                ...oldData?.data?.session,
+              },
+            },
+          };
+        });
+        router.invalidate();
         toast.success("Profile updated successfully!");
-      } catch (error) {
-        toast.error("Failed to update profile");
       }
     },
     validators: {
@@ -74,10 +106,37 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
 
   const handleImageUpload = async (urls: { url: string; publicId: string }[]) => {
     if (urls.length > 0) {
-      try {
+      const { data, error } = await updateUser({
+        image: urls[0].url,
+      });
+
+      if (error) {
+        toast.error(error.code || "Error", { description: error.message || "Something went wrong" });
+        return;
+      }
+
+      if (data) {
         toast.success("Profile image updated successfully");
-      } catch (error: any) {
-        toast.error("Failed to update profile image");
+
+        queryClient.setQueryData<{
+          data: Session;
+        }>(["session"], (oldData) => {
+          if (!oldData?.data?.user) return undefined;
+
+          return {
+            ...oldData,
+            data: {
+              user: {
+                ...oldData?.data?.user,
+                image: urls[0].url,
+              },
+              session: {
+                ...oldData?.data?.session,
+              },
+            },
+          };
+        });
+        router.invalidate();
       }
     }
   };
@@ -148,11 +207,17 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
           {!initialData.emailVerified && (
             <Alert variant="destructive" className="mb-6">
               <AlertDescription className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4" />
-                  <span>Your email is not verified</span>
+                <div className="flex items-center space-x-3">
+                  <Mail className="h-5 w-5 text-red-500" />
+                  <div>
+                    <p className="font-semibold text-sm">Email Verification Required</p>
+                    <p className="text-sm">
+                      Your email is not verified. Please verify your email to access your account. <br />
+                      This step is currently mandatory. We are working on alternatives to support this process.
+                    </p>
+                  </div>
                 </div>
-                <Button variant="outline" size="sm" onClick={handleResendVerification}>
+                <Button variant="outline" size="sm" onClick={handleResendVerification} disabled className="ml-4">
                   Resend Verification
                 </Button>
               </AlertDescription>
@@ -208,35 +273,24 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                   )}
                 />
 
-                <form.Field
-                  name="email"
-                  children={(field) => (
-                    <div className="space-y-2">
-                      <Label htmlFor={field.name}>Email</Label>
-                      <div className="flex space-x-2">
-                        <Input
-                          id={field.name}
-                          name={field.name}
-                          type="email"
-                          placeholder="Enter your email"
-                          value={field.state.value}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                        />
-                        {initialData.emailVerified ? (
-                          <Badge variant="default" className="self-center">
-                            Verified
-                          </Badge>
-                        ) : (
-                          <Badge variant="destructive" className="self-center">
-                            Unverified
-                          </Badge>
-                        )}
-                      </div>
-                      <FieldInfo field={field} />
-                    </div>
-                  )}
-                />
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <div className="flex space-x-2">
+                    <Input id="email" name="email" type="email" placeholder="Enter your email" value={initialData.email || ""} disabled />
+                    {initialData.emailVerified ? (
+                      <Badge variant="default" className="self-center">
+                        Verified
+                      </Badge>
+                    ) : (
+                      <Badge variant="destructive" className="self-center">
+                        Unverified
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Currently, changing your email is not supported. We are working on enabling this feature in the near future.
+                  </p>
+                </div>
 
                 <form.Field
                   name="bio"

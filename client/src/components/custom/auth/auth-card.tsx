@@ -16,11 +16,12 @@ const AuthCard = ({ children, sideContent }: AuthCardProps) => {
       <Card className="flex flex-col md:flex-row w-full max-w-[1400px] shadow-lg">
         {/* Left Section */}
         <CardContent className="w-full md:w-[60%] p-6 md:p-10">
-          {/* Logo */}
           <div className="flex items-center gap-3 mb-8">
-            <Link to="/">
-              <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center text-white text-xl font-bold">{ACRONYM_APP_NAME}</div>
-              <span className="text-xl font-semibold">{APP_NAME}</span>
+            <Link to="/" className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                <span className="text-2xl font-bold text-white leading-none">{ACRONYM_APP_NAME}</span>
+              </div>
+              <span className="text-2xl font-semibold text-black leading-none">{APP_NAME}</span>
             </Link>
           </div>
           {children}

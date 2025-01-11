@@ -4,7 +4,7 @@ import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
-  auth: { isAuthenticated: boolean; user: Session["user"] | null } | undefined;
+  auth: { isAuthenticated: boolean; user: Session["user"] | null; currentSession: Session["session"] | null } | undefined;
 }>()({
   component: () => <Outlet />,
 });

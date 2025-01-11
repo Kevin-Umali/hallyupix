@@ -6,7 +6,7 @@ import { getSessionQueryOptions } from "@/lib/queries/auth.queries";
 import { createFileRoute, Outlet, redirect, useLocation } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated")({
-  beforeLoad: async ({ context }) => {
+  beforeLoad: async ({ context, location }) => {
     const { queryClient } = context;
 
     const session = await queryClient.ensureQueryData(getSessionQueryOptions());
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/_authenticated")({
       auth: {
         isAuthenticated,
         user: session.data?.user,
+        currentSession: session.data?.session,
       },
     };
   },

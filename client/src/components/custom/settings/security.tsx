@@ -5,11 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import FieldInfo from "@/components/custom/field-info";
-import { Loader2, LogOut, Shield, Smartphone, Lock } from "lucide-react";
+import { Loader2, Shield, Smartphone, Lock } from "lucide-react";
 import { toast } from "sonner";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Session } from "@/lib/api";
+import ActiveSessionsTable from "@/components/custom/settings/active-sessions-table";
+import { useRevokeOtherSessionsMutation, useRevokeSessionMutation } from "@/lib/mutation/auth.mutation";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
+
+interface SecuritySettingsProps {
+  currentSession: Session["session"] | null;
+  sessionList: Array<Session["session"]>;
+  isLoadingSessions: boolean;
+}
 
 const passwordSchema = z
   .object({
@@ -19,7 +28,7 @@ const passwordSchema = z
       .min(8, "Password must be at least 8 characters")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(/\d/, "Password must contain at least one number")
       .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
     confirmPassword: z.string(),
   })
@@ -30,25 +39,12 @@ const passwordSchema = z
 
 type PasswordFormType = z.infer<typeof passwordSchema>;
 
-// Mock active sessions data
-const mockSessions = [
-  {
-    id: "1",
-    device: "Chrome on Windows",
-    ipAddress: "192.168.1.1",
-    lastActive: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-    current: true,
-  },
-  {
-    id: "2",
-    device: "Safari on iPhone",
-    ipAddress: "192.168.1.2",
-    lastActive: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
-    current: false,
-  },
-];
+const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, sessionList, isLoadingSessions }) => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const { mutateAsync: revokeSession, isPending: isRevokingSession } = useRevokeSessionMutation();
+  const { mutateAsync: revokeOtherSessions, isPending: isRevokingOtherSessions } = useRevokeOtherSessionsMutation();
 
-const SecuritySettings = () => {
   const form = useForm<PasswordFormType>({
     defaultValues: {
       currentPassword: "",
@@ -68,20 +64,39 @@ const SecuritySettings = () => {
     },
   });
 
-  const handleRevokeSession = async (sessionId: string) => {
-    try {
-      toast.success("Session revoked successfully");
-    } catch (error) {
-      toast.error("Failed to revoke session");
-    }
+  const handleRevokeSession = async (token: string) => {
+    await revokeSession(token, {
+      onSuccess: () => {
+        toast.success("Session revoked successfully");
+      },
+      onError: (error) => {
+        toast.error(error.code || "Failed to revoke session", {
+          description: error.message || "Something went wrong",
+        });
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ["session-list"] });
+        router.invalidate({
+          filter: (route) => route.routeId === "/_authenticated/settings/security",
+        });
+      },
+    });
   };
 
   const handleRevokeAllSessions = async () => {
-    try {
-      toast.success("All sessions revoked successfully");
-    } catch (error) {
-      toast.error("Failed to revoke sessions");
-    }
+    await revokeOtherSessions(undefined, {
+      onSuccess: () => {
+        toast.success("All sessions revoked successfully");
+      },
+      onError: (error) => {
+        toast.error(error.code || "Failed to revoke sessions", {
+          description: error.message || "Something went wrong",
+        });
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ["session-list"] });
+      },
+    });
   };
 
   const handleEnable2FA = async () => {
@@ -120,7 +135,7 @@ const SecuritySettings = () => {
                 </div>
                 <div>
                   <p className="font-medium">2FA Status</p>
-                  <p className="text-sm text-muted-foreground">Not Enabled</p>
+                  <p className="text-sm text-muted-foreground">Not Enabled (Will support soon)</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 rounded-lg border p-4">
@@ -129,7 +144,7 @@ const SecuritySettings = () => {
                 </div>
                 <div>
                   <p className="font-medium">Active Sessions</p>
-                  <p className="text-sm text-muted-foreground">2 Devices</p>
+                  <p className="text-sm text-muted-foreground">{sessionList.length} Devices</p>
                 </div>
               </div>
             </div>
@@ -170,7 +185,6 @@ const SecuritySettings = () => {
                       </div>
                     )}
                   />
-
                   <form.Field
                     name="newPassword"
                     children={(field) => (
@@ -188,7 +202,6 @@ const SecuritySettings = () => {
                       </div>
                     )}
                   />
-
                   <form.Field
                     name="confirmPassword"
                     children={(field) => (
@@ -206,7 +219,6 @@ const SecuritySettings = () => {
                       </div>
                     )}
                   />
-
                   <div className="pt-2">
                     <form.Subscribe
                       selector={(state) => [state.canSubmit, state.isSubmitting]}
@@ -232,7 +244,7 @@ const SecuritySettings = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Two-Factor Authentication</CardTitle>
-                <CardDescription>Add an extra layer of security to your account</CardDescription>
+                <CardDescription>Coming soon: Add an extra layer of security to your account</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-start gap-4">
@@ -241,11 +253,13 @@ const SecuritySettings = () => {
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <p className="font-medium">Not Enabled</p>
-                      <p className="text-sm text-muted-foreground">Add an extra layer of security by enabling 2FA for your account</p>
+                      <p className="font-medium">Not Available Yet</p>
+                      <p className="text-sm text-muted-foreground">
+                        This feature is currently under development and will be available soon to enhance your account security.
+                      </p>
                     </div>
-                    <Button variant="outline" onClick={handleEnable2FA}>
-                      Enable 2FA
+                    <Button variant="outline" disabled>
+                      Enable 2FA (Coming Soon)
                     </Button>
                   </div>
                 </div>
@@ -254,54 +268,15 @@ const SecuritySettings = () => {
           </div>
 
           {/* Right Column - Active Sessions */}
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Active Sessions</CardTitle>
-                  <CardDescription>Manage your active sessions</CardDescription>
-                </div>
-                <Button variant="outline" onClick={handleRevokeAllSessions}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Revoke All
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Device</TableHead>
-                    <TableHead>IP Address</TableHead>
-                    <TableHead>Last Active</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockSessions.map((session) => (
-                    <TableRow key={session.id}>
-                      <TableCell className="font-medium">
-                        {session.device}
-                        {session.current && (
-                          <Badge variant="outline" className="ml-2">
-                            Current
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>{session.ipAddress}</TableCell>
-                      <TableCell>{session.lastActive.toLocaleString()}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={() => handleRevokeSession(session.id)} disabled={session.current}>
-                          <LogOut className="h-4 w-4" />
-                          <span className="sr-only">Revoke session</span>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <ActiveSessionsTable
+            currentSession={currentSession}
+            sessionList={sessionList}
+            onRevokeSession={handleRevokeSession}
+            onRevokeAllSessions={handleRevokeAllSessions}
+            isRevokingSession={isRevokingSession}
+            isRevokingOtherSessions={isRevokingOtherSessions}
+            isLoadingSessions={isLoadingSessions}
+          />
         </div>
       </div>
     </div>

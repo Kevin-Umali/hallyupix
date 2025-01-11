@@ -12,7 +12,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Session } from "@/lib/api";
-import { APP_NAME, NAV_ITEMS } from "@/constant";
+import { ACRONYM_APP_NAME, APP_NAME, NAV_ITEMS } from "@/constant";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import DesktopMenuItem from "@/components/custom/sidebar/desktop-menu-item";
@@ -61,7 +61,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ user, ...props }) => {
               <SidebarMenuButton size="lg" asChild className="h-8 p-0">
                 <Link to="/dashboard" activeProps={{ className: "text-primary" }} activeOptions={{ exact: true }}>
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <Command className="size-4" />
+                    {ACRONYM_APP_NAME}
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">{APP_NAME}</span>

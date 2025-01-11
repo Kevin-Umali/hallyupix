@@ -10,9 +10,11 @@ const NotFound = () => {
       <div className="container px-4 py-16 text-center">
         {/* Logo */}
         <div className="mb-8 inline-flex items-center gap-3">
-          <Link to="/">
-            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-2xl font-bold text-white">{ACRONYM_APP_NAME}</div>
-            <span className="text-2xl font-semibold">{APP_NAME}</span>
+          <Link to="/" className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+              <span className="text-2xl font-bold text-white leading-none">{ACRONYM_APP_NAME}</span>
+            </div>
+            <span className="text-2xl font-semibold leading-none">{APP_NAME}</span>
           </Link>
         </div>
 
