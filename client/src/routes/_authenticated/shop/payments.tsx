@@ -1,4 +1,4 @@
-import ShopPaymentSettings from "@/components/custom/shop/payments";
+import ShopPaymentSettings from "@/components/custom/shop/payments/payments";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/shop/payments")({

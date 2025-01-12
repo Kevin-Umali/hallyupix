@@ -1,4 +1,4 @@
-import ShopProfileSettings from "@/components/custom/shop/profile";
+import ShopProfileSettings from "@/components/custom/shop/profile/profile";
 import { getShopProfileQueryOptions } from "@/lib/queries/shop.queries";
 import { createImageData } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";

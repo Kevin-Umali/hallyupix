@@ -10,9 +10,9 @@ import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 
-import ImageUploadSection from "./image-upload";
-import ShopInformation from "./shop-information";
-import SocialLinksSection from "./social-links";
+import ImageUploadSection from "@/components/custom/shop/profile/image-upload";
+import ShopInformation from "@/components/custom/shop/profile/shop-information";
+import SocialLinksSection from "@/components/custom/shop/profile/social-links";
 import { useSaveProfileMutation } from "@/lib/mutation/shop.mutation";
 import { ShopProfileResponse } from "@/lib/queries/shop.queries";
 

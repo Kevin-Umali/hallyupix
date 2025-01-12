@@ -9,11 +9,10 @@ import { Loader2, Shield, Smartphone, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { Session } from "@/lib/api";
-import ActiveSessionsTable from "@/components/custom/settings/active-sessions-table";
+import ActiveSessionsTable from "@/components/custom/settings/security/active-sessions-table";
 import { useChangePasswordMutation, useRevokeOtherSessionsMutation, useRevokeSessionMutation } from "@/lib/mutation/auth.mutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface SecuritySettingsProps {

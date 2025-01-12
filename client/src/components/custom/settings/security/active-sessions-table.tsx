@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Session } from "@/lib/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import CustomLoader from "../custom-loader";
+import CustomLoader from "../../custom-loader";
 
 interface ActiveSessionsTableProps {
   currentSession: Session["session"] | null;
