@@ -1,4 +1,4 @@
-import { BadgeCheck, ChevronsUpDown, HelpCircle, LogOut } from "lucide-react";
+import { BadgeCheck, ChevronsUpDown, HelpCircle, Loader2, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -11,6 +11,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { Session } from "@/lib/api";
+import { useSignOutMutation } from "@/lib/mutation/auth.mutation";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 interface NavUserProps {
   user: Session["user"] | undefined;
@@ -18,6 +22,26 @@ interface NavUserProps {
 
 const NavUser: React.FC<NavUserProps> = ({ user }) => {
   const { isMobile } = useSidebar();
+
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const { mutateAsync: signOut, isPending: isSigningOut } = useSignOutMutation();
+
+  const handleSignOut = async () => {
+    await signOut(undefined, {
+      onSuccess: () => {
+        queryClient.clear();
+        router.invalidate();
+        toast.success("Signed out successfully");
+      },
+      onError: (error) => {
+        toast.error(error.code || "Failed to sign out", {
+          description: error.message || "Something went wrong",
+        });
+      },
+    });
+  };
 
   return (
     <SidebarMenu>
@@ -66,9 +90,15 @@ const NavUser: React.FC<NavUserProps> = ({ user }) => {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
+            <DropdownMenuItem onClick={() => handleSignOut()} disabled={isSigningOut}>
+              {isSigningOut ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <LogOut />
+                  Log out
+                </>
+              )}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

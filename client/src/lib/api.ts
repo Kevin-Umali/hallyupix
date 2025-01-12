@@ -43,5 +43,6 @@ export const {
   revokeSessions,
   revokeOtherSessions,
   revokeSession,
+  changePassword,
 } = authClient;
 export type Session = typeof authClient.$Infer.Session;

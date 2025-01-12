@@ -8,11 +8,11 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as VerifyEmailImport } from './routes/verify-email'
-import { Route as VerifiedEmailImport } from './routes/verified-email'
 import { Route as SignUpImport } from './routes/sign-up'
 import { Route as SignInImport } from './routes/sign-in'
 import { Route as ResetPasswordImport } from './routes/reset-password'
@@ -40,19 +40,26 @@ import { Route as AuthenticatedOrdersShippingImport } from './routes/_authentica
 import { Route as AuthenticatedOrdersPreOrdersImport } from './routes/_authenticated/orders/pre-orders'
 import { Route as AuthenticatedOrdersPaymentsImport } from './routes/_authenticated/orders/payments'
 
+// Create Virtual Routes
+
+const VerifyEmailLazyImport = createFileRoute('/verify-email')()
+const VerifiedEmailLazyImport = createFileRoute('/verified-email')()
+
 // Create/Update Routes
 
-const VerifyEmailRoute = VerifyEmailImport.update({
+const VerifyEmailLazyRoute = VerifyEmailLazyImport.update({
   id: '/verify-email',
   path: '/verify-email',
   getParentRoute: () => rootRoute,
-} as any)
+} as any).lazy(() => import('./routes/verify-email.lazy').then((d) => d.Route))
 
-const VerifiedEmailRoute = VerifiedEmailImport.update({
+const VerifiedEmailLazyRoute = VerifiedEmailLazyImport.update({
   id: '/verified-email',
   path: '/verified-email',
   getParentRoute: () => rootRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/verified-email.lazy').then((d) => d.Route),
+)
 
 const SignUpRoute = SignUpImport.update({
   id: '/sign-up',
@@ -268,14 +275,14 @@ declare module '@tanstack/react-router' {
       id: '/verified-email'
       path: '/verified-email'
       fullPath: '/verified-email'
-      preLoaderRoute: typeof VerifiedEmailImport
+      preLoaderRoute: typeof VerifiedEmailLazyImport
       parentRoute: typeof rootRoute
     }
     '/verify-email': {
       id: '/verify-email'
       path: '/verify-email'
       fullPath: '/verify-email'
-      preLoaderRoute: typeof VerifyEmailImport
+      preLoaderRoute: typeof VerifyEmailLazyImport
       parentRoute: typeof rootRoute
     }
     '/_authenticated/dashboard': {
@@ -489,8 +496,8 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/verified-email': typeof VerifiedEmailRoute
-  '/verify-email': typeof VerifyEmailRoute
+  '/verified-email': typeof VerifiedEmailLazyRoute
+  '/verify-email': typeof VerifyEmailLazyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/orders/payments': typeof AuthenticatedOrdersPaymentsRoute
   '/orders/pre-orders': typeof AuthenticatedOrdersPreOrdersRoute
@@ -520,8 +527,8 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/verified-email': typeof VerifiedEmailRoute
-  '/verify-email': typeof VerifyEmailRoute
+  '/verified-email': typeof VerifiedEmailLazyRoute
+  '/verify-email': typeof VerifyEmailLazyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/orders/payments': typeof AuthenticatedOrdersPaymentsRoute
   '/orders/pre-orders': typeof AuthenticatedOrdersPreOrdersRoute
@@ -552,8 +559,8 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/verified-email': typeof VerifiedEmailRoute
-  '/verify-email': typeof VerifyEmailRoute
+  '/verified-email': typeof VerifiedEmailLazyRoute
+  '/verify-email': typeof VerifyEmailLazyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/orders/payments': typeof AuthenticatedOrdersPaymentsRoute
   '/_authenticated/orders/pre-orders': typeof AuthenticatedOrdersPreOrdersRoute
@@ -677,8 +684,8 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
-  VerifiedEmailRoute: typeof VerifiedEmailRoute
-  VerifyEmailRoute: typeof VerifyEmailRoute
+  VerifiedEmailLazyRoute: typeof VerifiedEmailLazyRoute
+  VerifyEmailLazyRoute: typeof VerifyEmailLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -687,8 +694,8 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
-  VerifiedEmailRoute: VerifiedEmailRoute,
-  VerifyEmailRoute: VerifyEmailRoute,
+  VerifiedEmailLazyRoute: VerifiedEmailLazyRoute,
+  VerifyEmailLazyRoute: VerifyEmailLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -749,10 +756,10 @@ export const routeTree = rootRoute
       "filePath": "sign-up.tsx"
     },
     "/verified-email": {
-      "filePath": "verified-email.tsx"
+      "filePath": "verified-email.lazy.tsx"
     },
     "/verify-email": {
-      "filePath": "verify-email.tsx"
+      "filePath": "verify-email.lazy.tsx"
     },
     "/_authenticated/dashboard": {
       "filePath": "_authenticated/dashboard.tsx",

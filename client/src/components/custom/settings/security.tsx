@@ -10,9 +10,11 @@ import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { Session } from "@/lib/api";
 import ActiveSessionsTable from "@/components/custom/settings/active-sessions-table";
-import { useRevokeOtherSessionsMutation, useRevokeSessionMutation } from "@/lib/mutation/auth.mutation";
+import { useChangePasswordMutation, useRevokeOtherSessionsMutation, useRevokeSessionMutation } from "@/lib/mutation/auth.mutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface SecuritySettingsProps {
   currentSession: Session["session"] | null;
@@ -31,6 +33,7 @@ const passwordSchema = z
       .regex(/\d/, "Password must contain at least one number")
       .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
     confirmPassword: z.string(),
+    revokeOtherSessions: z.boolean().optional(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
@@ -44,20 +47,36 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
   const router = useRouter();
   const { mutateAsync: revokeSession, isPending: isRevokingSession } = useRevokeSessionMutation();
   const { mutateAsync: revokeOtherSessions, isPending: isRevokingOtherSessions } = useRevokeOtherSessionsMutation();
+  const { mutateAsync: changePassword, isPending: isChangingPassword } = useChangePasswordMutation();
 
   const form = useForm<PasswordFormType>({
     defaultValues: {
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
+      revokeOtherSessions: false,
     },
     onSubmit: async ({ value }) => {
-      try {
-        toast.success("Password changed successfully!");
-        form.reset();
-      } catch (error) {
-        toast.error("Failed to change password");
-      }
+      await changePassword(value, {
+        onSuccess: () => {
+          toast.success("Password changed successfully!");
+          queryClient.invalidateQueries({ queryKey: ["session-list"] });
+          router.invalidate({
+            filter: (route) => route.routeId === "/_authenticated/settings/security",
+          });
+          form.reset({
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: "",
+            revokeOtherSessions: false,
+          });
+        },
+        onError: (error) => {
+          toast.error(error.code || "Failed to change password", {
+            description: error.message || "Something went wrong",
+          });
+        },
+      });
     },
     validators: {
       onChange: passwordSchema,
@@ -68,16 +87,14 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
     await revokeSession(token, {
       onSuccess: () => {
         toast.success("Session revoked successfully");
+        queryClient.invalidateQueries({ queryKey: ["session-list"] });
+        router.invalidate({
+          filter: (route) => route.routeId === "/_authenticated/settings/security",
+        });
       },
       onError: (error) => {
         toast.error(error.code || "Failed to revoke session", {
           description: error.message || "Something went wrong",
-        });
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries({ queryKey: ["session-list"] });
-        router.invalidate({
-          filter: (route) => route.routeId === "/_authenticated/settings/security",
         });
       },
     });
@@ -87,14 +104,12 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
     await revokeOtherSessions(undefined, {
       onSuccess: () => {
         toast.success("All sessions revoked successfully");
+        queryClient.invalidateQueries({ queryKey: ["session-list"] });
       },
       onError: (error) => {
         toast.error(error.code || "Failed to revoke sessions", {
           description: error.message || "Something went wrong",
         });
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries({ queryKey: ["session-list"] });
       },
     });
   };
@@ -219,12 +234,34 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
                       </div>
                     )}
                   />
+                  <form.Field
+                    name="revokeOtherSessions"
+                    children={(field) => (
+                      <div className="flex items-center space-x-4">
+                        <Checkbox
+                          id={field.name}
+                          name={field.name}
+                          checked={field.state.value}
+                          onCheckedChange={(checked) => field.handleChange(checked === true)}
+                        />
+                        <div className="flex flex-col space-y-1">
+                          <Label htmlFor={field.name} className="text-sm font-medium">
+                            Revoke Other Sessions
+                          </Label>
+                          <p id={`${field.name}-description`} className="text-sm text-muted-foreground">
+                            Enable this option to revoke all other active sessions except this device.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  />
+
                   <div className="pt-2">
                     <form.Subscribe
                       selector={(state) => [state.canSubmit, state.isSubmitting]}
                       children={([canSubmit, isSubmitting]) => (
-                        <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                          {isSubmitting ? (
+                        <Button type="submit" disabled={!canSubmit || isSubmitting || isChangingPassword}>
+                          {isSubmitting || isChangingPassword ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                               Changing Password...

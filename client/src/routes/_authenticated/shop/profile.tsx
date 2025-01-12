@@ -1,6 +1,6 @@
 import ShopProfileSettings from "@/components/custom/shop/profile";
 import { getShopProfileQueryOptions } from "@/lib/queries/shop.queries";
-import { createImageData, extractPathSegment } from "@/lib/utils";
+import { createImageData } from "@/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/shop/profile")({

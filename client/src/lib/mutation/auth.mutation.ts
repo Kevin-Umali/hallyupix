@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { ApiError, CommonApiResponse, resetPassword, revokeOtherSessions, revokeSession, sendVerificationEmail } from "../api";
+import { ApiError, changePassword, CommonApiResponse, resetPassword, revokeOtherSessions, revokeSession, sendVerificationEmail, signOut } from "../api";
 
 export const useSendVerificationEmailMutation = () => {
   return useMutation<CommonApiResponse, ApiError, string>({
@@ -56,6 +56,49 @@ export const useRevokeOtherSessionsMutation = () => {
   return useMutation<CommonApiResponse, ApiError>({
     mutationFn: async () => {
       const { data, error } = await revokeOtherSessions();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+  });
+};
+
+export const useChangePasswordMutation = () => {
+  return useMutation<
+    {
+      token: string | null;
+    },
+    ApiError,
+    { currentPassword: string; newPassword: string; revokeOtherSessions?: boolean }
+  >({
+    mutationFn: async ({ currentPassword, newPassword, revokeOtherSessions = false }) => {
+      const { data, error } = await changePassword({
+        currentPassword,
+        newPassword,
+        revokeOtherSessions,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+  });
+};
+
+export const useSignOutMutation = () => {
+  return useMutation<
+    {
+      success: boolean;
+    } | null,
+    ApiError
+  >({
+    mutationFn: async () => {
+      const { data, error } = await signOut();
 
       if (error) {
         throw error;

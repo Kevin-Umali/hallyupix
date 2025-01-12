@@ -13,6 +13,7 @@ import { signIn } from "@/lib/api";
 import FieldInfo from "@/components/custom/field-info";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 const signInSchema = z.object({
   emailOrUsername: z
@@ -59,7 +60,7 @@ const SignInForm = () => {
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
 
   const search = useSearch({ strict: false });
-
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const router = useRouter();
 
@@ -92,6 +93,7 @@ const SignInForm = () => {
 
       if (data) {
         toast.success("Signed in successfully!");
+        queryClient.invalidateQueries({ queryKey: ["session"] });
         router.invalidate();
         form.reset({
           emailOrUsername: "",
