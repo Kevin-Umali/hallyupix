@@ -3,14 +3,24 @@ import { useForm } from "@tanstack/react-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Plus, Trash2, AlertCircle } from "lucide-react";
+import { Plus, Trash2, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import FieldInfo from "@/components/custom/field-info";
 import { z } from "zod";
+import RichEditor from "../../editor/rich-editor";
+import React from "react";
+import { useSaveShopPaymentPoliciesMutation } from "@/lib/mutation/shop.mutation";
+
+interface PaymentFormProps {
+  refundPolicy?: string;
+  cancellationPolicy?: string;
+  partialPaymentAllowed?: boolean;
+  minimumPartialPayment?: number;
+  customPolicies?: string[];
+}
 
 const paymentPoliciesSchema = z.object({
   refundPolicy: z.string().min(1, "Refund policy is required"),
@@ -19,25 +29,45 @@ const paymentPoliciesSchema = z.object({
   minimumPartialPayment: z.number().optional(),
   customPolicies: z.array(z.string()),
 });
+
 type PaymentPolicies = z.infer<typeof paymentPoliciesSchema>;
 
-export const PoliciesForm = () => {
+export const PoliciesForm: React.FC<PaymentFormProps> = ({
+  refundPolicy,
+  cancellationPolicy,
+  partialPaymentAllowed,
+  minimumPartialPayment,
+  customPolicies,
+}) => {
+  const { mutateAsync: savePaymentPolicies, isPending: isSaving } = useSaveShopPaymentPoliciesMutation();
   const form = useForm<PaymentPolicies>({
     defaultValues: {
-      refundPolicy: "",
-      cancellationPolicy: "",
-      partialPaymentAllowed: false,
-      minimumPartialPayment: undefined,
-      customPolicies: [],
+      refundPolicy: refundPolicy ?? "",
+      cancellationPolicy: cancellationPolicy ?? "",
+      partialPaymentAllowed: partialPaymentAllowed ?? false,
+      minimumPartialPayment: minimumPartialPayment ?? undefined,
+      customPolicies: customPolicies ?? [],
     },
     onSubmit: async ({ value }) => {
-      try {
-        // Make API call to save policies
-        console.log(value);
-        toast.success("Policies updated successfully!");
-      } catch (error) {
-        toast.error("Failed to update policies");
-      }
+      savePaymentPolicies(
+        {
+          refundPolicy: value.refundPolicy,
+          cancellationPolicy: value.cancellationPolicy,
+          partialPaymentAllowed: value.partialPaymentAllowed,
+          minimumPartialPayment: value.minimumPartialPayment ?? 0,
+          customPolicies: value.customPolicies,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Policies updated successfully!");
+          },
+          onError: (error) => {
+            toast.error(error.code || "Failed to update policies", {
+              description: error.message || "Something went wrong",
+            });
+          },
+        }
+      );
     },
     validators: {
       onChange: paymentPoliciesSchema,
@@ -64,12 +94,7 @@ export const PoliciesForm = () => {
             children={(field) => (
               <div className="space-y-2">
                 <Label>Refund Policy</Label>
-                <Textarea
-                  placeholder="Enter your refund policy..."
-                  className="min-h-[100px]"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
+                <RichEditor key={field.name} name={field.name} initialContent={field.state.value} onChange={(html) => field.handleChange(html)} />
                 <FieldInfo field={field} />
               </div>
             )}
@@ -80,12 +105,7 @@ export const PoliciesForm = () => {
             children={(field) => (
               <div className="space-y-2">
                 <Label>Cancellation Policy</Label>
-                <Textarea
-                  placeholder="Enter your cancellation policy..."
-                  className="min-h-[100px]"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
+                <RichEditor key={field.name} name={field.name} initialContent={field.state.value} onChange={(html) => field.handleChange(html)} />
                 <FieldInfo field={field} />
               </div>
             )}
@@ -114,7 +134,7 @@ export const PoliciesForm = () => {
                   placeholder="e.g., 50"
                   min={1}
                   max={100}
-                  value={field.state.value?.toString() || ""}
+                  value={field.state.value?.toString() ?? ""}
                   onChange={(e) => field.handleChange(parseInt(e.target.value))}
                   disabled={!form.getFieldValue("partialPaymentAllowed")}
                 />
@@ -146,12 +166,13 @@ export const PoliciesForm = () => {
                 ) : (
                   field.state.value.map((_, index) => (
                     <div key={index} className="flex gap-2">
-                      <Textarea
-                        placeholder="Enter policy details..."
-                        value={field.state.value[index]}
-                        onChange={(e) => {
+                      <RichEditor
+                        key={field.name}
+                        name={field.name}
+                        initialContent={field.state.value[index]}
+                        onChange={(html) => {
                           const newPolicies = [...field.state.value];
-                          newPolicies[index] = e.target.value;
+                          newPolicies[index] = html;
                           field.handleChange(newPolicies);
                         }}
                       />
@@ -167,10 +188,17 @@ export const PoliciesForm = () => {
 
           <div className="flex justify-end">
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                  Save Policies
+              selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
+              children={([canSubmit, isSubmitting, isValidating]) => (
+                <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isSaving}>
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Policies"
+                  )}
                 </Button>
               )}
             />

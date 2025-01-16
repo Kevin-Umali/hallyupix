@@ -416,9 +416,9 @@ const ShopShippingSettings = () => {
         <div className="flex justify-end gap-4 mt-6">
           <Button variant="outline">Cancel</Button>
           <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
-              <Button type="submit" disabled={!canSubmit || isSubmitting}>
+            selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
+            children={([canSubmit, isSubmitting, isValidating]) => (
+              <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

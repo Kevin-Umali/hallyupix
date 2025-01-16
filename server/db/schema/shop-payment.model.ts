@@ -52,9 +52,62 @@ export const shopPayment = pgTable("shop_payment", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const selectShopPaymentSchema = createSelectSchema(shopPayment);
+export const selectShopPaymentSchema = createSelectSchema(shopPayment, {
+  paymentMethods: z
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        type: z.enum(["BANK", "EWALLET", "CRYPTO"]),
+        accountName: z.string(),
+        accountNumber: z.string(),
+        qrCodeImage: z.string().optional(),
+        isActive: z.boolean(),
+      })
+    )
+    .default([]),
+  deadlineSettings: z.object({
+    preOrderPayment: z.number(),
+    regularOrderPayment: z.number(),
+    paymentReminderInterval: z.number().optional(),
+  }),
+  paymentPolicies: z.object({
+    refundPolicy: z.string(),
+    cancellationPolicy: z.string(),
+    partialPaymentAllowed: z.boolean(),
+    minimumPartialPayment: z.number().optional(),
+  }),
+  customPolicies: z.array(z.string()).default([]),
+});
 export const insertShopPaymentSchema = createInsertSchema(shopPayment);
 export const updateShopPaymentSchema = createUpdateSchema(shopPayment);
+export const insertShopPaymentInstructionsSchema = createInsertSchema(shopPayment).pick({
+  userId: true,
+  paymentInstructions: true,
+});
+export const insertDeadlineSettingsSchema = createInsertSchema(shopPayment, {
+  deadlineSettings: z.object({
+    preOrderPayment: z.number(),
+    regularOrderPayment: z.number(),
+    paymentReminderInterval: z.number().optional(),
+  }),
+}).pick({
+  userId: true,
+  deadlineSettings: true,
+});
+export const insertPaymentPoliciesSchema = createInsertSchema(shopPayment, {
+  paymentPolicies: z.object({
+    refundPolicy: z.string(),
+    cancellationPolicy: z.string(),
+    partialPaymentAllowed: z.boolean(),
+    minimumPartialPayment: z.number().optional(),
+  }),
+  customPolicies: z.array(z.string()).default([]),
+}).pick({
+  userId: true,
+  paymentPolicies: true,
+  customPolicies: true,
+});
 
 export type ShopPayment = z.infer<typeof selectShopPaymentSchema>;
 export type InsertShopPayment = z.infer<typeof insertShopPaymentSchema>;

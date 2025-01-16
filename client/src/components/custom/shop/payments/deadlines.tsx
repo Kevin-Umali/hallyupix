@@ -7,6 +7,14 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import FieldInfo from "@/components/custom/field-info";
 import { z } from "zod";
+import { useSaveShopPaymentDeadlineSettingsMutation } from "@/lib/mutation/shop.mutation";
+import { Loader2 } from "lucide-react";
+
+interface DeadlineFormProps {
+  preOrderPayment?: number;
+  regularOrderPayment?: number;
+  paymentReminderInterval?: number;
+}
 
 const deadlineSettingsSchema = z.object({
   preOrderPayment: z.number().min(1, "Pre-order payment deadline is required"),
@@ -16,21 +24,33 @@ const deadlineSettingsSchema = z.object({
 
 export type DeadlineSettings = z.infer<typeof deadlineSettingsSchema>;
 
-export const DeadlinesForm = () => {
+export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ preOrderPayment, regularOrderPayment, paymentReminderInterval }) => {
+  const { mutateAsync: saveDeadlineSettings, isPending: isSaving } = useSaveShopPaymentDeadlineSettingsMutation();
+
   const form = useForm<DeadlineSettings>({
     defaultValues: {
-      preOrderPayment: 24,
-      regularOrderPayment: 48,
-      paymentReminderInterval: 12,
+      preOrderPayment: preOrderPayment ?? 24,
+      regularOrderPayment: regularOrderPayment ?? 48,
+      paymentReminderInterval: paymentReminderInterval ?? 12,
     },
     onSubmit: async ({ value }) => {
-      try {
-        console.log(value);
-        // Make API call to save deadline settings
-        toast.success("Deadline settings updated successfully!");
-      } catch (error) {
-        toast.error("Failed to update deadline settings");
-      }
+      saveDeadlineSettings(
+        {
+          preOrderPayment: value.preOrderPayment,
+          regularOrderPayment: value.regularOrderPayment,
+          paymentReminderInterval: value.paymentReminderInterval ?? 0,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Deadline settings updated successfully!");
+          },
+          onError: (error) => {
+            toast.error(error.code || "Failed to update deadline settings", {
+              description: error.message || "Something went wrong",
+            });
+          },
+        }
+      );
     },
     validators: {
       onChange: deadlineSettingsSchema,
@@ -89,10 +109,17 @@ export const DeadlinesForm = () => {
 
           <div className="flex justify-end">
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                  Save Deadlines
+              selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
+              children={([canSubmit, isSubmitting, isValidating]) => (
+                <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isSaving}>
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Deadlines"
+                  )}
                 </Button>
               )}
             />

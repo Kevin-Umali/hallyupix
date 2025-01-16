@@ -8,14 +8,7 @@ export const Route = createFileRoute("/_authenticated/shop/profile")({
     const result = await context.queryClient.ensureQueryData(getShopProfileQueryOptions());
 
     return {
-      shopProfile: result ?? {
-        shopName: "",
-        description: "",
-        bannerImage: null,
-        profileImage: null,
-        socialLinks: {},
-        isVerified: false,
-      },
+      shopProfile: result,
     };
   },
   component: RouteComponent,
@@ -27,12 +20,12 @@ function RouteComponent() {
   return (
     <ShopProfileSettings
       initialData={{
-        shopName: data.shopProfile.shopName,
-        description: data.shopProfile.description ?? "",
-        bannerImage: createImageData(data.shopProfile.bannerImage),
-        profileImage: createImageData(data.shopProfile.profileImage),
-        socialLinks: data.shopProfile.socialLinks ?? {},
-        isVerified: data.shopProfile.isVerified ?? false,
+        shopName: data?.shopProfile?.shopName,
+        description: data?.shopProfile?.description ?? "",
+        bannerImage: createImageData(data?.shopProfile?.bannerImage),
+        profileImage: createImageData(data?.shopProfile?.profileImage),
+        socialLinks: data?.shopProfile?.socialLinks ?? {},
+        isVerified: data?.shopProfile?.isVerified ?? false,
       }}
     />
   );

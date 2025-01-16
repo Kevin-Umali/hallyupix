@@ -257,9 +257,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
 
                   <div className="pt-2">
                     <form.Subscribe
-                      selector={(state) => [state.canSubmit, state.isSubmitting]}
-                      children={([canSubmit, isSubmitting]) => (
-                        <Button type="submit" disabled={!canSubmit || isSubmitting || isChangingPassword}>
+                      selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
+                      children={([canSubmit, isSubmitting, isValidating]) => (
+                        <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isChangingPassword}>
                           {isSubmitting || isChangingPassword ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

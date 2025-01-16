@@ -7,7 +7,41 @@ import InstructionsForm from "@/components/custom/shop/payments/instructions";
 import DeadlinesForm from "@/components/custom/shop/payments/deadlines";
 import PoliciesForm from "@/components/custom/shop/payments/policies";
 
-const ShopPaymentSettings = () => {
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  type: string;
+  accountName: string;
+  accountNumber: string;
+  qrCodeImage?: string;
+  isActive: boolean;
+}
+
+export interface DeadlineSettings {
+  preOrderPayment: number;
+  regularOrderPayment: number;
+  paymentReminderInterval?: number;
+}
+
+export interface PaymentPolicies {
+  refundPolicy: string;
+  cancellationPolicy: string;
+  partialPaymentAllowed: boolean;
+  minimumPartialPayment?: number;
+}
+export interface ShopPayment {
+  paymentMethods: PaymentMethod[];
+  paymentInstructions: string | null;
+  deadlineSettings: DeadlineSettings;
+  paymentPolicies: PaymentPolicies;
+  customPolicies: string[];
+}
+
+interface ShopPaymentSettingsProps {
+  initialData: Partial<ShopPayment>;
+}
+
+const ShopPaymentSettings: React.FC<ShopPaymentSettingsProps> = ({ initialData }) => {
   return (
     <div className="mx-auto w-full max-w-screen-xl space-y-8 p-6">
       <div className="flex flex-col space-y-1">
@@ -41,15 +75,15 @@ const ShopPaymentSettings = () => {
         </TabsContent>
 
         <TabsContent value="instructions">
-          <InstructionsForm />
+          <InstructionsForm paymentInstructions={initialData.paymentInstructions ?? ""} />
         </TabsContent>
 
         <TabsContent value="deadlines">
-          <DeadlinesForm />
+          <DeadlinesForm {...initialData?.deadlineSettings} />
         </TabsContent>
 
         <TabsContent value="policies">
-          <PoliciesForm />
+          <PoliciesForm {...initialData?.paymentPolicies} />
         </TabsContent>
       </Tabs>
     </div>

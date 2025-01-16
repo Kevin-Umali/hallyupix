@@ -42,45 +42,24 @@ export const getShopProfile = createRoute({
     200: {
       content: {
         "application/json": {
-          schema: z
-            .object({
-              data: z.object({
-                shopName: z.string(),
-                description: z.string().nullable().optional(),
-                bannerImage: z.string().nullable().optional(),
-                profileImage: z.string().nullable().optional(),
-                socialLinks: z.object({
-                  facebook: z.string().optional(),
-                  instagram: z.string().optional(),
-                  twitter: z.string().optional(),
-                  discord: z.string().optional(),
-                  website: z.string().optional(),
-                }),
-                isVerified: z.boolean(),
-                createdAt: z.string(),
-                updatedAt: z.string(),
+          schema: z.object({
+            data: z.object({
+              shopName: z.string(),
+              description: z.string().nullable().optional(),
+              bannerImage: z.string().nullable().optional(),
+              profileImage: z.string().nullable().optional(),
+              socialLinks: z.object({
+                facebook: z.string().optional(),
+                instagram: z.string().optional(),
+                twitter: z.string().optional(),
+                discord: z.string().optional(),
+                website: z.string().optional(),
               }),
-            })
-            .openapi({
-              example: {
-                data: {
-                  shopName: "Hallyupix",
-                  description: "Hallyupix is a unique online store that offers a wide range of products for all ages.",
-                  bannerImage: "https://res.cloudinary.com/hallyupix/image/upload/v1679528400/hallyupix/123456.jpg",
-                  profileImage: "https://res.cloudinary.com/hallyupix/image/upload/v1679528400/hallyupix/123456.jpg",
-                  socialLinks: {
-                    facebook: "https://www.facebook.com/hallyupix",
-                    instagram: "https://www.instagram.com/hallyupix",
-                    twitter: "https://twitter.com/hallyupix",
-                    discord: "https://discord.gg/hallyupix",
-                    website: "https://hallyupix.com",
-                  },
-                  isVerified: true,
-                  createdAt: "2023-01-01T00:00:00.000Z",
-                  updatedAt: "2023-01-01T00:00:00.000Z",
-                },
-              },
+              isVerified: z.boolean(),
+              createdAt: z.string(),
+              updatedAt: z.string(),
             }),
+          }),
         },
       },
       description: "Shop profile",
@@ -124,3 +103,138 @@ export const updateShopProfileImage = createRoute({
 export type SaveShopProfile = typeof saveShopProfile;
 export type GetShopProfile = typeof getShopProfile;
 export type UpdateShopProfileImage = typeof updateShopProfileImage;
+
+export const getShopPayment = createRoute({
+  method: "get",
+  path: "/payment",
+  summary: "Get shop payment information",
+  description: "Retrieve all shop payment information for the logged-in user.",
+  request: {},
+  responses: {
+    ...DEFAULT_RESPONSE,
+    200: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            data: z.object({
+              paymentMethods: z
+                .array(
+                  z.object({
+                    id: z.string(),
+                    name: z.string(),
+                    type: z.enum(["BANK", "EWALLET", "CRYPTO"]),
+                    accountName: z.string(),
+                    accountNumber: z.string(),
+                    qrCodeImage: z.string().optional(),
+                    isActive: z.boolean(),
+                  })
+                )
+                .default([]),
+              paymentInstructions: z.string().nullable(),
+              deadlineSettings: z.object({
+                preOrderPayment: z.number(),
+                regularOrderPayment: z.number(),
+                paymentReminderInterval: z.number().optional(),
+              }),
+              paymentPolicies: z.object({
+                refundPolicy: z.string(),
+                cancellationPolicy: z.string(),
+                partialPaymentAllowed: z.boolean(),
+                minimumPartialPayment: z.number().optional(),
+              }),
+              customPolicies: z.array(z.string()).default([]),
+              createdAt: z.string(),
+              updatedAt: z.string(),
+            }),
+          }),
+        },
+      },
+      description: "Shop payment information",
+    },
+    404: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            code: z.string(),
+            message: z.string(),
+          }),
+        },
+      },
+      description: "Shop payment not found",
+    },
+  },
+});
+
+export const saveShopPaymentInstructions = createRoute({
+  method: "patch",
+  path: "/payment/instructions",
+  summary: "Save payment instructions",
+  description: "Save payment instructions",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            paymentInstructions: z.string().min(1, "Payment instructions are required"),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    ...DEFAULT_RESPONSE,
+  },
+});
+
+export const saveShopPaymentDeadlineSettings = createRoute({
+  method: "patch",
+  path: "/payment/deadlines",
+  summary: "Save deadline settings",
+  description: "Save deadline settings",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            preOrderPayment: z.number().min(1, "Pre-order payment deadline is required"),
+            regularOrderPayment: z.number().min(1, "Regular order payment deadline is required"),
+            paymentReminderInterval: z.number().min(1, "Payment reminder interval is required"),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    ...DEFAULT_RESPONSE,
+  },
+});
+
+export const saveShopPaymentPolicies = createRoute({
+  method: "patch",
+  path: "/payment/policies",
+  summary: "Save payment policies",
+  description: "Save payment policies",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            refundPolicy: z.string().min(1, "Refund policy is required"),
+            cancellationPolicy: z.string().min(1, "Cancellation policy is required"),
+            partialPaymentAllowed: z.boolean(),
+            minimumPartialPayment: z.number().min(1, "Minimum partial payment is required"),
+            customPolicies: z.array(z.string()).default([]),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    ...DEFAULT_RESPONSE,
+  },
+});
+
+export type GetShopPayment = typeof getShopPayment;
+export type SaveShopPaymentInstructions = typeof saveShopPaymentInstructions;
+export type SaveShopPaymentDeadlineSettings = typeof saveShopPaymentDeadlineSettings;
+export type SaveShopPaymentPolicies = typeof saveShopPaymentPolicies;

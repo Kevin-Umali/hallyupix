@@ -2,8 +2,23 @@ import { eq } from "drizzle-orm";
 import { db } from "../../db";
 import { shopProfiles, insertShopProfileSchema, selectShopProfileSchema, updateShopProfileImageSchema } from "../../db/schema/shop-profiles.model";
 import type { HonoRouteHandler } from "../../lib/types";
-import type { GetShopProfile, SaveShopProfile, UpdateShopProfileImage } from "./shop.routes";
+import type {
+  GetShopPayment,
+  GetShopProfile,
+  SaveShopPaymentDeadlineSettings,
+  SaveShopPaymentInstructions,
+  SaveShopPaymentPolicies,
+  SaveShopProfile,
+  UpdateShopProfileImage,
+} from "./shop.routes";
 import { CustomHTTPException } from "../../lib/custom-error";
+import {
+  insertDeadlineSettingsSchema,
+  insertPaymentPoliciesSchema,
+  insertShopPaymentInstructionsSchema,
+  selectShopPaymentSchema,
+  shopPayment,
+} from "../../db/schema/shop-payment.model";
 
 export const saveShopProfile: HonoRouteHandler<SaveShopProfile> = async (c) => {
   const { shopName, description, socialLinks } = c.req.valid("json");
@@ -52,18 +67,13 @@ export const getShopProfile: HonoRouteHandler<GetShopProfile> = async (c) => {
   }
 
   const result = selectShopProfileSchema.parse(shopProfile);
+  const { id: _, userId: __, ...dataWithoutIds } = result;
 
   return c.json(
     {
       data: {
-        shopName: result.shopName,
-        description: result.description,
-        bannerImage: result.bannerImage,
-        profileImage: result.profileImage,
-        socialLinks: result.socialLinks,
+        ...dataWithoutIds,
         isVerified: result.isVerified ?? false,
-        createdAt: result.createdAt.toDateString(),
-        updatedAt: result.updatedAt.toDateString(),
       },
     },
     200
@@ -104,6 +114,158 @@ export const updateShopProfileImage: HonoRouteHandler<UpdateShopProfileImage> = 
       profileImage: isBanner ? existingProfile.profileImage : parsedData.profileImage,
     })
     .where(eq(shopProfiles.userId, userId));
+
+  return c.json(
+    {
+      data: {
+        status: true,
+      },
+    },
+    200
+  );
+};
+
+export const getShopPayment: HonoRouteHandler<GetShopPayment> = async (c) => {
+  const userId = c.get("user")?.id ?? "";
+
+  const [shopPaymentData] = await db.select().from(shopPayment).where(eq(shopPayment.userId, userId));
+
+  if (!shopPaymentData) {
+    throw new CustomHTTPException(404, {
+      code: "SHOP_PAYMENT_NOT_FOUND",
+      message: "Shop payment not found",
+    });
+  }
+
+  const result = selectShopPaymentSchema.parse(shopPaymentData);
+  const { userId: _, id: __, ...dataWithoutIds } = result;
+
+  return c.json(
+    {
+      data: dataWithoutIds,
+    },
+    200
+  );
+};
+
+export const saveShopPaymentInstructions: HonoRouteHandler<SaveShopPaymentInstructions> = async (c) => {
+  const { paymentInstructions } = c.req.valid("json");
+  const userId = c.get("user")?.id ?? "";
+
+  const { success, data: parsedData } = await insertShopPaymentInstructionsSchema.safeParseAsync({
+    userId,
+    paymentInstructions,
+  });
+
+  if (!success) {
+    throw new CustomHTTPException(400, {
+      code: "BAD_REQUEST",
+      message: "Invalid data, please check the data",
+    });
+  }
+
+  const [existingPaymentInstructions] = await db.select().from(shopPayment).where(eq(shopPayment.userId, userId));
+
+  if (!existingPaymentInstructions?.userId) {
+    await db.insert(shopPayment).values({
+      userId,
+      paymentInstructions: parsedData.paymentInstructions,
+    });
+  } else {
+    await db.update(shopPayment).set({ paymentInstructions: parsedData.paymentInstructions }).where(eq(shopPayment.userId, userId));
+  }
+
+  return c.json(
+    {
+      data: {
+        status: true,
+      },
+    },
+    200
+  );
+};
+
+export const saveShopPaymentDeadlineSettings: HonoRouteHandler<SaveShopPaymentDeadlineSettings> = async (c) => {
+  const { preOrderPayment, regularOrderPayment, paymentReminderInterval } = c.req.valid("json");
+  const userId = c.get("user")?.id ?? "";
+
+  const { success, data: parsedData } = await insertDeadlineSettingsSchema.safeParseAsync({
+    userId,
+    preOrderPayment,
+    regularOrderPayment,
+    paymentReminderInterval,
+  });
+
+  if (!success) {
+    throw new CustomHTTPException(400, {
+      code: "BAD_REQUEST",
+      message: "Invalid data, please check the data",
+    });
+  }
+
+  const [existingDeadlineSettings] = await db.select().from(shopPayment).where(eq(shopPayment.userId, userId));
+
+  if (!existingDeadlineSettings?.userId) {
+    await db.insert(shopPayment).values({
+      userId,
+      deadlineSettings: parsedData.deadlineSettings,
+    });
+  } else {
+    await db
+      .update(shopPayment)
+      .set({
+        deadlineSettings: parsedData.deadlineSettings,
+      })
+      .where(eq(shopPayment.userId, userId));
+  }
+
+  return c.json(
+    {
+      data: {
+        status: true,
+      },
+    },
+    200
+  );
+};
+
+export const saveShopPaymentPolicies: HonoRouteHandler<SaveShopPaymentPolicies> = async (c) => {
+  const { refundPolicy, cancellationPolicy, partialPaymentAllowed, minimumPartialPayment, customPolicies } = c.req.valid("json");
+  const userId = c.get("user")?.id ?? "";
+
+  const { success, data: parsedData } = await insertPaymentPoliciesSchema.safeParseAsync({
+    userId,
+    refundPolicy,
+    cancellationPolicy,
+    partialPaymentAllowed,
+    minimumPartialPayment,
+    customPolicies,
+  });
+
+  if (!success) {
+    throw new CustomHTTPException(400, {
+      code: "BAD_REQUEST",
+      message: "Invalid data, please check the data",
+    });
+  }
+
+  const [existingPaymentPolicies] = await db.select().from(shopPayment).where(eq(shopPayment.userId, userId));
+
+  if (!existingPaymentPolicies?.userId) {
+    await db.insert(shopPayment).values({
+      userId,
+      paymentPolicies: parsedData.paymentPolicies,
+      customPolicies: parsedData.customPolicies,
+    });
+  } else {
+    await db
+      .update(shopPayment)
+      .set({
+        paymentPolicies: parsedData.paymentPolicies,
+        customPolicies: parsedData.customPolicies,
+      })
+      .where(eq(shopPayment.userId, userId));
+  }
 
   return c.json(
     {

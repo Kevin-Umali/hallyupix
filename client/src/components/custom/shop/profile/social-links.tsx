@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "@tanstack/react-form";
-import { ShopProfileFormType } from "@/components/custom/shop/profile";
+import { ShopProfileFormType } from "@/components/custom/shop/profile/profile";
 import FieldInfo from "@/components/custom/field-info";
 import { Globe, Facebook, Instagram, Twitter, Disc2 } from "lucide-react";
 

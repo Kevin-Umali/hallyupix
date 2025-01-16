@@ -169,9 +169,9 @@ const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
 
             <div className="flex justify-end gap-4">
               <Button variant="outline">Cancel</Button>
-              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-                {([canSubmit, isSubmitting]) => (
-                  <Button type="submit" disabled={!canSubmit || isSubmitting || isSaving}>
+              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+                {([canSubmit, isSubmitting, isValidating]) => (
+                  <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isSaving}>
                     {isSubmitting || isSaving ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

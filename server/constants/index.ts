@@ -7,6 +7,11 @@ export const ErrorResponseSchema = z.object({
   message: z.string(),
 });
 
+const SuccessResponseSchema = <T extends z.ZodType>(dataSchema: T) =>
+  z.object({
+    data: dataSchema,
+  });
+
 const DEFAULT_RESPONSE = {
   200: {
     content: {

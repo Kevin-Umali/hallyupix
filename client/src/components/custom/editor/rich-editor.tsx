@@ -23,6 +23,8 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface RichEditorProps {
+  key?: string;
+  name?: string;
   initialContent?: string;
   onChange?: (html: string) => void;
   readOnly?: boolean;
@@ -101,7 +103,7 @@ const extensions = [
   }),
 ];
 
-const RichEditor: React.FC<RichEditorProps> = ({ initialContent, onChange, readOnly = false, className, placeholder, autofocus = false }) => {
+const RichEditor: React.FC<RichEditorProps> = ({ initialContent, onChange, readOnly = false, className, placeholder, autofocus = false, key, name }) => {
   const editor = useEditor({
     extensions,
     content: initialContent ?? "<p></p>",
@@ -123,7 +125,6 @@ const RichEditor: React.FC<RichEditorProps> = ({ initialContent, onChange, readO
     },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      console.log(html);
       onChange?.(html);
     },
   });
@@ -131,10 +132,10 @@ const RichEditor: React.FC<RichEditorProps> = ({ initialContent, onChange, readO
   if (!editor) return null;
 
   return (
-    <Card className="w-full">
+    <Card className="w-full" key={key}>
       {!readOnly && <Toolbar editor={editor} />}
       <CardContent className="p-4">
-        <EditorContent editor={editor} />
+        <EditorContent editor={editor} name={name} />
       </CardContent>
     </Card>
   );

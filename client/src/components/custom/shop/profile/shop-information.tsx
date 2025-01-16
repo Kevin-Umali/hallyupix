@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import FieldInfo from "@/components/custom/field-info";
 import { useForm } from "@tanstack/react-form";
-import { ShopProfileFormType } from "@/components/custom/shop/profile";
+import { ShopProfileFormType } from "@/components/custom/shop/profile/profile";
 
 interface ShopInformationProps {
   form: ReturnType<typeof useForm<ShopProfileFormType>>;
