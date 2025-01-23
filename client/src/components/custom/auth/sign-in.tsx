@@ -126,9 +126,8 @@ const SignInForm = () => {
         >
           <div className="space-y-4">
             {/* Email or Username */}
-            <form.Field
-              name="emailOrUsername"
-              children={(field) => (
+            <form.Field name="emailOrUsername">
+              {(field) => (
                 <div className="space-y-2">
                   <Label htmlFor={field.name} className="text-base">
                     Email Address or Username
@@ -145,12 +144,10 @@ const SignInForm = () => {
                   <FieldInfo field={field} />
                 </div>
               )}
-            />
-
+            </form.Field>
             {/* Password */}
-            <form.Field
-              name="password"
-              children={(field) => (
+            <form.Field name="password">
+              {(field) => (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor={field.name} className="text-base">
@@ -171,12 +168,10 @@ const SignInForm = () => {
                   <FieldInfo field={field} />
                 </div>
               )}
-            />
-
+            </form.Field>
             {/* Remember Me */}
-            <form.Field
-              name="rememberMe"
-              children={(field) => (
+            <form.Field name="rememberMe">
+              {(field) => (
                 <div className="flex items-center space-x-2">
                   <Checkbox id={field.name} name={field.name} checked={field.state.value} onCheckedChange={(checked) => field.handleChange(checked === true)} />
                   <Label htmlFor={field.name} className="text-sm text-muted-foreground leading-none">
@@ -184,12 +179,11 @@ const SignInForm = () => {
                   </Label>
                 </div>
               )}
-            />
+            </form.Field>
           </div>
 
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
-            children={([canSubmit, isSubmitting, isValidating]) => (
+          <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+            {([canSubmit, isSubmitting, isValidating]) => (
               <Button type="submit" size="lg" className="w-full" disabled={!canSubmit || isSubmitting || isValidating}>
                 {isSubmitting ? (
                   <>
@@ -201,10 +195,10 @@ const SignInForm = () => {
                 )}
               </Button>
             )}
-          />
+          </form.Subscribe>
 
           <div className="text-center text-sm text-muted-foreground">
-            Don't have an account?
+            Don&apos;t have an account?
             <Link to="/sign-up" className="text-primary hover:underline font-medium">
               {" "}
               Sign up

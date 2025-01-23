@@ -44,7 +44,7 @@ const signUpSchema = z
       .string()
       .min(8, "Password must be at least 8 characters")
       .max(64, "Password must be less than 64 characters")
-      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:'",.<>?/`~\\])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};:'",.<>?/`~\\]{8,}$/, {
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-[\]{};:'",.<>?/`~\\])[A-Za-z\d!@#$%^&*()_\-[\]{};:'",.<>?/`~\\]{8,}$/, {
         message: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
       }),
     confirmPassword: z.string(),
@@ -128,9 +128,8 @@ const SignUpForm = () => {
           className="space-y-6"
         >
           {/* Role */}
-          <form.Field
-            name="role"
-            children={(field) => (
+          <form.Field name="role">
+            {(field) => (
               <div className="space-y-2">
                 <Label htmlFor={field.name} className="text-base font-semibold">
                   Choose your role
@@ -143,12 +142,11 @@ const SignUpForm = () => {
                 />
               </div>
             )}
-          />
+          </form.Field>
           <div className="grid md:grid-cols-2 gap-6">
             {/* Username */}
-            <form.Field
-              name="username"
-              children={(field) => (
+            <form.Field name="username">
+              {(field) => (
                 <div className="space-y-2">
                   <Label htmlFor={field.name} className="text-base">
                     Username
@@ -165,12 +163,11 @@ const SignUpForm = () => {
                   <FieldInfo field={field} />
                 </div>
               )}
-            />
+            </form.Field>
 
             {/*  Name */}
-            <form.Field
-              name="name"
-              children={(field) => (
+            <form.Field name="name">
+              {(field) => (
                 <div className="space-y-2">
                   <Label htmlFor={field.name} className="text-base">
                     Name
@@ -187,13 +184,12 @@ const SignUpForm = () => {
                   <FieldInfo field={field} />
                 </div>
               )}
-            />
+            </form.Field>
           </div>
 
           {/* Email */}
-          <form.Field
-            name="email"
-            children={(field) => (
+          <form.Field name="email">
+            {(field) => (
               <div className="space-y-2">
                 <Label htmlFor={field.name} className="text-base">
                   Email Address
@@ -211,13 +207,12 @@ const SignUpForm = () => {
                 <FieldInfo field={field} />
               </div>
             )}
-          />
+          </form.Field>
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Password */}
-            <form.Field
-              name="password"
-              children={(field) => (
+            <form.Field name="password">
+              {(field) => (
                 <div className="space-y-2">
                   <Label htmlFor={field.name} className="text-base">
                     Password
@@ -235,12 +230,11 @@ const SignUpForm = () => {
                   <FieldInfo field={field} />
                 </div>
               )}
-            />
+            </form.Field>
 
             {/* Confirm Password */}
-            <form.Field
-              name="confirmPassword"
-              children={(field) => (
+            <form.Field name="confirmPassword">
+              {(field) => (
                 <div className="space-y-2">
                   <Label htmlFor={field.name} className="text-base">
                     Confirm Password
@@ -258,13 +252,12 @@ const SignUpForm = () => {
                   <FieldInfo field={field} />
                 </div>
               )}
-            />
+            </form.Field>
           </div>
 
           {/* Terms & Conditions */}
-          <form.Field
-            name="terms"
-            children={(field) => (
+          <form.Field name="terms">
+            {(field) => (
               <div className="flex items-center space-x-2">
                 <Checkbox id={field.name} name={field.name} checked={field.state.value} onCheckedChange={(checked) => field.handleChange(checked === true)} />
                 <Label htmlFor={field.name} className="text-sm text-muted-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -272,13 +265,12 @@ const SignUpForm = () => {
                 </Label>
               </div>
             )}
-          />
+          </form.Field>
 
           {/* Submit Button */}
           <div className="flex flex-col items-center space-y-4">
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
-              children={([canSubmit, isSubmitting, isValidating]) => (
+            <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+              {([canSubmit, isSubmitting, isValidating]) => (
                 <Button type="submit" size="lg" className="w-full" disabled={!canSubmit || isSubmitting || isValidating}>
                   {isSubmitting ? (
                     <>
@@ -290,7 +282,7 @@ const SignUpForm = () => {
                   )}
                 </Button>
               )}
-            />
+            </form.Subscribe>
 
             <div className="text-center text-sm text-muted-foreground">
               Already have an account?

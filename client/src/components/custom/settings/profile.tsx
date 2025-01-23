@@ -11,7 +11,7 @@ import FieldInfo from "@/components/custom/field-info";
 import { Loader2, Mail, Shield, CalendarDays } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import CloudinaryImageUploader from "../cloudinary-image-uploader";
+import CloudinaryImageUploader from "@/components/custom/cloudinary-image-uploader";
 import { Separator } from "@/components/ui/separator";
 import { Session, updateUser } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
@@ -237,9 +237,8 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                 <CardDescription>Update your personal information</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <form.Field
-                  name="name"
-                  children={(field) => (
+                <form.Field name="name">
+                  {(field) => (
                     <div className="space-y-2">
                       <Label htmlFor={field.name}>Name</Label>
                       <Input
@@ -253,11 +252,10 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                       <FieldInfo field={field} />
                     </div>
                   )}
-                />
+                </form.Field>
 
-                <form.Field
-                  name="username"
-                  children={(field) => (
+                <form.Field name="username">
+                  {(field) => (
                     <div className="space-y-2">
                       <Label htmlFor={field.name}>Username</Label>
                       <Input
@@ -271,7 +269,7 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                       <FieldInfo field={field} />
                     </div>
                   )}
-                />
+                </form.Field>
 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
@@ -292,9 +290,8 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                   </p>
                 </div>
 
-                <form.Field
-                  name="bio"
-                  children={(field) => (
+                <form.Field name="bio">
+                  {(field) => (
                     <div className="space-y-2">
                       <Label htmlFor={field.name}>Bio</Label>
                       <Textarea
@@ -312,15 +309,14 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                       <FieldInfo field={field} />
                     </div>
                   )}
-                />
+                </form.Field>
               </CardContent>
             </Card>
 
             <div className="flex justify-end gap-4 mt-6">
               <Button variant="outline">Cancel</Button>
-              <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
-                children={([canSubmit, isSubmitting, isValidating]) => (
+              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+                {([canSubmit, isSubmitting, isValidating]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating}>
                     {isSubmitting ? (
                       <>
@@ -332,7 +328,7 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                     )}
                   </Button>
                 )}
-              />
+              </form.Subscribe>
             </div>
           </form>
         </div>

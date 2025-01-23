@@ -22,9 +22,11 @@ interface ImageFile extends File {
 }
 
 type VariantType = "default" | "button";
+type UploadMode = "immediate" | "deferred";
 
 interface CloudinaryImageUploaderProps {
   variant?: VariantType;
+  uploadMode?: UploadMode;
   multiple?: boolean;
   disabled?: boolean;
   accept?: Record<string, string[]>;
@@ -34,8 +36,11 @@ interface CloudinaryImageUploaderProps {
   previewClassName?: string;
   placeholder?: string;
   showPreview?: boolean;
+  showProgress?: boolean;
   onUploadComplete?: (urls: { url: string; publicId: string }[]) => void;
   onUploadError?: (error: string) => void;
+  onFileSelect?: (file: File) => void;
+  onFileRemove?: () => void;
   apiKey?: string;
   existingPublicId?: string;
   onExistingFileDelete?: () => void;
@@ -44,6 +49,7 @@ interface CloudinaryImageUploaderProps {
 
 const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
   variant = "default",
+  uploadMode = "immediate",
   multiple = false,
   disabled = false,
   accept = {
@@ -55,7 +61,10 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
   previewClassName,
   placeholder = "Click or drag images here",
   showPreview = true,
+  showProgress = true,
   onUploadComplete,
+  onUploadError,
+  onFileSelect,
   apiKey = import.meta.env.VITE_CLOUDINARY_API_KEY,
   existingPublicId,
   onExistingFileDelete,
@@ -147,10 +156,11 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
         toast.error(`CLOUDINARY_UPLOAD_FAILED`, {
           description: error instanceof Error ? error.message : "Unknown error",
         });
+        onUploadError?.(error instanceof Error ? error.message : "Unknown error");
         return null;
       }
     },
-    [getSignedUrl, apiKey]
+    [getSignedUrl, apiKey, getSignedUrlError, onUploadError]
   );
 
   const handleFilePreview = useCallback((file: File): ImageFile => {
@@ -183,12 +193,11 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
     (newFiles: ImageFile[]) => {
       const updatedList = multiple ? [...files, ...newFiles] : [newFiles[0]];
       setFiles(updatedList);
-      onUploadComplete?.(
-        updatedList.map((file) => ({
-          url: file.uploadedUrl!,
-          publicId: file.publicId!,
-        }))
-      );
+      const uploadResults = updatedList.map((file) => ({
+        url: file.uploadedUrl!,
+        publicId: file.publicId!,
+      }));
+      onUploadComplete?.(uploadResults);
     },
     [files, multiple, onUploadComplete]
   );
@@ -201,6 +210,15 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
 
       if (files.length + acceptedFiles.length > maxFiles) {
         toast.error(`Maximum ${maxFiles} files can be selected`);
+        return;
+      }
+
+      // If in deferred mode, don't upload, just notify parent
+      if (uploadMode === "deferred") {
+        const file = acceptedFiles[0];
+        const imageFile = handleFilePreview(file);
+        setFiles([imageFile]);
+        onFileSelect?.(file);
         return;
       }
 
@@ -224,11 +242,22 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
       }
       setIsUploading(false);
     },
-    [files, maxFiles, multiple, handleFilePreview, handleUpload, updateFileList]
+    [files, maxFiles, multiple, handleFilePreview, handleUpload, updateFileList, uploadMode, onFileSelect]
   );
 
   const removeFile = useCallback(
     async (fileToRemove: ImageFile) => {
+      // If in deferred mode, just remove the preview
+      // if (uploadMode === "deferred") {
+      //   if (fileToRemove.preview) {
+      //     URL.revokeObjectURL(fileToRemove.preview);
+      //   }
+      //   setFiles([]);
+      //   onFileRemove?.();
+      //   return;
+      // }
+
+      // Normal removal logic for immediate upload mode
       if (fileToRemove.publicId) {
         setDeletingId(fileToRemove.publicId);
 
@@ -262,6 +291,7 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
         URL.revokeObjectURL(fileToRemove.preview);
       }
     },
+    // [deleteImage, uploadMode, onFileRemove]
     [deleteImage]
   );
 
@@ -291,6 +321,39 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
   });
 
   const renderUploadStatus = () => {
+    if (variant === "button") {
+      if (isGettingSignedUrl) {
+        return (
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Preparing...</span>
+          </div>
+        );
+      }
+      if (isUploading) {
+        return (
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Uploading...</span>
+          </div>
+        );
+      }
+      if (isDeleting) {
+        return (
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Deleting...</span>
+          </div>
+        );
+      }
+      return (
+        <div className="flex items-center gap-2">
+          <ImagePlus className="h-4 w-4" />
+          <span>{buttonText}</span>
+        </div>
+      );
+    }
+
     if (isGettingSignedUrl) {
       return (
         <div className="flex flex-col items-center">
@@ -305,7 +368,7 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
         <div className="flex flex-col items-center w-full max-w-[200px]">
           <Upload className="h-10 w-10 text-primary animate-bounce" />
           <span className="text-sm text-muted-foreground mt-2 text-center">Uploading files...</span>
-          {Object.keys(uploadProgress).length > 0 && (
+          {showProgress && Object.keys(uploadProgress).length > 0 && (
             <div className="w-full mt-4 space-y-2">
               <Progress
                 value={Object.values(uploadProgress).reduce((acc, curr) => acc + curr, 0) / Object.keys(uploadProgress).length}
@@ -329,15 +392,6 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
       );
     }
 
-    if (variant === "button") {
-      return (
-        <div className="flex items-center gap-2">
-          <ImagePlus className="h-4 w-4" />
-          <span>{buttonText}</span>
-        </div>
-      );
-    }
-
     return (
       <>
         <ImagePlus className="h-10 w-10 text-primary" />
@@ -357,6 +411,7 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
         }
       });
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isDisabled = disabled || isGettingSignedUrl || isUploading || isDeleting;
@@ -366,7 +421,7 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
       {variant === "button" ? (
         <div {...getRootProps()}>
           <input {...getInputProps()} />
-          <Button disabled={isDisabled} className="w-full sm:w-auto">
+          <Button type="button" disabled={isDisabled} className="w-full sm:w-auto">
             {renderUploadStatus()}
           </Button>
         </div>

@@ -104,9 +104,8 @@ const GeneralSettings = () => {
                 <CardDescription>Customize how HallyuPix looks on your device</CardDescription>
               </CardHeader>
               <CardContent>
-                <form.Field
-                  name="theme"
-                  children={(field) => (
+                <form.Field name="theme">
+                  {(field) => (
                     <div className="space-y-2 max-w-md">
                       <Label htmlFor={field.name}>Theme</Label>
                       <Select value={field.state.value} onValueChange={(value) => field.handleChange(value as "light" | "dark" | "system")}>
@@ -122,7 +121,7 @@ const GeneralSettings = () => {
                       <FieldInfo field={field} />
                     </div>
                   )}
-                />
+                </form.Field>
               </CardContent>
             </Card>
           </TabsContent>
@@ -134,9 +133,8 @@ const GeneralSettings = () => {
                 <CardDescription>Configure your default preferences for orders and platforms</CardDescription>
               </CardHeader>
               <CardContent>
-                <form.Field
-                  name="defaultOrderPlatform"
-                  children={(field) => (
+                <form.Field name="defaultOrderPlatform">
+                  {(field) => (
                     <div className="space-y-2 max-w-md">
                       <Label htmlFor={field.name}>Default Order Platform</Label>
                       <Select
@@ -157,7 +155,7 @@ const GeneralSettings = () => {
                       <FieldInfo field={field} />
                     </div>
                   )}
-                />
+                </form.Field>
               </CardContent>
             </Card>
           </TabsContent>
@@ -170,9 +168,8 @@ const GeneralSettings = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-6">
-                  <form.Field
-                    name="notifications.emailNotifications"
-                    children={(field) => (
+                  <form.Field name="notifications.emailNotifications">
+                    {(field) => (
                       <div className="flex items-center justify-between space-x-2">
                         <Label htmlFor={field.name} className="font-medium">
                           Email Notifications
@@ -180,11 +177,10 @@ const GeneralSettings = () => {
                         <Switch id={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />
                       </div>
                     )}
-                  />
+                  </form.Field>
                   <Separator />
-                  <form.Field
-                    name="notifications.orderUpdates"
-                    children={(field) => (
+                  <form.Field name="notifications.orderUpdates">
+                    {(field) => (
                       <div className="flex items-center justify-between space-x-2">
                         <Label htmlFor={field.name} className="font-medium">
                           Order Updates
@@ -192,11 +188,10 @@ const GeneralSettings = () => {
                         <Switch id={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />
                       </div>
                     )}
-                  />
+                  </form.Field>
                   <Separator />
-                  <form.Field
-                    name="notifications.paymentReminders"
-                    children={(field) => (
+                  <form.Field name="notifications.paymentReminders">
+                    {(field) => (
                       <div className="flex items-center justify-between space-x-2">
                         <Label htmlFor={field.name} className="font-medium">
                           Payment Reminders
@@ -204,11 +199,10 @@ const GeneralSettings = () => {
                         <Switch id={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />
                       </div>
                     )}
-                  />
+                  </form.Field>
                   <Separator />
-                  <form.Field
-                    name="notifications.stockAlerts"
-                    children={(field) => (
+                  <form.Field name="notifications.stockAlerts">
+                    {(field) => (
                       <div className="flex items-center justify-between space-x-2">
                         <Label htmlFor={field.name} className="font-medium">
                           Stock Alerts
@@ -216,7 +210,7 @@ const GeneralSettings = () => {
                         <Switch id={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />
                       </div>
                     )}
-                  />
+                  </form.Field>
                 </div>
               </CardContent>
             </Card>
@@ -229,9 +223,8 @@ const GeneralSettings = () => {
                 <CardDescription>Configure how orders are handled</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <form.Field
-                  name="orderSettings.autoPaymentVerification"
-                  children={(field) => (
+                <form.Field name="orderSettings.autoPaymentVerification">
+                  {(field) => (
                     <div className="flex items-center justify-between space-x-2">
                       <div className="space-y-0.5">
                         <Label htmlFor={field.name} className="font-medium">
@@ -242,11 +235,10 @@ const GeneralSettings = () => {
                       <Switch id={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />
                     </div>
                   )}
-                />
+                </form.Field>
                 <Separator />
-                <form.Field
-                  name="orderSettings.autoUpdateStatus"
-                  children={(field) => (
+                <form.Field name="orderSettings.autoUpdateStatus">
+                  {(field) => (
                     <div className="flex items-center justify-between space-x-2">
                       <div className="space-y-0.5">
                         <Label htmlFor={field.name} className="font-medium">
@@ -257,11 +249,10 @@ const GeneralSettings = () => {
                       <Switch id={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />
                     </div>
                   )}
-                />
+                </form.Field>
                 <Separator />
-                <form.Field
-                  name="orderSettings.requirePaymentProof"
-                  children={(field) => (
+                <form.Field name="orderSettings.requirePaymentProof">
+                  {(field) => (
                     <div className="flex items-center justify-between space-x-2">
                       <div className="space-y-0.5">
                         <Label htmlFor={field.name} className="font-medium">
@@ -272,11 +263,10 @@ const GeneralSettings = () => {
                       <Switch id={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />
                     </div>
                   )}
-                />
+                </form.Field>
                 <Separator />
-                <form.Field
-                  name="orderSettings.showLowStockWarning"
-                  children={(field) => (
+                <form.Field name="orderSettings.showLowStockWarning">
+                  {(field) => (
                     <div className="flex items-center justify-between space-x-2">
                       <div className="space-y-0.5">
                         <Label htmlFor={field.name} className="font-medium">
@@ -287,7 +277,7 @@ const GeneralSettings = () => {
                       <Switch id={field.name} checked={field.state.value} onCheckedChange={field.handleChange} />
                     </div>
                   )}
-                />
+                </form.Field>
               </CardContent>
             </Card>
           </TabsContent>
@@ -295,9 +285,8 @@ const GeneralSettings = () => {
 
         <div className="flex justify-end gap-4 mt-6">
           <Button variant="outline">Cancel</Button>
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
-            children={([canSubmit, isSubmitting, isValidating]) => (
+          <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+            {([canSubmit, isSubmitting, isValidating]) => (
               <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating}>
                 {isSubmitting ? (
                   <>
@@ -309,7 +298,7 @@ const GeneralSettings = () => {
                 )}
               </Button>
             )}
-          />
+          </form.Subscribe>
         </div>
       </form>
     </div>

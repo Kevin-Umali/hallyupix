@@ -31,8 +31,10 @@ export const Route = createFileRoute("/_authenticated")({
     };
   },
   component: () => {
+    /* eslint-disable react-hooks/rules-of-hooks */
     const { auth } = Route.useRouteContext();
     const location = useLocation();
+    /* eslint-enable react-hooks/rules-of-hooks */
 
     const segments = location.pathname.replace(/\/$/, "").split("/").filter(Boolean);
     const breadcrumbItems = segments.map((segment, index) => ({

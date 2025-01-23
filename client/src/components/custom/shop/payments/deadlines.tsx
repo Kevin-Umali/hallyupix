@@ -6,32 +6,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import FieldInfo from "@/components/custom/field-info";
-import { z } from "zod";
-import { useSaveShopPaymentDeadlineSettingsMutation } from "@/lib/mutation/shop.mutation";
+
+import { useSaveShopPaymentDeadlineSettingsMutation, SaveShopPaymentDeadlineSettingsRequest } from "@/lib/mutation/shop.mutation";
 import { Loader2 } from "lucide-react";
+import { DeadlineSettings } from "@/shared/types/shop.types";
+import { SaveDeadlineSettingsRequestSchema } from "@/shared/types/shop.requests";
+import { useQueryClient } from "@tanstack/react-query";
+import { ShopPaymentResponse } from "@/lib/queries/shop.queries";
 
 interface DeadlineFormProps {
-  preOrderPayment?: number;
-  regularOrderPayment?: number;
-  paymentReminderInterval?: number;
+  deadlineSettings?: Partial<DeadlineSettings>;
 }
 
-const deadlineSettingsSchema = z.object({
-  preOrderPayment: z.number().min(1, "Pre-order payment deadline is required"),
-  regularOrderPayment: z.number().min(1, "Regular order payment deadline is required"),
-  paymentReminderInterval: z.number().optional(),
-});
+export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ deadlineSettings }) => {
+  const queryClient = useQueryClient();
 
-export type DeadlineSettings = z.infer<typeof deadlineSettingsSchema>;
-
-export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ preOrderPayment, regularOrderPayment, paymentReminderInterval }) => {
   const { mutateAsync: saveDeadlineSettings, isPending: isSaving } = useSaveShopPaymentDeadlineSettingsMutation();
 
-  const form = useForm<DeadlineSettings>({
+  const form = useForm<SaveShopPaymentDeadlineSettingsRequest>({
     defaultValues: {
-      preOrderPayment: preOrderPayment ?? 24,
-      regularOrderPayment: regularOrderPayment ?? 48,
-      paymentReminderInterval: paymentReminderInterval ?? 12,
+      preOrderPayment: deadlineSettings?.preOrderPayment ?? 24,
+      regularOrderPayment: deadlineSettings?.regularOrderPayment ?? 48,
+      paymentReminderInterval: deadlineSettings?.paymentReminderInterval ?? 12,
     },
     onSubmit: async ({ value }) => {
       saveDeadlineSettings(
@@ -42,6 +38,14 @@ export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ preOrderPayment, re
         },
         {
           onSuccess: () => {
+            queryClient.setQueryData<ShopPaymentResponse>(["shop-payment"], (oldData) => {
+              if (!oldData) return undefined;
+
+              return {
+                ...oldData,
+                deadlineSettings: value,
+              };
+            });
             toast.success("Deadline settings updated successfully!");
           },
           onError: (error) => {
@@ -53,7 +57,7 @@ export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ preOrderPayment, re
       );
     },
     validators: {
-      onChange: deadlineSettingsSchema,
+      onChange: SaveDeadlineSettingsRequestSchema,
     },
   });
 
@@ -73,46 +77,42 @@ export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ preOrderPayment, re
           className="space-y-6"
         >
           <div className="grid gap-6 md:grid-cols-2">
-            <form.Field
-              name="preOrderPayment"
-              children={(field) => (
+            <form.Field name="preOrderPayment">
+              {(field) => (
                 <div className="space-y-2">
                   <Label>Pre-order Payment (hours)</Label>
                   <Input type="number" value={field.state.value} onChange={(e) => field.handleChange(parseInt(e.target.value))} />
                   <FieldInfo field={field} />
                 </div>
               )}
-            />
+            </form.Field>
 
-            <form.Field
-              name="regularOrderPayment"
-              children={(field) => (
+            <form.Field name="regularOrderPayment">
+              {(field) => (
                 <div className="space-y-2">
                   <Label>Regular Order Payment (hours)</Label>
                   <Input type="number" value={field.state.value} onChange={(e) => field.handleChange(parseInt(e.target.value))} />
                   <FieldInfo field={field} />
                 </div>
               )}
-            />
+            </form.Field>
           </div>
 
-          <form.Field
-            name="paymentReminderInterval"
-            children={(field) => (
+          <form.Field name="paymentReminderInterval">
+            {(field) => (
               <div className="space-y-2">
                 <Label>Reminder Interval (hours)</Label>
                 <Input type="number" value={field.state.value?.toString() || ""} onChange={(e) => field.handleChange(parseInt(e.target.value))} />
                 <FieldInfo field={field} />
               </div>
             )}
-          />
+          </form.Field>
 
           <div className="flex justify-end">
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
-              children={([canSubmit, isSubmitting, isValidating]) => (
+            <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+              {([canSubmit, isSubmitting, isValidating]) => (
                 <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isSaving}>
-                  {isSaving ? (
+                  {isSubmitting || isSaving ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Saving...
@@ -122,7 +122,7 @@ export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ preOrderPayment, re
                   )}
                 </Button>
               )}
-            />
+            </form.Subscribe>
           </div>
         </form>
       </CardContent>

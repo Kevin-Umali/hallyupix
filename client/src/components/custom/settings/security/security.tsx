@@ -113,14 +113,6 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
     });
   };
 
-  const handleEnable2FA = async () => {
-    try {
-      toast.success("2FA setup initiated");
-    } catch (error) {
-      toast.error("Failed to setup 2FA");
-    }
-  };
-
   return (
     <div className="mx-auto w-full max-w-screen-xl space-y-8 p-6">
       <div className="flex flex-col space-y-1">
@@ -182,9 +174,8 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
                   <CardDescription>Update your account password</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <form.Field
-                    name="currentPassword"
-                    children={(field) => (
+                  <form.Field name="currentPassword">
+                    {(field) => (
                       <div className="space-y-2">
                         <Label htmlFor={field.name}>Current Password</Label>
                         <Input
@@ -198,10 +189,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
                         <FieldInfo field={field} />
                       </div>
                     )}
-                  />
-                  <form.Field
-                    name="newPassword"
-                    children={(field) => (
+                  </form.Field>
+                  <form.Field name="newPassword">
+                    {(field) => (
                       <div className="space-y-2">
                         <Label htmlFor={field.name}>New Password</Label>
                         <Input
@@ -215,10 +205,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
                         <FieldInfo field={field} />
                       </div>
                     )}
-                  />
-                  <form.Field
-                    name="confirmPassword"
-                    children={(field) => (
+                  </form.Field>
+                  <form.Field name="confirmPassword">
+                    {(field) => (
                       <div className="space-y-2">
                         <Label htmlFor={field.name}>Confirm New Password</Label>
                         <Input
@@ -232,10 +221,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
                         <FieldInfo field={field} />
                       </div>
                     )}
-                  />
-                  <form.Field
-                    name="revokeOtherSessions"
-                    children={(field) => (
+                  </form.Field>
+                  <form.Field name="revokeOtherSessions">
+                    {(field) => (
                       <div className="flex items-center space-x-4">
                         <Checkbox
                           id={field.name}
@@ -253,12 +241,11 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
                         </div>
                       </div>
                     )}
-                  />
+                  </form.Field>
 
                   <div className="pt-2">
-                    <form.Subscribe
-                      selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
-                      children={([canSubmit, isSubmitting, isValidating]) => (
+                    <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+                      {([canSubmit, isSubmitting, isValidating]) => (
                         <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isChangingPassword}>
                           {isSubmitting || isChangingPassword ? (
                             <>
@@ -270,7 +257,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
                           )}
                         </Button>
                       )}
-                    />
+                    </form.Subscribe>
                   </div>
                 </CardContent>
               </Card>

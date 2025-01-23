@@ -2,12 +2,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "@tanstack/react-form";
-import { ShopProfileFormType } from "@/components/custom/shop/profile/profile";
 import FieldInfo from "@/components/custom/field-info";
 import { Globe, Facebook, Instagram, Twitter, Disc2 } from "lucide-react";
+import { SaveShopProfileRequest } from "@/lib/mutation/shop.mutation";
 
 export interface SocialLinksSectionProps {
-  form: ReturnType<typeof useForm<ShopProfileFormType>>;
+  form: ReturnType<typeof useForm<SaveShopProfileRequest>>;
 }
 
 const SocialLinksSection: React.FC<SocialLinksSectionProps> = ({ form }) => {
@@ -19,9 +19,8 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = ({ form }) => {
       </CardHeader>
       <CardContent className="grid gap-6">
         {/* Website */}
-        <form.Field
-          name="socialLinks.website"
-          children={(field) => (
+        <form.Field name="socialLinks.website">
+          {(field) => (
             <div className="grid gap-2">
               <Label htmlFor={field.name}>Website</Label>
               <div className="relative">
@@ -40,12 +39,11 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = ({ form }) => {
               <FieldInfo field={field} />
             </div>
           )}
-        />
+        </form.Field>
 
         {/* Facebook */}
-        <form.Field
-          name="socialLinks.facebook"
-          children={(field) => (
+        <form.Field name="socialLinks.facebook">
+          {(field) => (
             <div className="grid gap-2">
               <Label htmlFor={field.name}>Facebook</Label>
               <div className="relative">
@@ -64,12 +62,11 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = ({ form }) => {
               <FieldInfo field={field} />
             </div>
           )}
-        />
+        </form.Field>
 
         {/* Instagram */}
-        <form.Field
-          name="socialLinks.instagram"
-          children={(field) => (
+        <form.Field name="socialLinks.instagram">
+          {(field) => (
             <div className="grid gap-2">
               <Label htmlFor={field.name}>Instagram</Label>
               <div className="relative">
@@ -88,12 +85,11 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = ({ form }) => {
               <FieldInfo field={field} />
             </div>
           )}
-        />
+        </form.Field>
 
         {/* Twitter */}
-        <form.Field
-          name="socialLinks.twitter"
-          children={(field) => (
+        <form.Field name="socialLinks.twitter">
+          {(field) => (
             <div className="grid gap-2">
               <Label htmlFor={field.name}>Twitter</Label>
               <div className="relative">
@@ -112,12 +108,11 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = ({ form }) => {
               <FieldInfo field={field} />
             </div>
           )}
-        />
+        </form.Field>
 
         {/* Discord */}
-        <form.Field
-          name="socialLinks.discord"
-          children={(field) => (
+        <form.Field name="socialLinks.discord">
+          {(field) => (
             <div className="grid gap-2">
               <Label htmlFor={field.name}>Discord</Label>
               <div className="relative">
@@ -137,7 +132,7 @@ const SocialLinksSection: React.FC<SocialLinksSectionProps> = ({ form }) => {
               <FieldInfo field={field} />
             </div>
           )}
-        />
+        </form.Field>
       </CardContent>
     </Card>
   );

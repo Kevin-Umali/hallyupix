@@ -1,53 +1,119 @@
-// src/components/settings/payment/PaymentMethodsForm.tsx
 import { useForm } from "@tanstack/react-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Plus, AlertCircle } from "lucide-react";
+import { Plus, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 import PaymentMethodItem from "./payment-method-item";
+import { PaymentMethod } from "@/shared/types/shop.types";
+import { useSaveShopPaymentMethodsMutation, SaveShopPaymentMethodsRequest } from "@/lib/mutation/shop.mutation";
+import { useGetSignedUrlMutation } from "@/lib/mutation/cloudinary.mutation";
+import { SavePaymentMethodsRequestSchema } from "@/shared/types/shop.requests";
+import { ShopPaymentResponse } from "@/lib/queries/shop.queries";
 
-export const paymentMethodSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1, "Name is required"),
-  type: z.enum(["BANK", "EWALLET", "CRYPTO"]),
-  accountName: z.string().min(1, "Account name is required"),
-  accountNumber: z.string().min(1, "Account number is required"),
-  qrCodeImage: z.string().optional(),
-  isActive: z.boolean(),
-});
+interface PaymentMethodFormProps {
+  paymentMethodsData?: Partial<PaymentMethod>[];
+}
 
-export type PaymentMethod = z.infer<typeof paymentMethodSchema>;
+export const PaymentMethodsForm: React.FC<PaymentMethodFormProps> = ({ paymentMethodsData }) => {
+  const queryClient = useQueryClient();
 
-export const PaymentMethodsForm = () => {
-  const form = useForm<{ paymentMethods: PaymentMethod[] }>({
+  const { mutateAsync: savePaymentMethods, isPending: isSaving } = useSaveShopPaymentMethodsMutation();
+  const { mutateAsync: getSignedUrl, isPending: isGettingSignedUrl } = useGetSignedUrlMutation();
+
+  const form = useForm<SaveShopPaymentMethodsRequest>({
     defaultValues: {
-      paymentMethods: [],
+      paymentMethods: (paymentMethodsData ?? []).map((method) => ({
+        id: method.id || crypto.randomUUID(),
+        name: method.name || "",
+        type: method.type || "BANK",
+        accountName: method.accountName || "",
+        accountNumber: method.accountNumber || "",
+        isActive: method.isActive ?? true,
+        qrCodeImage: method.qrCodeImage || "",
+      })),
     },
     onSubmit: async ({ value }) => {
       try {
-        console.log(value);
-        // Make API call to save payment methods
-        toast.success("Payment methods updated successfully!");
+        // Get all methods that have new files to upload
+        const methodsWithPendingUploads = value.paymentMethods.filter((method) => method.qrCodeImage?.startsWith("blob:"));
+
+        // Upload all pending files to Cloudinary
+        const uploads = await Promise.all(
+          methodsWithPendingUploads.map(async (method) => {
+            const signedUrlData = await getSignedUrl();
+            const { signature, timestamp, folder, url } = signedUrlData;
+
+            const formData = new FormData();
+            formData.append("timestamp", timestamp.toString());
+            formData.append("signature", signature);
+            formData.append("folder", folder);
+            formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
+
+            // Since we stored the blob URL, we need to fetch the file
+            const response = await fetch(method.qrCodeImage!);
+            const blob = await response.blob();
+            formData.append("file", blob);
+
+            const uploadResponse = await fetch(url, {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+              throw new Error(`Upload failed for ${method.name}`);
+            }
+
+            const data = await uploadResponse.json();
+            return {
+              methodId: method.id,
+              cloudinaryUrl: data.secure_url,
+            };
+          })
+        );
+
+        // Update the payment methods with the new Cloudinary URLs
+        const updatedMethods = value.paymentMethods.map((method) => {
+          const upload = uploads.find((u) => u.methodId === method.id);
+          return {
+            ...method,
+            qrCodeImage: upload ? upload.cloudinaryUrl : method.qrCodeImage,
+          };
+        });
+
+        // Save the payment methods
+        await savePaymentMethods(
+          { paymentMethods: updatedMethods },
+          {
+            onSuccess: () => {
+              toast.success("Payment methods updated successfully");
+              queryClient.setQueryData<ShopPaymentResponse>(["shop-payment"], (oldData) => {
+                if (!oldData) return undefined;
+
+                return {
+                  ...oldData,
+                  paymentMethods: updatedMethods,
+                };
+              });
+            },
+            onError: (error) => {
+              toast.error(error.code || "Failed to update payment methods", {
+                description: error.message || "Something went wrong",
+              });
+            },
+          }
+        );
       } catch (error) {
-        toast.error("Failed to update payment methods");
+        toast.error("Failed to update payment methods", {
+          description: error instanceof Error ? error.message : "Something went wrong",
+        });
       }
     },
     validators: {
-      onChange: z.object({
-        paymentMethods: z.array(paymentMethodSchema),
-      }),
+      onChange: SavePaymentMethodsRequestSchema,
     },
   });
-
-  const handleQRUpload = async (methodId: string) => {
-    try {
-      toast.success("QR code uploaded successfully!");
-    } catch (error) {
-      toast.error("Failed to upload QR code");
-    }
-  };
 
   return (
     <Card>
@@ -66,9 +132,8 @@ export const PaymentMethodsForm = () => {
           }}
           className="space-y-6"
         >
-          <form.Field
-            name="paymentMethods"
-            children={(field) => (
+          <form.Field name="paymentMethods">
+            {(field) => (
               <div className="space-y-6">
                 {!field.state.value.length ? (
                   <Alert>
@@ -77,13 +142,7 @@ export const PaymentMethodsForm = () => {
                   </Alert>
                 ) : (
                   field.state.value.map((method, index) => (
-                    <PaymentMethodItem
-                      key={method.id}
-                      form={form}
-                      index={index}
-                      onQRUpload={() => handleQRUpload(method.id)}
-                      onRemove={() => field.removeValue(index)}
-                    />
+                    <PaymentMethodItem key={method.id} form={form} index={index} onRemove={(index) => field.removeValue(index)} />
                   ))
                 )}
 
@@ -97,6 +156,7 @@ export const PaymentMethodsForm = () => {
                       type: "BANK",
                       accountName: "",
                       accountNumber: "",
+                      qrCodeImage: "",
                       isActive: true,
                     });
                   }}
@@ -106,16 +166,22 @@ export const PaymentMethodsForm = () => {
                 </Button>
               </div>
             )}
-          />
+          </form.Field>
           <div className="flex justify-end">
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                  Save Payment Methods
+            <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+              {([canSubmit, isSubmitting, isValidating]) => (
+                <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isSaving || isGettingSignedUrl}>
+                  {isSaving || isGettingSignedUrl ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Payment Methods"
+                  )}
                 </Button>
               )}
-            />
+            </form.Subscribe>
           </div>
         </form>
       </CardContent>

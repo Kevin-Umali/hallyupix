@@ -52,46 +52,50 @@ const ForgotPasswordDialog = ({ open, onOpenChange }: { open: boolean; onOpenCha
   const shouldShowSuccessView = state.timeLeft > 0 || state.remainingAttempts === 0 || (state.emailSent && state.timeLeft > 0);
 
   // Update time and attempts counter
-  useEffect(() => {
-    const updateStatus = () => {
-      const attempts = getAttempts();
-      const now = Math.floor(Date.now() / 1000);
-      const today = new Date().toDateString();
+  useEffect(
+    () => {
+      const updateStatus = () => {
+        const attempts = getAttempts();
+        const now = Math.floor(Date.now() / 1000);
+        const today = new Date().toDateString();
 
-      // Reset for new day
-      if (attempts.date !== today) {
-        setAttempts({
-          count: 0,
-          lastAttempt: 0,
-          date: today,
-        });
+        // Reset for new day
+        if (attempts.date !== today) {
+          setAttempts({
+            count: 0,
+            lastAttempt: 0,
+            date: today,
+          });
+          setState((prev) => ({
+            ...prev,
+            emailSent: false, // Reset email sent state
+            timeLeft: 0,
+            remainingAttempts: DAILY_LIMIT,
+            error: "",
+          }));
+          return;
+        }
+
+        // Update cooldown timer
+        const timeSinceLastAttempt = now - attempts.lastAttempt;
+        const timeLeft = timeSinceLastAttempt < COOLDOWN_PERIOD ? COOLDOWN_PERIOD - timeSinceLastAttempt : 0;
+
         setState((prev) => ({
           ...prev,
-          emailSent: false, // Reset email sent state
-          timeLeft: 0,
-          remainingAttempts: DAILY_LIMIT,
-          error: "",
+          timeLeft,
+          // Only reset emailSent if timer is done and we still have attempts
+          emailSent: timeLeft > 0 ? prev.emailSent : false,
+          remainingAttempts: DAILY_LIMIT - attempts.count,
         }));
-        return;
-      }
+      };
 
-      // Update cooldown timer
-      const timeSinceLastAttempt = now - attempts.lastAttempt;
-      const timeLeft = timeSinceLastAttempt < COOLDOWN_PERIOD ? COOLDOWN_PERIOD - timeSinceLastAttempt : 0;
-
-      setState((prev) => ({
-        ...prev,
-        timeLeft,
-        // Only reset emailSent if timer is done and we still have attempts
-        emailSent: timeLeft > 0 ? prev.emailSent : false,
-        remainingAttempts: DAILY_LIMIT - attempts.count,
-      }));
-    };
-
-    const timer = setInterval(updateStatus, 1000);
-    updateStatus(); // Initial update
-    return () => clearInterval(timer);
-  }, [DAILY_LIMIT]);
+      const timer = setInterval(updateStatus, 1000);
+      updateStatus(); // Initial update
+      return () => clearInterval(timer);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [DAILY_LIMIT]
+  );
 
   const form = useForm<ForgotPasswordFormType>({
     defaultValues: { email: "" },
@@ -137,7 +141,7 @@ const ForgotPasswordDialog = ({ open, onOpenChange }: { open: boolean; onOpenCha
       } catch (error) {
         setState((prev) => ({
           ...prev,
-          error: "Failed to send reset email. Please try again later.",
+          error: error instanceof Error ? error.message : "Failed to send reset email. Please try again later.",
         }));
       }
     },
@@ -189,14 +193,14 @@ const ForgotPasswordDialog = ({ open, onOpenChange }: { open: boolean; onOpenCha
             <div className="bg-muted/50 rounded-lg p-4 space-y-2">
               <p className="text-sm font-medium flex items-center gap-2">
                 <AlertCircle className="h-4 w-4" />
-                Can't find the email?
+                Can&apos;t find the email?
               </p>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
                 <li>Check your spam or junk folder</li>
                 <li>Add no-reply@hallyupix.com to your contacts</li>
                 <li>Check all email folders</li>
                 <li>Wait a few minutes and refresh your inbox</li>
-                <li>If you don't still receive any email that means you don't have an email address associated with your account</li>
+                <li>If you don&apos;t still receive any email that means you don&apos;t have an email address associated with your account</li>
                 <li>Please contact us at support@hallyupix.com to resolve this issue</li>
               </ul>
             </div>

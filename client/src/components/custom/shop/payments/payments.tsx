@@ -1,4 +1,4 @@
-// src/components/settings/payment/ShopPaymentSettings.tsx
+// components/settings/payment/ShopPaymentSettings.tsx
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { CreditCard, FileText, Clock, Settings2 } from "lucide-react";
@@ -6,42 +6,13 @@ import PaymentMethodsForm from "@/components/custom/shop/payments/payment-method
 import InstructionsForm from "@/components/custom/shop/payments/instructions";
 import DeadlinesForm from "@/components/custom/shop/payments/deadlines";
 import PoliciesForm from "@/components/custom/shop/payments/policies";
-
-export interface PaymentMethod {
-  id: string;
-  name: string;
-  type: string;
-  accountName: string;
-  accountNumber: string;
-  qrCodeImage?: string;
-  isActive: boolean;
-}
-
-export interface DeadlineSettings {
-  preOrderPayment: number;
-  regularOrderPayment: number;
-  paymentReminderInterval?: number;
-}
-
-export interface PaymentPolicies {
-  refundPolicy: string;
-  cancellationPolicy: string;
-  partialPaymentAllowed: boolean;
-  minimumPartialPayment?: number;
-}
-export interface ShopPayment {
-  paymentMethods: PaymentMethod[];
-  paymentInstructions: string | null;
-  deadlineSettings: DeadlineSettings;
-  paymentPolicies: PaymentPolicies;
-  customPolicies: string[];
-}
+import { ShopPayment } from "@/shared/types/shop.types";
 
 interface ShopPaymentSettingsProps {
   initialData: Partial<ShopPayment>;
 }
 
-const ShopPaymentSettings: React.FC<ShopPaymentSettingsProps> = ({ initialData }) => {
+export const ShopPaymentSettings = ({ initialData }: ShopPaymentSettingsProps) => {
   return (
     <div className="mx-auto w-full max-w-screen-xl space-y-8 p-6">
       <div className="flex flex-col space-y-1">
@@ -49,7 +20,6 @@ const ShopPaymentSettings: React.FC<ShopPaymentSettingsProps> = ({ initialData }
         <p className="text-muted-foreground">Manage your payment methods and policies</p>
         <Separator className="my-4" />
       </div>
-
       <Tabs defaultValue="methods" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="methods" className="space-x-2">
@@ -69,25 +39,23 @@ const ShopPaymentSettings: React.FC<ShopPaymentSettingsProps> = ({ initialData }
             <span>Policies</span>
           </TabsTrigger>
         </TabsList>
-
         <TabsContent value="methods">
-          <PaymentMethodsForm />
+          <PaymentMethodsForm paymentMethodsData={initialData.paymentMethods} />
         </TabsContent>
-
         <TabsContent value="instructions">
-          <InstructionsForm paymentInstructions={initialData.paymentInstructions ?? ""} />
+          <InstructionsForm paymentInstructions={initialData.paymentInstructions} />
         </TabsContent>
-
         <TabsContent value="deadlines">
-          <DeadlinesForm {...initialData?.deadlineSettings} />
+          <DeadlinesForm deadlineSettings={initialData.deadlineSettings} />
         </TabsContent>
-
         <TabsContent value="policies">
-          <PoliciesForm {...initialData?.paymentPolicies} />
+          <PoliciesForm policies={initialData.paymentPolicies} customPolicies={initialData.customPolicies} />
         </TabsContent>
       </Tabs>
     </div>
   );
 };
+
+ShopPaymentSettings.displayName = "ShopPaymentSettings";
 
 export default ShopPaymentSettings;

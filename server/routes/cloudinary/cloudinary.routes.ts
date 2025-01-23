@@ -1,15 +1,15 @@
 import { createRoute } from "@hono/zod-openapi";
 import { z } from "zod";
-import DEFAULT_RESPONSE from "../../constants";
+import { DEFAULT_RESPONSES } from "../../../shared/types/api.types";
 
 export const cloudinarySignedURL = createRoute({
   method: "get",
-  path: "/signed-url",
+  path: "/signed/url",
   summary: "Generate cloudinary signed url for uploading image",
   description: "Generate cloudinary signed url for uploading image",
   request: {},
   responses: {
-    ...DEFAULT_RESPONSE,
+    ...DEFAULT_RESPONSES,
     200: {
       content: {
         "application/json": {
@@ -41,7 +41,7 @@ export const cloudinarySignedURL = createRoute({
 
 export const deleteUserCloudinaryAssets = createRoute({
   method: "delete",
-  path: "/delete-user-cloudinary-assets",
+  path: "/assets",
   summary: "Delete all cloudinary assets for a user",
   description: "Delete all cloudinary assets for a user",
   request: {
@@ -56,7 +56,7 @@ export const deleteUserCloudinaryAssets = createRoute({
     },
   },
   responses: {
-    ...DEFAULT_RESPONSE,
+    ...DEFAULT_RESPONSES,
   },
 });
 

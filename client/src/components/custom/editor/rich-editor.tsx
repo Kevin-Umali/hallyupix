@@ -18,7 +18,7 @@ import BulletList from "@tiptap/extension-bullet-list";
 import Heading from "@tiptap/extension-heading";
 import Code from "@tiptap/extension-code";
 import CodeBlock from "@tiptap/extension-code-block";
-import Toolbar from "./toolbar";
+import Toolbar from "@/components/custom/editor/toolbar";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -103,7 +103,7 @@ const extensions = [
   }),
 ];
 
-const RichEditor: React.FC<RichEditorProps> = ({ initialContent, onChange, readOnly = false, className, placeholder, autofocus = false, key, name }) => {
+const RichEditor: React.FC<RichEditorProps> = ({ initialContent, onChange, readOnly = false, className, autofocus = false, key, name }) => {
   const editor = useEditor({
     extensions,
     content: initialContent ?? "<p></p>",

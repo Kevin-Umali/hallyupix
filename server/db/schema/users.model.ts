@@ -20,7 +20,3 @@ export const users = pgTable("users", {
 export const selectUserSchema = createSelectSchema(users);
 export const insertUserSchema = createInsertSchema(users);
 export const updateUserSchema = createUpdateSchema(users);
-
-export type User = z.infer<typeof selectUserSchema>;
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type UpdateUser = z.infer<typeof updateUserSchema>;

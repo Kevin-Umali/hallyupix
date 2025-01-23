@@ -30,7 +30,3 @@ export const productVariants = pgTable(
 export const selectProductVariantSchema = createSelectSchema(productVariants);
 export const insertProductVariantSchema = createInsertSchema(productVariants);
 export const updateProductVariantSchema = createUpdateSchema(productVariants);
-
-export type ProductVariant = z.infer<typeof selectProductVariantSchema>;
-export type InsertProductVariant = z.infer<typeof insertProductVariantSchema>;
-export type UpdateProductVariant = z.infer<typeof updateProductVariantSchema>;

@@ -22,7 +22,7 @@ const NotFound = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-md mx-auto space-y-6">
           <h1 className="text-4xl md:text-5xl font-bold">404</h1>
           <h2 className="text-2xl font-semibold">Page Not Found</h2>
-          <p className="text-muted-foreground">Oops! The page you are looking for doesn't exist or has been moved.</p>
+          <p className="text-muted-foreground">Oops! The page you are looking for doesn&apos;t exist or has been moved.</p>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">

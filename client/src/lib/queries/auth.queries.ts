@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { getSession, listSessions } from "../api";
+import { getSession, listSessions } from "@/lib/api";
 
 export const getSessionQueryOptions = () => {
   return queryOptions({

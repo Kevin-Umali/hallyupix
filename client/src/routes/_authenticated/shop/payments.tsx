@@ -4,17 +4,13 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/shop/payments")({
   loader: async ({ context }) => {
-    const result = await context.queryClient.ensureQueryData(getShopPaymentQueryOptions());
-
-    return {
-      shopPayment: result,
-    };
+    const shopPayment = await context.queryClient.ensureQueryData(getShopPaymentQueryOptions());
+    return { shopPayment };
   },
-  component: RouteComponent,
+  component: () => {
+    /* eslint-disable react-hooks/rules-of-hooks */
+    const { shopPayment } = Route.useLoaderData();
+    /* eslint-enable react-hooks/rules-of-hooks */
+    return <ShopPaymentSettings initialData={shopPayment ?? {}} />;
+  },
 });
-
-function RouteComponent() {
-  const data = Route.useLoaderData();
-
-  return <ShopPaymentSettings initialData={data?.shopPayment ?? {}} />;
-}

@@ -20,7 +20,6 @@ import MobileMenuItem from "@/components/custom/sidebar/mobile-menu-item";
 import NavUser from "@/components/custom/sidebar/nav-user";
 import SubNavigation from "@/components/custom/sidebar/sub-nav";
 import { NavItem } from "@/components/custom/sidebar/types";
-import { Command } from "lucide-react";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: Session["user"] | undefined;

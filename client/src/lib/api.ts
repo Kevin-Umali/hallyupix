@@ -1,4 +1,4 @@
-import { hc, InferRequestType, InferResponseType } from "hono/client";
+import { hc, InferRequestType, InferResponseType, ClientRequestOptions } from "hono/client";
 import { StatusCode } from "hono/utils/http-status";
 import { type HonoAppType } from "@/server/routes/index.routes";
 import { createAuthClient } from "better-auth/react";
@@ -28,6 +28,7 @@ export type CommonApiResponse = { status: boolean | string };
 export const api = client.api.v1;
 export type APIInferRequestType<T> = InferRequestType<T>;
 export type APIInferResponseType<T, S extends StatusCode> = InferResponseType<T, S>;
+export type ApiFunction<T> = (args: { json: T }, options?: ClientRequestOptions) => Promise<Response>;
 
 export const authApi = authClient;
 export const {

@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,62 +8,28 @@ import { Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-
 import ImageUploadSection from "@/components/custom/shop/profile/image-upload";
 import ShopInformation from "@/components/custom/shop/profile/shop-information";
 import SocialLinksSection from "@/components/custom/shop/profile/social-links";
-import { useSaveProfileMutation } from "@/lib/mutation/shop.mutation";
+import { useSaveProfileMutation, SaveShopProfileRequest } from "@/lib/mutation/shop.mutation";
 import { ShopProfileResponse } from "@/lib/queries/shop.queries";
-
-export interface ImageData {
-  url: string;
-  publicId: string;
-}
-
-export interface SocialLinks {
-  facebook?: string;
-  instagram?: string;
-  twitter?: string;
-  discord?: string;
-  website?: string;
-}
-
-export interface ShopProfile {
-  shopName: string;
-  description?: string;
-  bannerImage?: ImageData;
-  profileImage?: ImageData;
-  socialLinks: SocialLinks;
-  isVerified: boolean;
-}
+import { ShopProfile } from "@/shared/types/shop.types";
+import { SaveShopProfileRequestSchema } from "@/shared/types/shop.requests";
+import { createImageData } from "@/lib/utils";
 
 export interface ShopProfileSettingsProps {
   initialData: Partial<ShopProfile>;
 }
-
-export const shopProfileSchema = z.object({
-  shopName: z.string().min(1, "Shop name is required").max(50, "Shop name must be less than 50 characters"),
-  description: z.string().max(500, "Description must be less than 500 characters").optional(),
-  socialLinks: z.object({
-    facebook: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-    instagram: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-    twitter: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-    discord: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-    website: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-  }),
-});
-
-export type ShopProfileFormType = z.infer<typeof shopProfileSchema>;
 
 const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { mutateAsync: saveProfile, isPending: isSaving } = useSaveProfileMutation();
 
-  const form = useForm<ShopProfileFormType>({
+  const form = useForm<SaveShopProfileRequest>({
     defaultValues: {
       shopName: initialData.shopName ?? "",
-      description: initialData.description,
+      description: initialData.description ?? "",
       socialLinks: initialData.socialLinks ?? {},
     },
     onSubmit: async ({ value }) => {
@@ -98,7 +63,7 @@ const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
       });
     },
     validators: {
-      onChange: shopProfileSchema,
+      onChange: SaveShopProfileRequestSchema,
     },
   });
 
@@ -107,7 +72,7 @@ const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
       {/* Header Section */}
       <div className="flex flex-col space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">Shop Profile Settings</h1>
-        <p className="text-muted-foreground">Manage your shop's profile and online presence</p>
+        <p className="text-muted-foreground">Manage your shop&apos;s profile and online presence</p>
         <Separator className="my-4" />
       </div>
 
@@ -118,7 +83,7 @@ const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
           <Card>
             <CardHeader>
               <CardTitle>Overview</CardTitle>
-              <CardDescription>Your shop's account details</CardDescription>
+              <CardDescription>Your shop&apos;s account details</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -135,10 +100,10 @@ const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
           </Card>
 
           {/* Banner Image */}
-          <ImageUploadSection type="banner" currentImage={initialData.bannerImage} />
+          <ImageUploadSection type="banner" currentImage={createImageData(initialData.bannerImage)} />
 
           {/* Profile Image */}
-          <ImageUploadSection type="profile" currentImage={initialData.profileImage} />
+          <ImageUploadSection type="profile" currentImage={createImageData(initialData.profileImage)} />
         </div>
 
         {/* Right Column */}
@@ -168,7 +133,9 @@ const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
             <SocialLinksSection form={form} />
 
             <div className="flex justify-end gap-4">
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" type="button" onClick={() => form.reset()} disabled={isSaving}>
+                Cancel
+              </Button>
               <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
                 {([canSubmit, isSubmitting, isValidating]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isSaving}>

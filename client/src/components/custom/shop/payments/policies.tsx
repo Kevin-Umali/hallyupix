@@ -9,44 +9,31 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Plus, Trash2, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import FieldInfo from "@/components/custom/field-info";
-import { z } from "zod";
-import RichEditor from "../../editor/rich-editor";
+import RichEditor from "@/components/custom/editor/rich-editor";
 import React from "react";
-import { useSaveShopPaymentPoliciesMutation } from "@/lib/mutation/shop.mutation";
+import { useSaveShopPaymentPoliciesMutation, SaveShopPaymentPoliciesRequest } from "@/lib/mutation/shop.mutation";
+import { PaymentPolicies } from "@/shared/types/shop.types";
+import { SavePaymentPoliciesRequestSchema } from "@/shared/types/shop.requests";
+import { useQueryClient } from "@tanstack/react-query";
+import { ShopPaymentResponse } from "@/lib/queries/shop.queries";
 
-interface PaymentFormProps {
-  refundPolicy?: string;
-  cancellationPolicy?: string;
-  partialPaymentAllowed?: boolean;
-  minimumPartialPayment?: number;
+interface PoliciesFormProps {
+  policies?: Partial<PaymentPolicies>;
   customPolicies?: string[];
 }
 
-const paymentPoliciesSchema = z.object({
-  refundPolicy: z.string().min(1, "Refund policy is required"),
-  cancellationPolicy: z.string().min(1, "Cancellation policy is required"),
-  partialPaymentAllowed: z.boolean(),
-  minimumPartialPayment: z.number().optional(),
-  customPolicies: z.array(z.string()),
-});
+export const PoliciesForm: React.FC<PoliciesFormProps> = ({ policies, customPolicies }) => {
+  const queryClient = useQueryClient();
 
-type PaymentPolicies = z.infer<typeof paymentPoliciesSchema>;
-
-export const PoliciesForm: React.FC<PaymentFormProps> = ({
-  refundPolicy,
-  cancellationPolicy,
-  partialPaymentAllowed,
-  minimumPartialPayment,
-  customPolicies,
-}) => {
   const { mutateAsync: savePaymentPolicies, isPending: isSaving } = useSaveShopPaymentPoliciesMutation();
-  const form = useForm<PaymentPolicies>({
+
+  const form = useForm<SaveShopPaymentPoliciesRequest>({
     defaultValues: {
-      refundPolicy: refundPolicy ?? "",
-      cancellationPolicy: cancellationPolicy ?? "",
-      partialPaymentAllowed: partialPaymentAllowed ?? false,
-      minimumPartialPayment: minimumPartialPayment ?? undefined,
-      customPolicies: customPolicies ?? [],
+      refundPolicy: policies?.refundPolicy || "",
+      cancellationPolicy: policies?.cancellationPolicy || "",
+      partialPaymentAllowed: policies?.partialPaymentAllowed || false,
+      minimumPartialPayment: policies?.minimumPartialPayment || 0,
+      customPolicies: customPolicies || [],
     },
     onSubmit: async ({ value }) => {
       savePaymentPolicies(
@@ -60,6 +47,14 @@ export const PoliciesForm: React.FC<PaymentFormProps> = ({
         {
           onSuccess: () => {
             toast.success("Policies updated successfully!");
+            queryClient.setQueryData<ShopPaymentResponse>(["shop-payment"], (oldData) => {
+              if (!oldData) return undefined;
+
+              return {
+                ...oldData,
+                paymentPolicies: value,
+              };
+            });
           },
           onError: (error) => {
             toast.error(error.code || "Failed to update policies", {
@@ -70,7 +65,7 @@ export const PoliciesForm: React.FC<PaymentFormProps> = ({
       );
     },
     validators: {
-      onChange: paymentPoliciesSchema,
+      onChange: SavePaymentPoliciesRequestSchema,
     },
   });
 
@@ -89,31 +84,28 @@ export const PoliciesForm: React.FC<PaymentFormProps> = ({
           }}
           className="space-y-6"
         >
-          <form.Field
-            name="refundPolicy"
-            children={(field) => (
+          <form.Field name="refundPolicy">
+            {(field) => (
               <div className="space-y-2">
                 <Label>Refund Policy</Label>
                 <RichEditor key={field.name} name={field.name} initialContent={field.state.value} onChange={(html) => field.handleChange(html)} />
                 <FieldInfo field={field} />
               </div>
             )}
-          />
+          </form.Field>
 
-          <form.Field
-            name="cancellationPolicy"
-            children={(field) => (
+          <form.Field name="cancellationPolicy">
+            {(field) => (
               <div className="space-y-2">
                 <Label>Cancellation Policy</Label>
                 <RichEditor key={field.name} name={field.name} initialContent={field.state.value} onChange={(html) => field.handleChange(html)} />
                 <FieldInfo field={field} />
               </div>
             )}
-          />
+          </form.Field>
 
-          <form.Field
-            name="partialPaymentAllowed"
-            children={(field) => (
+          <form.Field name="partialPaymentAllowed">
+            {(field) => (
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Allow Partial Payments</Label>
@@ -122,11 +114,10 @@ export const PoliciesForm: React.FC<PaymentFormProps> = ({
                 <Switch checked={field.state.value} onCheckedChange={field.handleChange} />
               </div>
             )}
-          />
+          </form.Field>
 
-          <form.Field
-            name="minimumPartialPayment"
-            children={(field) => (
+          <form.Field name="minimumPartialPayment">
+            {(field) => (
               <div className="space-y-2">
                 <Label>Minimum Partial Payment (%)</Label>
                 <Input
@@ -141,11 +132,10 @@ export const PoliciesForm: React.FC<PaymentFormProps> = ({
                 <FieldInfo field={field} />
               </div>
             )}
-          />
+          </form.Field>
 
-          <form.Field
-            name="customPolicies"
-            children={(field) => (
+          <form.Field name="customPolicies">
+            {(field) => (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="space-y-0.5">
@@ -158,20 +148,15 @@ export const PoliciesForm: React.FC<PaymentFormProps> = ({
                   </Button>
                 </div>
 
-                {!field.state.value.length ? (
-                  <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>No custom policies added yet.</AlertDescription>
-                  </Alert>
-                ) : (
+                {Array.isArray(field.state.value) && field.state.value.length > 0 ? (
                   field.state.value.map((_, index) => (
                     <div key={index} className="flex gap-2">
                       <RichEditor
-                        key={field.name}
+                        key={`${field.name}-${index}`}
                         name={field.name}
-                        initialContent={field.state.value[index]}
+                        initialContent={field.state.value?.[index]}
                         onChange={(html) => {
-                          const newPolicies = [...field.state.value];
+                          const newPolicies = [...(field.state.value || [])]; // Ensure a safe copy
                           newPolicies[index] = html;
                           field.handleChange(newPolicies);
                         }}
@@ -181,17 +166,21 @@ export const PoliciesForm: React.FC<PaymentFormProps> = ({
                       </Button>
                     </div>
                   ))
+                ) : (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>No custom policies added yet.</AlertDescription>
+                  </Alert>
                 )}
               </div>
             )}
-          />
+          </form.Field>
 
           <div className="flex justify-end">
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
-              children={([canSubmit, isSubmitting, isValidating]) => (
+            <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+              {([canSubmit, isSubmitting, isValidating]) => (
                 <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isSaving}>
-                  {isSaving ? (
+                  {isSubmitting || isSaving ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Saving...
@@ -201,7 +190,7 @@ export const PoliciesForm: React.FC<PaymentFormProps> = ({
                   )}
                 </Button>
               )}
-            />
+            </form.Subscribe>
           </div>
         </form>
       </CardContent>

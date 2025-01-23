@@ -98,9 +98,8 @@ function ResetPassword() {
               className="space-y-6"
             >
               {/* Password */}
-              <form.Field
-                name="password"
-                children={(field) => (
+              <form.Field name="password">
+                {(field) => (
                   <div className="space-y-2">
                     <Label htmlFor={field.name} className="text-base">
                       Password
@@ -118,12 +117,11 @@ function ResetPassword() {
                     <FieldInfo field={field} />
                   </div>
                 )}
-              />
+              </form.Field>
 
               {/* Confirm Password */}
-              <form.Field
-                name="confirmPassword"
-                children={(field) => (
+              <form.Field name="confirmPassword">
+                {(field) => (
                   <div className="space-y-2">
                     <Label htmlFor={field.name} className="text-base">
                       Confirm Password
@@ -141,11 +139,10 @@ function ResetPassword() {
                     <FieldInfo field={field} />
                   </div>
                 )}
-              />
+              </form.Field>
               <div className="space-y-4">
-                <form.Subscribe
-                  selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
-                  children={([canSubmit, isSubmitting, isValidating]) => (
+                <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+                  {([canSubmit, isSubmitting, isValidating]) => (
                     <Button type="submit" size="lg" className="w-full" disabled={!canSubmit || isSubmitting || isValidating}>
                       {isSubmitting ? (
                         <>
@@ -157,7 +154,7 @@ function ResetPassword() {
                       )}
                     </Button>
                   )}
-                />
+                </form.Subscribe>
                 <div className="text-center">
                   <Button variant="link" asChild>
                     <Link to="/sign-in">Back to Sign In</Link>

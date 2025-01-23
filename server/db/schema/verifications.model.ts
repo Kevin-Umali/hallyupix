@@ -15,7 +15,3 @@ export const verifications = pgTable("verifications", {
 export const selectVerificationSchema = createSelectSchema(verifications);
 export const insertVerificationSchema = createInsertSchema(verifications);
 export const updateVerificationSchema = createUpdateSchema(verifications);
-
-export type Verification = z.infer<typeof selectVerificationSchema>;
-export type InsertVerification = z.infer<typeof insertVerificationSchema>;
-export type UpdateVerification = z.infer<typeof updateVerificationSchema>;

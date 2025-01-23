@@ -17,7 +17,3 @@ export const images = pgTable("images", {
 export const selectImageSchema = createSelectSchema(images);
 export const insertImageSchema = createInsertSchema(images);
 export const updateImageSchema = createUpdateSchema(images);
-
-export type Image = z.infer<typeof selectImageSchema>;
-export type InsertImage = z.infer<typeof insertImageSchema>;
-export type UpdateImage = z.infer<typeof updateImageSchema>;

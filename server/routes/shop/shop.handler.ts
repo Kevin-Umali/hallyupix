@@ -5,8 +5,10 @@ import type { HonoRouteHandler } from "../../lib/types";
 import type {
   GetShopPayment,
   GetShopProfile,
+  GetShopShipping,
   SaveShopPaymentDeadlineSettings,
   SaveShopPaymentInstructions,
+  SaveShopPaymentMethods,
   SaveShopPaymentPolicies,
   SaveShopProfile,
   UpdateShopProfileImage,
@@ -16,9 +18,11 @@ import {
   insertDeadlineSettingsSchema,
   insertPaymentPoliciesSchema,
   insertShopPaymentInstructionsSchema,
+  insertPaymentMethodsSchema,
   selectShopPaymentSchema,
   shopPayment,
 } from "../../db/schema/shop-payment.model";
+import { selectShopShippingSchema, shopShipping } from "../../db/schema/shop-shipping.model";
 
 export const saveShopProfile: HonoRouteHandler<SaveShopProfile> = async (c) => {
   const { shopName, description, socialLinks } = c.req.valid("json");
@@ -272,6 +276,72 @@ export const saveShopPaymentPolicies: HonoRouteHandler<SaveShopPaymentPolicies> 
       data: {
         status: true,
       },
+    },
+    200
+  );
+};
+
+export const saveShopPaymentMethods: HonoRouteHandler<SaveShopPaymentMethods> = async (c) => {
+  const { paymentMethods } = c.req.valid("json");
+  const userId = c.get("user")?.id ?? "";
+
+  const { success, data: parsedData } = await insertPaymentMethodsSchema.safeParseAsync({
+    userId,
+    paymentMethods,
+  });
+
+  if (!success) {
+    throw new CustomHTTPException(400, {
+      code: "BAD_REQUEST",
+      message: "Invalid data, please check the data",
+    });
+  }
+
+  const [existingPaymentMethods] = await db.select().from(shopPayment).where(eq(shopPayment.userId, userId));
+
+  if (!existingPaymentMethods?.userId) {
+    await db.insert(shopPayment).values({
+      userId,
+      paymentMethods: parsedData.paymentMethods,
+    });
+  } else {
+    await db
+      .update(shopPayment)
+      .set({
+        paymentMethods: parsedData.paymentMethods,
+      })
+      .where(eq(shopPayment.userId, userId));
+  }
+
+  return c.json(
+    {
+      data: {
+        status: true,
+      },
+    },
+    200
+  );
+};
+
+export const getShopShipping: HonoRouteHandler<GetShopShipping> = async (c) => {
+  const userId = c.get("user")?.id ?? "";
+
+  const [shopShippingData] = await db.select().from(shopShipping).where(eq(shopShipping.userId, userId));
+
+  if (!shopShippingData) {
+    throw new CustomHTTPException(404, {
+      code: "SHOP_SHIPPING_NOT_FOUND",
+      message: "Shop shipping not found",
+    });
+  }
+
+  const result = selectShopShippingSchema.parse(shopShippingData);
+
+  const { userId: _, id: __, ...dataWithoutIds } = result;
+
+  return c.json(
+    {
+      data: dataWithoutIds,
     },
     200
   );

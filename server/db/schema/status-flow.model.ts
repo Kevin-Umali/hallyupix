@@ -52,7 +52,3 @@ export const sellerStatusFlows = pgTable(
 export const selectSellerStatusFlowSchema = createSelectSchema(sellerStatusFlows);
 export const insertSellerStatusFlowSchema = createInsertSchema(sellerStatusFlows);
 export const updateSellerStatusFlowSchema = createUpdateSchema(sellerStatusFlows);
-
-export type SellerStatusFlow = z.infer<typeof selectSellerStatusFlowSchema>;
-export type InsertSellerStatusFlow = z.infer<typeof insertSellerStatusFlowSchema>;
-export type UpdateSellerStatusFlow = z.infer<typeof updateSellerStatusFlowSchema>;

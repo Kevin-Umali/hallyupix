@@ -3,26 +3,24 @@ import { useForm } from "@tanstack/react-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { z } from "zod";
 import FieldInfo from "@/components/custom/field-info";
-import RichEditor from "../../editor/rich-editor";
-import { useSaveShopPaymentInstructionsMutation } from "@/lib/mutation/shop.mutation";
+import RichEditor from "@/components/custom/editor/rich-editor";
+import { useSaveShopPaymentInstructionsMutation, SaveShopPaymentInstructionsRequest } from "@/lib/mutation/shop.mutation";
 import { Loader2 } from "lucide-react";
+import { SavePaymentInstructionsRequestSchema } from "@/shared/types/shop.requests";
+import { useQueryClient } from "@tanstack/react-query";
+import { ShopPaymentResponse } from "@/lib/queries/shop.queries";
 
 interface InstructionsFormProps {
-  paymentInstructions?: string;
+  paymentInstructions?: string | null;
 }
 
-const instructionsSchema = z.object({
-  paymentInstructions: z.string().min(1, "Payment instructions are required"),
-});
-
-type InstructionsFormType = z.infer<typeof instructionsSchema>;
-
 export const InstructionsForm: React.FC<InstructionsFormProps> = ({ paymentInstructions }) => {
+  const queryClient = useQueryClient();
+
   const { mutateAsync: savePaymentInstructions, isPending: isSaving } = useSaveShopPaymentInstructionsMutation();
 
-  const form = useForm<InstructionsFormType>({
+  const form = useForm<SaveShopPaymentInstructionsRequest>({
     defaultValues: {
       paymentInstructions: paymentInstructions ?? "",
     },
@@ -30,14 +28,24 @@ export const InstructionsForm: React.FC<InstructionsFormProps> = ({ paymentInstr
       await savePaymentInstructions(value, {
         onSuccess: () => {
           toast.success("Payment instructions updated successfully!");
+          queryClient.setQueryData<ShopPaymentResponse>(["shop-payment"], (oldData) => {
+            if (!oldData) return undefined;
+
+            return {
+              ...oldData,
+              paymentInstructions: value.paymentInstructions,
+            };
+          });
         },
         onError: (error) => {
-          toast.error(error.code || "Failed to update payment instructions");
+          toast.error(error.code || "Failed to update payment instructions", {
+            description: error.message || "Something went wrong",
+          });
         },
       });
     },
     validators: {
-      onChange: instructionsSchema,
+      onChange: SavePaymentInstructionsRequestSchema,
     },
   });
 
@@ -56,9 +64,8 @@ export const InstructionsForm: React.FC<InstructionsFormProps> = ({ paymentInstr
           }}
           className="space-y-6"
         >
-          <form.Field
-            name="paymentInstructions"
-            children={(field) => (
+          <form.Field name="paymentInstructions">
+            {(field) => (
               <div className="space-y-2">
                 <RichEditor key={field.name} name={field.name} initialContent={field.state.value} onChange={(html) => field.handleChange(html)} />
                 <FieldInfo field={field} />
@@ -67,12 +74,11 @@ export const InstructionsForm: React.FC<InstructionsFormProps> = ({ paymentInstr
                 </p>
               </div>
             )}
-          />
+          </form.Field>
 
           <div className="flex justify-end">
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting || isSaving]}
-              children={([canSubmit, isSubmitting]) => (
+            <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting || isSaving]}>
+              {([canSubmit, isSubmitting]) => (
                 <Button type="submit" disabled={!canSubmit || isSubmitting || isSaving}>
                   {isSubmitting || isSaving ? (
                     <>
@@ -83,7 +89,7 @@ export const InstructionsForm: React.FC<InstructionsFormProps> = ({ paymentInstr
                   )}
                 </Button>
               )}
-            />
+            </form.Subscribe>
           </div>
         </form>
       </CardContent>

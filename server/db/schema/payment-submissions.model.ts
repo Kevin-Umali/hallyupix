@@ -23,7 +23,3 @@ export const paymentSubmissions = pgTable("payment_submissions", {
 export const selectPaymentSubmissionSchema = createSelectSchema(paymentSubmissions);
 export const insertPaymentSubmissionSchema = createInsertSchema(paymentSubmissions);
 export const updatePaymentSubmissionSchema = createUpdateSchema(paymentSubmissions);
-
-export type PaymentSubmission = z.infer<typeof selectPaymentSubmissionSchema>;
-export type InsertPaymentSubmission = z.infer<typeof insertPaymentSubmissionSchema>;
-export type UpdatePaymentSubmission = z.infer<typeof updatePaymentSubmissionSchema>;

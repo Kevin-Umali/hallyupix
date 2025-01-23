@@ -10,6 +10,7 @@ const router = createRouter()
   .openapi(shopRoutes.getShopPayment, shopHandler.getShopPayment)
   .openapi(shopRoutes.saveShopPaymentInstructions, shopHandler.saveShopPaymentInstructions)
   .openapi(shopRoutes.saveShopPaymentDeadlineSettings, shopHandler.saveShopPaymentDeadlineSettings)
-  .openapi(shopRoutes.saveShopPaymentPolicies, shopHandler.saveShopPaymentPolicies);
+  .openapi(shopRoutes.saveShopPaymentPolicies, shopHandler.saveShopPaymentPolicies)
+  .openapi(shopRoutes.saveShopPaymentMethods, shopHandler.saveShopPaymentMethods);
 
 export default router;

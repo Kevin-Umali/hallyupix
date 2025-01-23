@@ -93,9 +93,8 @@ const ShopShippingSettings = () => {
 
   const ShippingPolicyFields = ({ name, title }: { name: "domesticShipping" | "internationalShipping"; title: string }) => (
     <div className="space-y-6">
-      <form.Field
-        name={`${name}.description`}
-        children={(field) => (
+      <form.Field name={`${name}.description`}>
+        {(field) => (
           <div className="space-y-2">
             <Label htmlFor={field.name}>Description</Label>
             <Textarea
@@ -109,12 +108,11 @@ const ShopShippingSettings = () => {
             <FieldInfo field={field} />
           </div>
         )}
-      />
+      </form.Field>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <form.Field
-          name={`${name}.processingTime`}
-          children={(field) => (
+        <form.Field name={`${name}.processingTime`}>
+          {(field) => (
             <div className="space-y-2">
               <Label htmlFor={field.name}>Processing Time</Label>
               <Input
@@ -127,11 +125,10 @@ const ShopShippingSettings = () => {
               <FieldInfo field={field} />
             </div>
           )}
-        />
+        </form.Field>
 
-        <form.Field
-          name={`${name}.estimatedDelivery`}
-          children={(field) => (
+        <form.Field name={`${name}.estimatedDelivery`}>
+          {(field) => (
             <div className="space-y-2">
               <Label htmlFor={field.name}>Estimated Delivery</Label>
               <Input
@@ -144,12 +141,11 @@ const ShopShippingSettings = () => {
               <FieldInfo field={field} />
             </div>
           )}
-        />
+        </form.Field>
       </div>
 
-      <form.Field
-        name={`${name}.cost`}
-        children={(field) => (
+      <form.Field name={`${name}.cost`}>
+        {(field) => (
           <div className="space-y-2">
             <Label htmlFor={field.name}>Base Shipping Cost</Label>
             <Input
@@ -163,11 +159,10 @@ const ShopShippingSettings = () => {
             <FieldInfo field={field} />
           </div>
         )}
-      />
+      </form.Field>
 
-      <form.Field
-        name={`${name}.notes`}
-        children={(field) => (
+      <form.Field name={`${name}.notes`}>
+        {(field) => (
           <div className="space-y-2">
             <Label htmlFor={field.name}>Additional Notes</Label>
             <Textarea
@@ -180,7 +175,7 @@ const ShopShippingSettings = () => {
             <FieldInfo field={field} />
           </div>
         )}
-      />
+      </form.Field>
     </div>
   );
 
@@ -227,9 +222,8 @@ const ShopShippingSettings = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <form.Field
-                    name="processingTimes.preOrder"
-                    children={(field) => (
+                  <form.Field name="processingTimes.preOrder">
+                    {(field) => (
                       <div className="space-y-2">
                         <Label htmlFor={field.name}>Pre-order Processing</Label>
                         <Input
@@ -242,11 +236,10 @@ const ShopShippingSettings = () => {
                         <FieldInfo field={field} />
                       </div>
                     )}
-                  />
+                  </form.Field>
 
-                  <form.Field
-                    name="processingTimes.regular"
-                    children={(field) => (
+                  <form.Field name="processingTimes.regular">
+                    {(field) => (
                       <div className="space-y-2">
                         <Label htmlFor={field.name}>Regular Processing</Label>
                         <Input
@@ -259,12 +252,11 @@ const ShopShippingSettings = () => {
                         <FieldInfo field={field} />
                       </div>
                     )}
-                  />
+                  </form.Field>
                 </div>
 
-                <form.Field
-                  name="processingTimes.express"
-                  children={(field) => (
+                <form.Field name="processingTimes.express">
+                  {(field) => (
                     <div className="space-y-2">
                       <Label htmlFor={field.name}>Express Processing (Optional)</Label>
                       <Input
@@ -277,7 +269,7 @@ const ShopShippingSettings = () => {
                       <FieldInfo field={field} />
                     </div>
                   )}
-                />
+                </form.Field>
               </CardContent>
             </Card>
           </TabsContent>
@@ -307,9 +299,8 @@ const ShopShippingSettings = () => {
           </TabsContent>
 
           <TabsContent value="custom">
-            <form.Field
-              name="customPolicies"
-              children={(field) => (
+            <form.Field name="customPolicies">
+              {(field) => (
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0">
                     <div>
@@ -351,9 +342,8 @@ const ShopShippingSettings = () => {
                           </div>
 
                           <div className="grid gap-4">
-                            <form.Field
-                              name={`customPolicies.${index}.name`}
-                              children={(nameField) => (
+                            <form.Field name={`customPolicies.${index}.name`}>
+                              {(nameField) => (
                                 <div className="space-y-2">
                                   <Label htmlFor={nameField.name}>Policy Name</Label>
                                   <Input
@@ -366,11 +356,10 @@ const ShopShippingSettings = () => {
                                   <FieldInfo field={nameField} />
                                 </div>
                               )}
-                            />
+                            </form.Field>
 
-                            <form.Field
-                              name={`customPolicies.${index}.description`}
-                              children={(descField) => (
+                            <form.Field name={`customPolicies.${index}.description`}>
+                              {(descField) => (
                                 <div className="space-y-2">
                                   <Label htmlFor={descField.name}>Description</Label>
                                   <Textarea
@@ -383,11 +372,10 @@ const ShopShippingSettings = () => {
                                   <FieldInfo field={descField} />
                                 </div>
                               )}
-                            />
+                            </form.Field>
 
-                            <form.Field
-                              name={`customPolicies.${index}.cost`}
-                              children={(costField) => (
+                            <form.Field name={`customPolicies.${index}.cost`}>
+                              {(costField) => (
                                 <div className="space-y-2">
                                   <Label htmlFor={costField.name}>Cost (Optional)</Label>
                                   <Input
@@ -401,7 +389,7 @@ const ShopShippingSettings = () => {
                                   <FieldInfo field={costField} />
                                 </div>
                               )}
-                            />
+                            </form.Field>
                           </div>
                         </div>
                       ))
@@ -409,15 +397,14 @@ const ShopShippingSettings = () => {
                   </CardContent>
                 </Card>
               )}
-            />
+            </form.Field>
           </TabsContent>
         </Tabs>
 
         <div className="flex justify-end gap-4 mt-6">
           <Button variant="outline">Cancel</Button>
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}
-            children={([canSubmit, isSubmitting, isValidating]) => (
+          <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+            {([canSubmit, isSubmitting, isValidating]) => (
               <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating}>
                 {isSubmitting ? (
                   <>
@@ -429,7 +416,7 @@ const ShopShippingSettings = () => {
                 )}
               </Button>
             )}
-          />
+          </form.Subscribe>
         </div>
       </form>
     </div>

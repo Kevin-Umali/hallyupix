@@ -4,10 +4,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import FieldInfo from "@/components/custom/field-info";
 import { useForm } from "@tanstack/react-form";
-import { ShopProfileFormType } from "@/components/custom/shop/profile/profile";
+import { SaveShopProfileRequest } from "@/lib/mutation/shop.mutation";
 
 interface ShopInformationProps {
-  form: ReturnType<typeof useForm<ShopProfileFormType>>;
+  form: ReturnType<typeof useForm<SaveShopProfileRequest>>;
 }
 
 const ShopInformation: React.FC<ShopInformationProps> = ({ form }) => {
@@ -18,9 +18,8 @@ const ShopInformation: React.FC<ShopInformationProps> = ({ form }) => {
         <CardDescription>Basic information about your shop</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <form.Field
-          name="shopName"
-          children={(field) => (
+        <form.Field name="shopName">
+          {(field) => (
             <div className="space-y-2">
               <Label htmlFor={field.name}>Shop Name</Label>
               <Input
@@ -33,11 +32,10 @@ const ShopInformation: React.FC<ShopInformationProps> = ({ form }) => {
               <FieldInfo field={field} />
             </div>
           )}
-        />
+        </form.Field>
 
-        <form.Field
-          name="description"
-          children={(field) => (
+        <form.Field name="description">
+          {(field) => (
             <div className="space-y-2">
               <Label htmlFor={field.name}>Description</Label>
               <Textarea
@@ -53,7 +51,7 @@ const ShopInformation: React.FC<ShopInformationProps> = ({ form }) => {
               <FieldInfo field={field} />
             </div>
           )}
-        />
+        </form.Field>
       </CardContent>
     </Card>
   );

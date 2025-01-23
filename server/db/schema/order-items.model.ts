@@ -28,7 +28,3 @@ export const orderItems = pgTable(
 export const selectOrderItemSchema = createSelectSchema(orderItems);
 export const insertOrderItemSchema = createInsertSchema(orderItems);
 export const updateOrderItemSchema = createUpdateSchema(orderItems);
-
-export type OrderItem = z.infer<typeof selectOrderItemSchema>;
-export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
-export type UpdateOrderItem = z.infer<typeof updateOrderItemSchema>;

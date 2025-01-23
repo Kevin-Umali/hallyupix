@@ -21,7 +21,3 @@ export const discounts = pgTable("discounts", {
 export const selectDiscountSchema = createSelectSchema(discounts);
 export const insertDiscountSchema = createInsertSchema(discounts);
 export const updateDiscountSchema = createUpdateSchema(discounts);
-
-export type Discount = z.infer<typeof selectDiscountSchema>;
-export type InsertDiscount = z.infer<typeof insertDiscountSchema>;
-export type UpdateDiscount = z.infer<typeof updateDiscountSchema>;

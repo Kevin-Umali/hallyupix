@@ -1,36 +1,15 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { ApiError, api } from "../api";
+import { api, APIInferResponseType } from "@/lib/api";
+import { createQueryFn } from "@/lib/api-utils";
 
-export const getSignedUrlQueryOptions = () => {
-  return queryOptions<
-    {
-      timestamp: number;
-      signature: string;
-      folder: string;
-      url: string;
-    },
-    ApiError
-  >({
-    queryKey: ["signed-url"],
-    queryFn: async () => {
-      const response = await api.cloudinary["signed-url"].$get();
-      if (!response.ok) {
-        const responseError = await response.json();
-        const error = {
-          code: responseError.code,
-          message: responseError.message,
-          status: response.status,
-          statusText: response.statusText,
-        };
-        throw error;
-      }
-
-      const { data } = await response.json();
-
-      return data;
-    },
+const createSignedUrlQuery = <TResponse>(key: string[], queryFn: () => Promise<TResponse | null>) =>
+  queryOptions({
+    queryKey: key,
+    queryFn,
   });
-};
+
+export type GetSignedUrlResponse = APIInferResponseType<typeof api.cloudinary.signed.url.$get, 200>["data"] | null;
+export const getSignedUrlQueryOptions = () => createSignedUrlQuery(["signed-url"], createQueryFn<GetSignedUrlResponse>(api.cloudinary.signed.url.$get));
 
 export const useGetSignedUrlQuery = () => {
   return useQuery(getSignedUrlQueryOptions());
