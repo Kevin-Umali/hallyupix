@@ -462,8 +462,8 @@ const CloudinaryImageUploader: React.FC<CloudinaryImageUploaderProps> = ({
                     <div className="relative">
                       <img src={file.uploadedUrl ?? file.preview} alt={file.name} className="w-full h-32 object-cover rounded-md" />
                       {deletingId === file.publicId && (
-                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-md">
-                          <Loader2 className="h-8 w-8 animate-spin text-white" />
+                        <div className="absolute inset-0 flex items-center justify-center rounded-md">
+                          <Loader2 className="h-8 w-8 animate-spin" />
                         </div>
                       )}
                     </div>

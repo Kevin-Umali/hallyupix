@@ -52,7 +52,7 @@ function Landing() {
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <motion.div whileHover={{ scale: 1.05 }} className="w-10 h-10 bg-primary rounded-md flex items-center justify-center text-white text-xl font-bold">
+            <motion.div whileHover={{ scale: 1.05 }} className="w-10 h-10 bg-primary rounded-md flex items-center justify-center text-xl font-bold">
               {ACRONYM_APP_NAME}
             </motion.div>
             <span className="text-xl font-semibold">{APP_NAME}</span>

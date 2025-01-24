@@ -78,7 +78,7 @@ export const ProductCard = ({
           <div className="relative aspect-square overflow-hidden bg-secondary">
             {/* Status Badge */}
             <div className="absolute left-3 top-3 z-20">
-              <Badge className={cn("px-2 py-1 flex items-center gap-1", statusConfig[status].color, "text-white")}>
+              <Badge className={cn("px-2 py-1 flex items-center gap-1", statusConfig[status].color)}>
                 <StatusIcon className="w-3 h-3" />
                 {status}
               </Badge>
@@ -96,7 +96,7 @@ export const ProductCard = ({
             {/* New Badge */}
             {isNewArrival && (
               <motion.div className="absolute left-3 top-12 z-20" initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
-                <Badge className="bg-violet-500 text-white">New</Badge>
+                <Badge className="bg-violet-500">New</Badge>
               </motion.div>
             )}
 

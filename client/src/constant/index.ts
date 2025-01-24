@@ -271,6 +271,12 @@ export const SELLER_FEATURES = [
     description: "Keep all order-related communication organized and accessible",
     color: "text-indigo-500",
   },
+  {
+    icon: Truck,
+    title: "Shipping Management",
+    description: "Streamline order fulfillment and tracking",
+    color: "text-red-500",
+  },
 ] as const;
 
 export const TESTIMONIALS = [

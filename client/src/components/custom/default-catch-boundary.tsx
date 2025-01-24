@@ -18,7 +18,7 @@ export const DefaultCatchBoundary: React.FC<ErrorComponentProps> = ({ error, inf
         <div className="mb-8 inline-flex items-center gap-3">
           <Link to="/" className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-              <span className="text-2xl font-bold text-white leading-none">{ACRONYM_APP_NAME}</span>
+              <span className="text-2xl font-bold leading-none">{ACRONYM_APP_NAME}</span>
             </div>
             <span className="text-2xl font-semibold leading-none">{APP_NAME}</span>
           </Link>

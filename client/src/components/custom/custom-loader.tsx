@@ -18,7 +18,7 @@ const CustomLoader: React.FC<CustomLoaderProps> = ({
   show = true,
   wait = "delay-300",
   size = "md",
-  color = "foreground",
+  color = "primary",
   text = "Loading",
   variant = "minimal",
   icons = [Disc, Music, Mic],
@@ -107,7 +107,7 @@ const CustomLoader: React.FC<CustomLoaderProps> = ({
             }}
             className={cn(`text-${color}`)}
           >
-            <Icon size={24} />
+            <Icon size={24} className={cn(`text-${color}`)} />
           </motion.div>
         ))}
       </div>

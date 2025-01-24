@@ -143,8 +143,8 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ type, currentIm
           >
             {isCurrentlyDeleting && (
               <div className="flex flex-col items-center gap-2">
-                <Loader2 className="h-8 w-8 animate-spin text-white" />
-                <span className="text-sm text-white">Deleting...</span>
+                <Loader2 className="h-8 w-8 animate-spin" />
+                <span className="text-sm">Deleting...</span>
               </div>
             )}
           </div>
@@ -172,8 +172,8 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ type, currentIm
         >
           {isCurrentlyDeleting && (
             <div className="flex flex-col items-center gap-2">
-              <Loader2 className="h-6 w-6 animate-spin text-white" />
-              <span className="text-xs text-white">Deleting...</span>
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <span className="text-xs">Deleting...</span>
             </div>
           )}
         </div>

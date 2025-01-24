@@ -1,26 +1,26 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { APP_NAME } from "@/constant";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
-  ListChecks,
   Package,
   MessageSquare,
-  BarChart,
   Clock,
   ShoppingBag,
   Bell,
-  FileText,
   ArrowRight,
   Check,
   X,
+  type LucideIcon,
   BadgeCheck,
+  BarChart,
+  FileText,
+  ListChecks,
   Medal,
   ThumbsUp,
-  type LucideIcon,
 } from "lucide-react";
 
 const fadeInUp = {
@@ -39,54 +39,50 @@ const staggerChildren = {
 
 export const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-secondary/5 pb-20 pt-10 px-4">
-      <div className="container mx-auto">
+    <section className="relative overflow-hidden bg-background pb-20 pt-10 px-4">
+      <div className="absolute inset-0 bg-gradient-primary/10" />
+      <div className="container relative mx-auto">
         <motion.div initial="initial" animate="animate" variants={staggerChildren} className="relative z-10 text-center max-w-3xl mx-auto mb-16">
           <motion.div variants={fadeInUp}>
-            <Badge variant="secondary" className="mb-4">
-              Built for K-pop Shop Sellers
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Streamline Your Shop Operations
+            <Badge className="mb-4 bg-gradient-primary hover:opacity-90">Exclusive Platform for K-pop Shop Sellers</Badge>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              Your Ultimate K-pop Shop
+              <span className="bg-gradient-text bg-clip-text text-transparent block mt-2">Management Solution</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              A better way to manage your K-pop shop orders, track inventory, and handle customer order statuses. Perfect for pre-order and on-hand items.
+            <p className="text-xl text-foreground/80 mb-12 max-w-2xl mx-auto">
+              Handle pre-orders, manage inventory, and streamline your order process with our specialized platform built for K-pop merchandise sellers.
             </p>
           </motion.div>
 
           <motion.div variants={fadeInUp} className="grid md:grid-cols-3 gap-6 mt-12">
             {[
               {
-                title: "Excel Sheets",
-                benefits: [
-                  "Manual status updates",
-                  "Hard to track inventory",
-                  "No payment proof system",
-                  "Difficult order tracking",
-                  "Manual customer updates",
-                  "Limited accessibility",
-                ],
+                title: "Traditional Methods",
+                features: ["Manual spreadsheets", "DM conversations", "Scattered information", "No payment tracking", "Manual status updates"],
                 recommended: false,
-              },
-              {
-                title: "Social Media DMs",
-                benefits: ["Mixed conversations", "Hard to track orders", "No organized system", "Manual status sharing", "No payment tracking"],
-                recommended: false,
+                icon: X,
               },
               {
                 title: APP_NAME,
-                benefits: [
+                features: [
                   "Custom status flows",
-                  "Inventory management",
-                  "Payment proof system",
-                  "Automated status links",
-                  "Easy tracking sharing",
-                  "Multi-platform orders",
+                  "Payment verification",
+                  "Inventory tracking",
+                  "Pre-order system",
+                  "Buyer tracking portal",
+                  "Multi-platform support",
                 ],
                 recommended: true,
+                icon: Check,
               },
-            ].map((card, index) => (
-              <ComparisonCard key={card.title} {...card} index={index} />
+              {
+                title: "Regular Platforms",
+                features: ["Limited customization", "No K-pop focus", "Complex setup", "High fees", "Limited features"],
+                recommended: false,
+                icon: X,
+              },
+            ].map((plan, index) => (
+              <PlanCard key={plan.title} {...plan} index={index} />
             ))}
           </motion.div>
         </motion.div>
@@ -120,13 +116,13 @@ export const HeroSection = () => {
         </motion.div>
 
         <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
-          <Button size="lg" className="group" asChild>
+          <Button size="lg" className="bg-gradient-primary hover:opacity-90 transition-opacity group" asChild>
             <Link to="/sign-up" className="flex items-center gap-2">
               Start Managing Your Shop
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
-          <Button size="lg" variant="outline" className="group">
+          <Button size="lg" variant="outline" className="border-primary hover:bg-primary/5">
             View Features
           </Button>
         </motion.div>
@@ -137,26 +133,38 @@ export const HeroSection = () => {
 
 HeroSection.displayName = "HeroSection";
 
-const ComparisonCard = ({ title, benefits, recommended, index }: { title: string; benefits: string[]; recommended: boolean; index: number }) => {
+const PlanCard = ({
+  title,
+  features,
+  recommended,
+  icon: Icon,
+  index,
+}: {
+  title: string;
+  features: string[];
+  recommended: boolean;
+  icon: LucideIcon;
+  index: number;
+}) => {
   return (
     <motion.div variants={fadeInUp} transition={{ delay: index * 0.1 }}>
-      <Card className={cn("relative transition-all duration-300 hover:shadow-lg", recommended && "border-primary shadow-lg")}>
-        {recommended && <Badge className="absolute -top-2 left-1/2 -translate-x-1/2">Recommended</Badge>}
+      <Card className={cn("relative transition-all duration-300 backdrop-blur-sm", recommended && " border-secondary shadow-lg")}>
+        {recommended && <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-primary">Recommended</Badge>}
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
+          <CardTitle className={cn("text-xl", recommended && "text-primary")}>{title}</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            {benefits.map((benefit, i) => (
+            {features.map((feature, i) => (
               <motion.li
-                key={benefit}
+                key={feature}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 + i * 0.05 }}
                 className="flex items-center gap-2 text-sm"
               >
-                {recommended ? <Check className="w-4 h-4 text-primary" /> : <X className="w-4 h-4 text-muted-foreground" />}
-                {benefit}
+                <Icon className={cn("w-4 h-4", recommended ? "text-primary" : "text-muted-foreground")} />
+                {feature}
               </motion.li>
             ))}
           </ul>
@@ -166,7 +174,7 @@ const ComparisonCard = ({ title, benefits, recommended, index }: { title: string
   );
 };
 
-ComparisonCard.displayName = "ComparisonCard";
+PlanCard.displayName = "PlanCard";
 
 const FeatureCard = ({
   title,
@@ -183,10 +191,10 @@ const FeatureCard = ({
 }) => {
   return (
     <motion.div variants={fadeInUp}>
-      <Card className="h-full hover:shadow-lg transition-all duration-300">
+      <Card className="h-full hover:shadow-lg transition-all duration-300 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardTitle className="text-gradient-primary">{title}</CardTitle>
+          <p className="text-sm text-muted-foreground">{description}</p>
         </CardHeader>
         <CardContent className="space-y-4">
           {features.map((feature, index) => (
@@ -205,7 +213,7 @@ FeatureCard.displayName = "FeatureCard";
 const FeatureItem = ({ icon: Icon, title, description }: { icon: LucideIcon; title: string; description: string }) => {
   return (
     <div className="flex items-start gap-3 group">
-      <div className="p-2 rounded-md bg-primary/10 transition-colors group-hover:bg-primary/20">
+      <div className="p-2 rounded-md bg-gradient-primary/10 transition-colors group-hover:bg-gradient-primary/20">
         <Icon className="w-4 h-4 text-primary" />
       </div>
       <div>
