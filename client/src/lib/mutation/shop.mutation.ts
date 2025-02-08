@@ -29,3 +29,26 @@ export const useSaveShopPaymentPoliciesMutation = () =>
 export type SaveShopPaymentMethodsRequest = APIInferRequestType<typeof api.shop.payment.methods.$patch>["json"];
 export const useSaveShopPaymentMethodsMutation = () =>
   useMutation(createMutation<SaveShopPaymentMethodsRequest, CommonApiResponse>(api.shop.payment.methods.$patch, "Payment methods saved successfully")());
+
+export type SaveShopShippingMethodRequest = APIInferRequestType<typeof api.shop.shipping.method.$patch>["json"];
+export const useSaveShopShippingMethodMutation = () =>
+  useMutation(createMutation<SaveShopShippingMethodRequest, CommonApiResponse>(api.shop.shipping.method.$patch, "Shipping method saved successfully")());
+
+export type SaveShopShippingProcessingTimesRequest = APIInferRequestType<typeof api.shop.shipping.processing.$patch>["json"];
+export const useSaveShopShippingProcessingTimesMutation = () =>
+  useMutation(
+    createMutation<SaveShopShippingProcessingTimesRequest, CommonApiResponse>(api.shop.shipping.processing.$patch, "Processing times saved successfully")()
+  );
+
+export type SaveShopShippingPoliciesRequest = APIInferRequestType<typeof api.shop.shipping.policies.$patch>["json"];
+export const useSaveShopShippingPoliciesMutation = () =>
+  useMutation(createMutation<SaveShopShippingPoliciesRequest, CommonApiResponse>(api.shop.shipping.policies.$patch, "Shipping policies saved successfully")());
+
+export type SaveShopShippingCustomPoliciesRequest = APIInferRequestType<typeof api.shop.shipping.policies.custom.$patch>["json"];
+export const useSaveShopShippingCustomPoliciesMutation = () =>
+  useMutation(
+    createMutation<SaveShopShippingCustomPoliciesRequest, CommonApiResponse>(
+      api.shop.shipping.policies.custom.$patch,
+      "Custom shipping policies saved successfully"
+    )()
+  );

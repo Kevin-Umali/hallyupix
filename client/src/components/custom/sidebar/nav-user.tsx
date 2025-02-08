@@ -14,7 +14,6 @@ import { Session } from "@/lib/api";
 import { useSignOutMutation } from "@/lib/mutation/auth.mutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { toast } from "sonner";
 
 interface NavUserProps {
   user: Session["user"] | undefined;
@@ -33,12 +32,6 @@ const NavUser: React.FC<NavUserProps> = ({ user }) => {
       onSuccess: () => {
         queryClient.clear();
         router.invalidate();
-        toast.success("Signed out successfully");
-      },
-      onError: (error) => {
-        toast.error(error.code || "Failed to sign out", {
-          description: error.message || "Something went wrong",
-        });
       },
     });
   };

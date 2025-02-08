@@ -15,3 +15,6 @@ export const getShopProfileQueryOptions = () => createShopQuery(["shop-profile"]
 
 export type ShopPaymentResponse = APIInferResponseType<typeof api.shop.payment.$get, 200>["data"] | null;
 export const getShopPaymentQueryOptions = () => createShopQuery(["shop-payment"], createQueryFn<ShopPaymentResponse>(api.shop.payment.$get));
+
+export type ShopShippingResponse = APIInferResponseType<typeof api.shop.shipping.$get, 200>["data"] | null;
+export const getShopShippingQueryOptions = () => createShopQuery(["shop-shipping"], createQueryFn<ShopShippingResponse>(api.shop.shipping.$get));

@@ -5,7 +5,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, AlertCircle } from "lucide-react";
-import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import ImageUploadSection from "@/components/custom/shop/profile/image-upload";
@@ -35,7 +34,6 @@ const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
     onSubmit: async ({ value }) => {
       await saveProfile(value, {
         onSuccess: () => {
-          toast.success("Shop profile updated successfully!");
           queryClient.setQueryData<ShopProfileResponse>(["shop-profile"], (oldData) => {
             if (!oldData) return undefined;
 
@@ -53,11 +51,6 @@ const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
             filter: (route) => {
               return route.routeId === "/_authenticated/shop/profile";
             },
-          });
-        },
-        onError: (error) => {
-          toast.error(error.code || "Error", {
-            description: error.message || "Something went wrong",
           });
         },
       });

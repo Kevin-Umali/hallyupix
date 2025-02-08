@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import FieldInfo from "@/components/custom/field-info";
 import { Loader2, Shield, Smartphone, Lock } from "lucide-react";
-import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { Session } from "@/lib/api";
 import ActiveSessionsTable from "@/components/custom/settings/security/active-sessions-table";
@@ -58,7 +57,6 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
     onSubmit: async ({ value }) => {
       await changePassword(value, {
         onSuccess: () => {
-          toast.success("Password changed successfully!");
           queryClient.invalidateQueries({ queryKey: ["session-list"] });
           router.invalidate({
             filter: (route) => route.routeId === "/_authenticated/settings/security",
@@ -68,11 +66,6 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
             newPassword: "",
             confirmPassword: "",
             revokeOtherSessions: false,
-          });
-        },
-        onError: (error) => {
-          toast.error(error.code || "Failed to change password", {
-            description: error.message || "Something went wrong",
           });
         },
       });
@@ -85,15 +78,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
   const handleRevokeSession = async (token: string) => {
     await revokeSession(token, {
       onSuccess: () => {
-        toast.success("Session revoked successfully");
         queryClient.invalidateQueries({ queryKey: ["session-list"] });
         router.invalidate({
           filter: (route) => route.routeId === "/_authenticated/settings/security",
-        });
-      },
-      onError: (error) => {
-        toast.error(error.code || "Failed to revoke session", {
-          description: error.message || "Something went wrong",
         });
       },
     });
@@ -102,13 +89,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ currentSession, ses
   const handleRevokeAllSessions = async () => {
     await revokeOtherSessions(undefined, {
       onSuccess: () => {
-        toast.success("All sessions revoked successfully");
         queryClient.invalidateQueries({ queryKey: ["session-list"] });
-      },
-      onError: (error) => {
-        toast.error(error.code || "Failed to revoke sessions", {
-          description: error.message || "Something went wrong",
-        });
       },
     });
   };

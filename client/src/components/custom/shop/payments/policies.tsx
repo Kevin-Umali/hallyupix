@@ -7,7 +7,6 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Plus, Trash2, AlertCircle, Loader2 } from "lucide-react";
-import { toast } from "sonner";
 import FieldInfo from "@/components/custom/field-info";
 import RichEditor from "@/components/custom/editor/rich-editor";
 import React from "react";
@@ -16,6 +15,7 @@ import { PaymentPolicies } from "@/shared/types/shop.types";
 import { SavePaymentPoliciesRequestSchema } from "@/shared/types/shop.requests";
 import { useQueryClient } from "@tanstack/react-query";
 import { ShopPaymentResponse } from "@/lib/queries/shop.queries";
+import { useRouter } from "@tanstack/react-router";
 
 interface PoliciesFormProps {
   policies?: Partial<PaymentPolicies>;
@@ -24,6 +24,7 @@ interface PoliciesFormProps {
 
 export const PoliciesForm: React.FC<PoliciesFormProps> = ({ policies, customPolicies }) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { mutateAsync: savePaymentPolicies, isPending: isSaving } = useSaveShopPaymentPoliciesMutation();
 
@@ -46,19 +47,23 @@ export const PoliciesForm: React.FC<PoliciesFormProps> = ({ policies, customPoli
         },
         {
           onSuccess: () => {
-            toast.success("Policies updated successfully!");
             queryClient.setQueryData<ShopPaymentResponse>(["shop-payment"], (oldData) => {
               if (!oldData) return undefined;
 
               return {
                 ...oldData,
-                paymentPolicies: value,
+                paymentPolicies: {
+                  ...oldData.paymentPolicies,
+                  refundPolicy: value.refundPolicy,
+                  cancellationPolicy: value.cancellationPolicy,
+                  partialPaymentAllowed: value.partialPaymentAllowed,
+                  minimumPartialPayment: value.minimumPartialPayment ?? 0,
+                },
+                customPolicies: value.customPolicies ?? [],
               };
             });
-          },
-          onError: (error) => {
-            toast.error(error.code || "Failed to update policies", {
-              description: error.message || "Something went wrong",
+            router.invalidate({
+              filter: (route) => route.routeId === "/_authenticated/shop/payments",
             });
           },
         }
@@ -134,7 +139,7 @@ export const PoliciesForm: React.FC<PoliciesFormProps> = ({ policies, customPoli
             )}
           </form.Field>
 
-          <form.Field name="customPolicies">
+          <form.Field name="customPolicies" mode="array">
             {(field) => (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -151,16 +156,18 @@ export const PoliciesForm: React.FC<PoliciesFormProps> = ({ policies, customPoli
                 {Array.isArray(field.state.value) && field.state.value.length > 0 ? (
                   field.state.value.map((_, index) => (
                     <div key={index} className="flex gap-2">
-                      <RichEditor
-                        key={`${field.name}-${index}`}
-                        name={field.name}
-                        initialContent={field.state.value?.[index]}
-                        onChange={(html) => {
-                          const newPolicies = [...(field.state.value || [])]; // Ensure a safe copy
-                          newPolicies[index] = html;
-                          field.handleChange(newPolicies);
-                        }}
-                      />
+                      <form.Field name={`customPolicies[${index}]`}>
+                        {(policyField) => (
+                          <RichEditor
+                            key={`${policyField.name}-${index}`}
+                            name={policyField.name}
+                            initialContent={policyField.state.value}
+                            onChange={(html) => {
+                              policyField.handleChange(html);
+                            }}
+                          />
+                        )}
+                      </form.Field>
                       <Button type="button" variant="ghost" size="icon" onClick={() => field.removeValue(index)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>

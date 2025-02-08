@@ -6,10 +6,9 @@ import {
   DeadlineSettingsSchema,
   PaymentMethodSchema,
   ShippingPoliciesSchema,
-  DomesticShippingSchema,
-  InternationalShippingSchema,
   ProcessingTimesSchema,
   CustomPoliciesSchema,
+  ShippingMethodSchema,
 } from "./shop.types";
 
 // Profile Requests
@@ -39,8 +38,11 @@ export const SavePaymentPoliciesRequestSchema = PaymentPoliciesSchema.extend({
   refundPolicy: z.string().min(1, "Refund policy is required"),
   cancellationPolicy: z.string().min(1, "Cancellation policy is required"),
   partialPaymentAllowed: z.boolean(),
-  minimumPartialPayment: z.number().min(1, "Minimum partial payment is required"),
+  minimumPartialPayment: z.number().optional(),
   customPolicies: z.array(z.string()).default([]),
+}).refine((data) => !data.partialPaymentAllowed || (data.minimumPartialPayment && data.minimumPartialPayment >= 1), {
+  message: "Minimum partial payment is required and must be at least 1 when partial payment is allowed.",
+  path: ["minimumPartialPayment"],
 });
 
 export const SavePaymentMethodsRequestSchema = z.object({
@@ -48,59 +50,78 @@ export const SavePaymentMethodsRequestSchema = z.object({
 });
 
 // Shipping Requests
-export const SaveDomesticShippingRequestSchema = DomesticShippingSchema.extend({
-  description: z.string().min(1, "Shipping policy description is required"),
-  processingTime: z.string().min(1, "Processing time is required"),
-  estimatedDelivery: z.string().min(1, "Estimated delivery is required"),
-  cost: z.number().optional(),
-  restrictions: z.array(z.string()).optional(),
-  notes: z.string().optional(),
+export const SaveShippingMethodRequestSchema = ShippingMethodSchema.extend({
+  domestic: z.object({
+    name: z.string().min(1, "Shipping policy name is required"),
+    description: z.string().min(1, "Shipping policy description is required"),
+    processingTime: z.string().min(1, "Processing time is required"),
+    estimatedDelivery: z.string().min(1, "Estimated delivery is required"),
+    baseRate: z.number().min(1, "Base rate is required"),
+    isActive: z.boolean().default(true),
+    areas: z
+      .array(z.object({ name: z.string(), additionalFee: z.number().min(1, "Additional fee is required"), additionalTime: z.string().optional() }))
+      .default([]),
+    conditions: z.array(z.string()).optional(),
+    notes: z.string().optional(),
+  }),
+  international: z.object({
+    name: z.string().min(1, "Shipping policy name is required"),
+    description: z.string().min(1, "Shipping policy description is required"),
+    processingTime: z.string().min(1, "Processing time is required"),
+    estimatedDelivery: z.string().min(1, "Estimated delivery is required"),
+    baseRate: z.number().min(1, "Base rate is required"),
+    isActive: z.boolean().default(true),
+    areas: z
+      .array(z.object({ name: z.string(), additionalFee: z.number().min(1, "Additional fee is required"), additionalTime: z.string().optional() }))
+      .default([]),
+    conditions: z.array(z.string()).optional(),
+    notes: z.string().optional(),
+  }),
 });
 
-export const SaveInternationalShippingRequestSchema = InternationalShippingSchema.extend({
-  description: z.string().min(1, "Shipping policy description is required"),
-  processingTime: z.string().min(1, "Processing time is required"),
-  estimatedDelivery: z.string().min(1, "Estimated delivery is required"),
-  cost: z.number().optional(),
-  restrictions: z.array(z.string()).optional(),
-  notes: z.string().optional(),
-});
-
-export const SaveProcessingTimesRequestSchema = ProcessingTimesSchema.extend({
+export const SaveShippingProcessingTimesRequestSchema = ProcessingTimesSchema.extend({
   preOrder: z.string().min(1, "Pre-order processing time is required"),
   regular: z.string().min(1, "Regular processing time is required"),
   express: z.string().optional(),
   customRules: z
     .array(
       z.object({
-        condition: z.string(),
+        name: z.string(),
         time: z.string(),
+        description: z.string(),
       })
     )
     .optional(),
 });
 
-export const SaveShippingPoliciesRequestSchema = z.record(
-  z.string(),
-  ShippingPoliciesSchema.extend({
-    description: z.string().min(1, "Policy description is required"),
-    processingTime: z.string().min(1, "Processing time is required"),
-    estimatedDelivery: z.string().min(1, "Estimated delivery is required"),
-    cost: z.number().optional(),
+export const SaveShippingPoliciesRequestSchema = ShippingPoliciesSchema.extend({
+  general: z.string().min(1, "General policy is required"),
+  domestic: z.object({
+    deliveryGuarantees: z.array(z.string()).optional(),
     restrictions: z.array(z.string()).optional(),
-    notes: z.string().optional(),
-  })
-);
+    returnPolicy: z.string().min(1, "Return policy is required"),
+    isActive: z.boolean(),
+  }),
+  international: z.object({
+    customsClearance: z.array(z.string()).optional(),
+    restrictions: z.array(z.string()).optional(),
+    returnPolicy: z.string().min(1, "Return policy is required"),
+    isActive: z.boolean(),
+  }),
+});
 
-export const SaveCustomPoliciesRequestSchema = z.array(
-  CustomPoliciesSchema.extend({
-    name: z.string().min(1, "Policy name is required"),
-    description: z.string().min(1, "Policy description is required"),
-    conditions: z.array(z.string()),
-    cost: z.number().optional(),
-    isActive: z.boolean().default(true),
-  })
-);
+export const SaveShippingCustomPoliciesRequestSchema = z.object({
+  customPolicies: z.array(
+    CustomPoliciesSchema.extend({
+      name: z.string().min(1, "Policy name is required"),
+      description: z.string().min(1, "Policy description is required"),
+      conditions: z.array(z.string()),
+      fee: z.number().optional(),
+      additionalTime: z.string().optional(),
+      isActive: z.boolean().default(true),
+    })
+  ),
+});
 
 // Type exports
 export type SaveShopProfileRequest = z.infer<typeof SaveShopProfileRequestSchema>;
@@ -109,8 +130,7 @@ export type SavePaymentInstructionsRequest = z.infer<typeof SavePaymentInstructi
 export type SaveDeadlineSettingsRequest = z.infer<typeof SaveDeadlineSettingsRequestSchema>;
 export type SavePaymentPoliciesRequest = z.infer<typeof SavePaymentPoliciesRequestSchema>;
 export type SavePaymentMethodsRequest = z.infer<typeof SavePaymentMethodsRequestSchema>;
-export type SaveDomesticShippingRequest = z.infer<typeof SaveDomesticShippingRequestSchema>;
-export type SaveInternationalShippingRequest = z.infer<typeof SaveInternationalShippingRequestSchema>;
-export type SaveProcessingTimesRequest = z.infer<typeof SaveProcessingTimesRequestSchema>;
+export type SaveShippingMethodRequest = z.infer<typeof SaveShippingMethodRequestSchema>;
+export type SaveShippingProcessingTimesRequest = z.infer<typeof SaveShippingProcessingTimesRequestSchema>;
 export type SaveShippingPoliciesRequest = z.infer<typeof SaveShippingPoliciesRequestSchema>;
-export type SaveCustomPoliciesRequest = z.infer<typeof SaveCustomPoliciesRequestSchema>;
+export type SaveShippingCustomPoliciesRequest = z.infer<typeof SaveShippingCustomPoliciesRequestSchema>;

@@ -59,22 +59,30 @@ export const ShopPaymentSchema = z.object({
 });
 
 // Shop Shipping schemas
-export const DomesticShippingSchema = z.object({
+export const BaseShippingMethodSchema = z.object({
+  name: z.string(),
   description: z.string(),
   processingTime: z.string(),
   estimatedDelivery: z.string(),
-  cost: z.number().optional(),
-  restrictions: z.array(z.string()).optional(),
+  baseRate: z.number(),
+  isActive: z.boolean().default(true),
+  // For different regions/provinces
+  areas: z
+    .array(
+      z.object({
+        name: z.string(),
+        additionalFee: z.number(),
+        additionalTime: z.string().optional(),
+      })
+    )
+    .optional(),
+  conditions: z.array(z.string()).optional(),
   notes: z.string().optional(),
 });
 
-export const InternationalShippingSchema = z.object({
-  description: z.string(),
-  processingTime: z.string(),
-  estimatedDelivery: z.string(),
-  cost: z.number().optional(),
-  restrictions: z.array(z.string()).optional(),
-  notes: z.string().optional(),
+export const ShippingMethodSchema = z.object({
+  domestic: BaseShippingMethodSchema,
+  international: BaseShippingMethodSchema,
 });
 
 export const ProcessingTimesSchema = z.object({
@@ -84,35 +92,43 @@ export const ProcessingTimesSchema = z.object({
   customRules: z
     .array(
       z.object({
-        condition: z.string(),
+        name: z.string(),
         time: z.string(),
+        description: z.string(),
       })
     )
     .optional(),
 });
 
 export const ShippingPoliciesSchema = z.object({
-  description: z.string(),
-  processingTime: z.string(),
-  estimatedDelivery: z.string(),
-  cost: z.number().optional(),
-  restrictions: z.array(z.string()).optional(),
-  notes: z.string().optional(),
+  general: z.string(),
+  domestic: z.object({
+    deliveryGuarantees: z.array(z.string()),
+    restrictions: z.array(z.string()),
+    returnPolicy: z.string(),
+    isActive: z.boolean(),
+  }),
+  international: z.object({
+    customsClearance: z.array(z.string()),
+    restrictions: z.array(z.string()),
+    returnPolicy: z.string(),
+    isActive: z.boolean(),
+  }),
 });
 
 export const CustomPoliciesSchema = z.object({
   name: z.string(),
   description: z.string(),
   conditions: z.array(z.string()),
-  cost: z.number().optional(),
+  fee: z.number().optional(),
+  additionalTime: z.string().optional(),
   isActive: z.boolean(),
 });
 
 export const ShopShippingSchema = z.object({
-  domesticShipping: DomesticShippingSchema,
-  internationalShipping: InternationalShippingSchema,
+  shippingMethods: ShippingMethodSchema,
   processingTimes: ProcessingTimesSchema,
-  shippingPolicies: z.record(z.string(), ShippingPoliciesSchema).default({}),
+  shippingPolicies: ShippingPoliciesSchema,
   customPolicies: z.array(CustomPoliciesSchema).default([]),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -131,12 +147,15 @@ export const DEFAULT_PAYMENT_POLICIES = {
   partialPaymentAllowed: false,
 };
 
-export const DEFAULT_SHIPPING = {
+export const DEFAULT_SHIPPING_METHOD = {
+  name: "",
   description: "",
   processingTime: "",
   estimatedDelivery: "",
-  cost: 0,
-  restrictions: [],
+  baseRate: 0,
+  isActive: true,
+  areas: [],
+  conditions: [],
   notes: "",
 };
 export const DEFAULT_PROCESSING_TIMES = {
@@ -144,6 +163,21 @@ export const DEFAULT_PROCESSING_TIMES = {
   regular: "",
   express: "",
   customRules: [],
+};
+export const DEFAULT_SHIPPING_POLICIES = {
+  general: "",
+  domestic: {
+    deliveryGuarantees: [],
+    restrictions: [],
+    returnPolicy: "",
+    isActive: true,
+  },
+  international: {
+    customsClearance: [],
+    restrictions: [],
+    returnPolicy: "",
+    isActive: true,
+  },
 };
 
 // Type exports
@@ -154,8 +188,8 @@ export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;
 export type DeadlineSettings = z.infer<typeof DeadlineSettingsSchema>;
 export type PaymentPolicies = z.infer<typeof PaymentPoliciesSchema>;
 export type ShopPayment = z.infer<typeof ShopPaymentSchema>;
-export type DomesticShipping = z.infer<typeof DomesticShippingSchema>;
-export type InternationalShipping = z.infer<typeof InternationalShippingSchema>;
+export type BaseShippingMethod = z.infer<typeof BaseShippingMethodSchema>;
+export type ShippingMethod = z.infer<typeof ShippingMethodSchema>;
 export type ProcessingTimes = z.infer<typeof ProcessingTimesSchema>;
 export type ShippingPolicies = z.infer<typeof ShippingPoliciesSchema>;
 export type CustomPolicies = z.infer<typeof CustomPoliciesSchema>;

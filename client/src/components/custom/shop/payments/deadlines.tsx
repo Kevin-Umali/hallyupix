@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
 import FieldInfo from "@/components/custom/field-info";
 
 import { useSaveShopPaymentDeadlineSettingsMutation, SaveShopPaymentDeadlineSettingsRequest } from "@/lib/mutation/shop.mutation";
@@ -13,6 +12,7 @@ import { DeadlineSettings } from "@/shared/types/shop.types";
 import { SaveDeadlineSettingsRequestSchema } from "@/shared/types/shop.requests";
 import { useQueryClient } from "@tanstack/react-query";
 import { ShopPaymentResponse } from "@/lib/queries/shop.queries";
+import { useRouter } from "@tanstack/react-router";
 
 interface DeadlineFormProps {
   deadlineSettings?: Partial<DeadlineSettings>;
@@ -20,6 +20,7 @@ interface DeadlineFormProps {
 
 export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ deadlineSettings }) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { mutateAsync: saveDeadlineSettings, isPending: isSaving } = useSaveShopPaymentDeadlineSettingsMutation();
 
@@ -46,11 +47,8 @@ export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ deadlineSettings })
                 deadlineSettings: value,
               };
             });
-            toast.success("Deadline settings updated successfully!");
-          },
-          onError: (error) => {
-            toast.error(error.code || "Failed to update deadline settings", {
-              description: error.message || "Something went wrong",
+            router.invalidate({
+              filter: (route) => route.routeId === "/_authenticated/shop/payments",
             });
           },
         }

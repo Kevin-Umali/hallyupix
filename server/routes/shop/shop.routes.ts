@@ -2,14 +2,13 @@ import { createRoute } from "@hono/zod-openapi";
 import { DEFAULT_RESPONSES, ApiResponseSchema } from "../../../shared/types/api.types";
 import { ShopPaymentSchema, ShopProfileSchema, ShopShippingSchema } from "../../../shared/types/shop.types";
 import {
-  SaveCustomPoliciesRequestSchema,
+  SaveShippingCustomPoliciesRequestSchema,
   SaveDeadlineSettingsRequestSchema,
-  SaveDomesticShippingRequestSchema,
-  SaveInternationalShippingRequestSchema,
+  SaveShippingMethodRequestSchema,
   SavePaymentInstructionsRequestSchema,
   SavePaymentMethodsRequestSchema,
   SavePaymentPoliciesRequestSchema,
-  SaveProcessingTimesRequestSchema,
+  SaveShippingProcessingTimesRequestSchema,
   SaveShippingPoliciesRequestSchema,
   SaveShopProfileRequestSchema,
   UpdateProfileImageRequestSchema,
@@ -185,33 +184,16 @@ export const getShopShipping = createRoute({
   },
 });
 
-export const saveShopShippingDomestic = createRoute({
+export const saveShopShippingMethod = createRoute({
   method: "patch",
-  path: "/shipping/domestic",
-  summary: "Save domestic shipping information",
-  description: "Save domestic shipping information",
+  path: "/shipping/method",
+  summary: "Save shipping method",
+  description: "Save shipping method",
   request: {
     body: {
       content: {
         "application/json": {
-          schema: SaveDomesticShippingRequestSchema,
-        },
-      },
-    },
-  },
-  responses: DEFAULT_RESPONSES,
-});
-
-export const saveShopShippingInternational = createRoute({
-  method: "patch",
-  path: "/shipping/international",
-  summary: "Save international shipping information",
-  description: "Save international shipping information",
-  request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: SaveInternationalShippingRequestSchema,
+          schema: SaveShippingMethodRequestSchema,
         },
       },
     },
@@ -221,14 +203,14 @@ export const saveShopShippingInternational = createRoute({
 
 export const saveShopShippingProcessingTimes = createRoute({
   method: "patch",
-  path: "/shipping/processing-times",
+  path: "/shipping/processing",
   summary: "Save processing times",
   description: "Save processing times",
   request: {
     body: {
       content: {
         "application/json": {
-          schema: SaveProcessingTimesRequestSchema,
+          schema: SaveShippingProcessingTimesRequestSchema,
         },
       },
     },
@@ -262,7 +244,7 @@ export const saveShopShippingCustomPolicies = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: SaveCustomPoliciesRequestSchema,
+          schema: SaveShippingCustomPoliciesRequestSchema,
         },
       },
     },
@@ -271,8 +253,7 @@ export const saveShopShippingCustomPolicies = createRoute({
 });
 
 export type GetShopShipping = typeof getShopShipping;
-export type SaveShopShippingDomestic = typeof saveShopShippingDomestic;
-export type SaveShopShippingInternational = typeof saveShopShippingInternational;
+export type SaveShopShippingMethod = typeof saveShopShippingMethod;
 export type SaveShopShippingProcessingTimes = typeof saveShopShippingProcessingTimes;
 export type SaveShopShippingPolicies = typeof saveShopShippingPolicies;
-export type saveShopShippingCustomPolicies = typeof saveShopShippingCustomPolicies;
+export type SaveShopShippingCustomPolicies = typeof saveShopShippingCustomPolicies;

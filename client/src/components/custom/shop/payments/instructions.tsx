@@ -2,7 +2,6 @@
 import { useForm } from "@tanstack/react-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import FieldInfo from "@/components/custom/field-info";
 import RichEditor from "@/components/custom/editor/rich-editor";
 import { useSaveShopPaymentInstructionsMutation, SaveShopPaymentInstructionsRequest } from "@/lib/mutation/shop.mutation";
@@ -10,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import { SavePaymentInstructionsRequestSchema } from "@/shared/types/shop.requests";
 import { useQueryClient } from "@tanstack/react-query";
 import { ShopPaymentResponse } from "@/lib/queries/shop.queries";
+import { useRouter } from "@tanstack/react-router";
 
 interface InstructionsFormProps {
   paymentInstructions?: string | null;
@@ -17,6 +17,7 @@ interface InstructionsFormProps {
 
 export const InstructionsForm: React.FC<InstructionsFormProps> = ({ paymentInstructions }) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { mutateAsync: savePaymentInstructions, isPending: isSaving } = useSaveShopPaymentInstructionsMutation();
 
@@ -27,7 +28,6 @@ export const InstructionsForm: React.FC<InstructionsFormProps> = ({ paymentInstr
     onSubmit: async ({ value }) => {
       await savePaymentInstructions(value, {
         onSuccess: () => {
-          toast.success("Payment instructions updated successfully!");
           queryClient.setQueryData<ShopPaymentResponse>(["shop-payment"], (oldData) => {
             if (!oldData) return undefined;
 
@@ -36,10 +36,8 @@ export const InstructionsForm: React.FC<InstructionsFormProps> = ({ paymentInstr
               paymentInstructions: value.paymentInstructions,
             };
           });
-        },
-        onError: (error) => {
-          toast.error(error.code || "Failed to update payment instructions", {
-            description: error.message || "Something went wrong",
+          router.invalidate({
+            filter: (route) => route.routeId === "/_authenticated/shop/payments",
           });
         },
       });

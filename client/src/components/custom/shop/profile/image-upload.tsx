@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Store, Trash2, Loader2 } from "lucide-react";
 import CloudinaryImageUploader from "@/components/custom/cloudinary-image-uploader";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useDeleteImageMutation } from "@/lib/mutation/cloudinary.mutation";
 import { useUpdateProfileImageMutation } from "@/lib/mutation/shop.mutation";
@@ -52,21 +51,9 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ type, currentIm
                 router.invalidate({
                   filter: (route) => route.routeId === "/_authenticated/shop/profile",
                 });
-
-                toast.success("Image deleted successfully");
-              },
-              onError: (error) => {
-                toast.error("Failed to update profile", {
-                  description: error.message ?? "Unknown error occurred",
-                });
               },
             }
           );
-        },
-        onError: (error) => {
-          toast.error("Failed to delete image", {
-            description: error.message ?? "Unknown error occurred",
-          });
         },
         onSettled: () => {
           setDeletingId(null);
@@ -97,13 +84,6 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ type, currentIm
               filter: (route) => {
                 return route.routeId === "/_authenticated/shop/profile";
               },
-            });
-
-            toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} image updated successfully`);
-          },
-          onError: (error) => {
-            toast.error(error.code, {
-              description: error.message ?? "Unknown error occurred",
             });
           },
           onSettled: () => {

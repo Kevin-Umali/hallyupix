@@ -11,6 +11,7 @@ import { useSaveShopPaymentMethodsMutation, SaveShopPaymentMethodsRequest } from
 import { useGetSignedUrlMutation } from "@/lib/mutation/cloudinary.mutation";
 import { SavePaymentMethodsRequestSchema } from "@/shared/types/shop.requests";
 import { ShopPaymentResponse } from "@/lib/queries/shop.queries";
+import { useRouter } from "@tanstack/react-router";
 
 interface PaymentMethodFormProps {
   paymentMethodsData?: Partial<PaymentMethod>[];
@@ -18,6 +19,7 @@ interface PaymentMethodFormProps {
 
 export const PaymentMethodsForm: React.FC<PaymentMethodFormProps> = ({ paymentMethodsData }) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { mutateAsync: savePaymentMethods, isPending: isSaving } = useSaveShopPaymentMethodsMutation();
   const { mutateAsync: getSignedUrl, isPending: isGettingSignedUrl } = useGetSignedUrlMutation();
@@ -87,7 +89,6 @@ export const PaymentMethodsForm: React.FC<PaymentMethodFormProps> = ({ paymentMe
           { paymentMethods: updatedMethods },
           {
             onSuccess: () => {
-              toast.success("Payment methods updated successfully");
               queryClient.setQueryData<ShopPaymentResponse>(["shop-payment"], (oldData) => {
                 if (!oldData) return undefined;
 
@@ -96,10 +97,8 @@ export const PaymentMethodsForm: React.FC<PaymentMethodFormProps> = ({ paymentMe
                   paymentMethods: updatedMethods,
                 };
               });
-            },
-            onError: (error) => {
-              toast.error(error.code || "Failed to update payment methods", {
-                description: error.message || "Something went wrong",
+              router.invalidate({
+                filter: (route) => route.routeId === "/_authenticated/shop/payments",
               });
             },
           }

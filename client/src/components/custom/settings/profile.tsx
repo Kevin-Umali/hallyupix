@@ -97,11 +97,11 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
   });
 
   const handleResendVerification = async () => {
-    try {
-      toast.success("Verification email sent!");
-    } catch (error) {
-      toast.error("Failed to send verification email");
-    }
+    // try {
+    //   toast.success("Verification email sent!");
+    // } catch (error) {
+    //   toast.error("Failed to send verification email");
+    // }
   };
 
   const handleImageUpload = async (urls: { url: string; publicId: string }[]) => {
