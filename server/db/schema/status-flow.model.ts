@@ -1,5 +1,5 @@
 // seller-status-flows.model.ts
-import { pgTable, serial, text, jsonb, timestamp, index, boolean } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, jsonb, timestamp, index } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { users } from "./users.model";
 import { z } from "zod";
@@ -29,10 +29,12 @@ export const selectSellerStatusFlowSchema = createSelectSchema(sellerStatusFlows
   paymentVerification: PaymentVerificationSchema,
 });
 export const insertSellerStatusFlowSchema = createInsertSchema(sellerStatusFlows, {
-  allowedTransitions: z.array(z.string()),
   paymentVerification: PaymentVerificationSchema,
+}).omit({
+  allowedTransitions: true,
 });
 export const updateSellerStatusFlowSchema = createUpdateSchema(sellerStatusFlows, {
-  allowedTransitions: z.array(z.string()),
   paymentVerification: PaymentVerificationSchema,
+}).omit({
+  allowedTransitions: true,
 });

@@ -7,12 +7,14 @@ import InstructionsForm from "@/components/custom/shop/payments/instructions";
 import DeadlinesForm from "@/components/custom/shop/payments/deadlines";
 import PoliciesForm from "@/components/custom/shop/payments/policies";
 import { ShopPayment } from "@/shared/types/shop.types";
+import CustomLoader from "@/components/custom/custom-loader";
 
 interface ShopPaymentSettingsProps {
   initialData: Partial<ShopPayment>;
+  isLoading: boolean;
 }
 
-export const ShopPaymentSettings = ({ initialData }: ShopPaymentSettingsProps) => {
+export const ShopPaymentSettings: React.FC<ShopPaymentSettingsProps> = ({ initialData, isLoading }) => {
   return (
     <div className="mx-auto w-full max-w-screen-xl space-y-8 p-6">
       <div className="flex flex-col space-y-1">
@@ -39,18 +41,26 @@ export const ShopPaymentSettings = ({ initialData }: ShopPaymentSettingsProps) =
             <span>Policies</span>
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="methods">
-          <PaymentMethodsForm paymentMethodsData={initialData.paymentMethods} />
-        </TabsContent>
-        <TabsContent value="instructions">
-          <InstructionsForm paymentInstructions={initialData.paymentInstructions} />
-        </TabsContent>
-        <TabsContent value="deadlines">
-          <DeadlinesForm deadlineSettings={initialData.deadlineSettings} />
-        </TabsContent>
-        <TabsContent value="policies">
-          <PoliciesForm policies={initialData.paymentPolicies} customPolicies={initialData.customPolicies} />
-        </TabsContent>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-[200px]">
+            <CustomLoader text="Loading payment settings..." />
+          </div>
+        ) : (
+          <>
+            <TabsContent value="methods">
+              <PaymentMethodsForm paymentMethodsData={initialData.paymentMethods} />
+            </TabsContent>
+            <TabsContent value="instructions">
+              <InstructionsForm paymentInstructions={initialData.paymentInstructions} />
+            </TabsContent>
+            <TabsContent value="deadlines">
+              <DeadlinesForm deadlineSettings={initialData.deadlineSettings} />
+            </TabsContent>
+            <TabsContent value="policies">
+              <PoliciesForm policies={initialData.paymentPolicies} customPolicies={initialData.customPolicies} />
+            </TabsContent>
+          </>
+        )}
       </Tabs>
     </div>
   );

@@ -434,7 +434,7 @@ export const NAV_ITEMS = [
     description: "Customize order status workflows",
     subItems: [
       { title: "Status Flows", to: "/status-flows", icon: ScrollText },
-      { title: "Flow Templates", to: "/status-flows/templates", icon: FileStack },
+      { title: "Flow Allowed Transitions", to: "/status-flows/transitions", icon: FileStack },
       { title: "Tracking Setup", to: "/status-flows/tracking", icon: TrendingUp },
     ],
   },
@@ -586,10 +586,8 @@ const DEFAULT_PAYMENT_VERIFICATION = {
 const DEFAULT_STATUS_FLOWS = [
   {
     id: undefined,
-    tempId: "temp-1",
     name: "New Order",
     order: 1,
-    allowedTransitions: [],
     paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
     color: COLORS[0].value,
     createdAt: new Date().toISOString(),
@@ -598,10 +596,8 @@ const DEFAULT_STATUS_FLOWS = [
   },
   {
     id: undefined,
-    tempId: "temp-2",
     name: "Pending Payment",
     order: 2,
-    allowedTransitions: [],
     paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
     color: COLORS[1].value,
     createdAt: new Date().toISOString(),
@@ -610,10 +606,8 @@ const DEFAULT_STATUS_FLOWS = [
   },
   {
     id: undefined,
-    tempId: "temp-3",
     name: "Processing",
     order: 3,
-    allowedTransitions: [],
     paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
     color: COLORS[2].value,
     createdAt: new Date().toISOString(),
@@ -622,10 +616,8 @@ const DEFAULT_STATUS_FLOWS = [
   },
   {
     id: undefined,
-    tempId: "temp-4",
     name: "Completed",
     order: 4,
-    allowedTransitions: [],
     paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
     color: COLORS[3].value,
     createdAt: new Date().toISOString(),

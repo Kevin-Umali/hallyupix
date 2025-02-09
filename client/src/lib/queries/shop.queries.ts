@@ -6,7 +6,7 @@ const createShopQuery = <TResponse>(key: string[], queryFn: () => Promise<TRespo
   queryOptions({
     queryKey: key,
     queryFn,
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 5,
   });
 
 // Query options

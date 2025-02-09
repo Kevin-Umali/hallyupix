@@ -15,12 +15,14 @@ import { ShopProfileResponse } from "@/lib/queries/shop.queries";
 import { ShopProfile } from "@/shared/types/shop.types";
 import { SaveShopProfileRequestSchema } from "@/shared/types/shop.requests";
 import { createImageData } from "@/lib/utils";
+import CustomLoader from "@/components/custom/custom-loader";
 
 export interface ShopProfileSettingsProps {
   initialData: Partial<ShopProfile>;
+  isLoading: boolean;
 }
 
-const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
+const ShopProfileSettings: React.FC<ShopProfileSettingsProps> = ({ initialData, isLoading }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { mutateAsync: saveProfile, isPending: isSaving } = useSaveProfileMutation();
@@ -69,84 +71,90 @@ const ShopProfileSettings = ({ initialData }: ShopProfileSettingsProps) => {
         <Separator className="my-4" />
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-12">
-        {/* Left Column */}
-        <div className="space-y-6 lg:col-span-4">
-          {/* Overview Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Overview</CardTitle>
-              <CardDescription>Your shop&apos;s account details</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Verification Status</span>
-                  <Badge variant={initialData.isVerified ? "default" : "destructive"}>{initialData.isVerified ? "Verified" : "Unverified"}</Badge>
+      {isLoading ? (
+        <div className="flex items-center justify-center h-[200px]">
+          <CustomLoader text="Loading profile settings..." />
+        </div>
+      ) : (
+        <div className="grid gap-8 lg:grid-cols-12">
+          {/* Left Column */}
+          <div className="space-y-6 lg:col-span-4">
+            {/* Overview Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Overview</CardTitle>
+                <CardDescription>Your shop&apos;s account details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Verification Status</span>
+                    <Badge variant={initialData.isVerified ? "default" : "destructive"}>{initialData.isVerified ? "Verified" : "Unverified"}</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Member Since</span>
+                    <span className="text-sm">{new Date().toLocaleDateString()}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Member Since</span>
-                  <span className="text-sm">{new Date().toLocaleDateString()}</span>
-                </div>
+              </CardContent>
+            </Card>
+
+            {/* Banner Image */}
+            <ImageUploadSection type="banner" currentImage={createImageData(initialData.bannerImage)} />
+
+            {/* Profile Image */}
+            <ImageUploadSection type="profile" currentImage={createImageData(initialData.profileImage)} />
+          </div>
+
+          {/* Right Column */}
+          <div className="lg:col-span-8">
+            {!initialData.isVerified && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertDescription className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <span>Your shop is not verified. Complete your profile to request verification.</span>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                form.handleSubmit();
+              }}
+              className="space-y-6"
+            >
+              {/* Shop Information Section */}
+              <ShopInformation form={form} />
+
+              {/* Social Links Section */}
+              <SocialLinksSection form={form} />
+
+              <div className="flex justify-end gap-4">
+                <Button variant="outline" type="button" onClick={() => form.reset()} disabled={isSaving}>
+                  Cancel
+                </Button>
+                <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+                  {([canSubmit, isSubmitting, isValidating]) => (
+                    <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isSaving}>
+                      {isSubmitting || isSaving ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Saving Changes...
+                        </>
+                      ) : (
+                        "Save Changes"
+                      )}
+                    </Button>
+                  )}
+                </form.Subscribe>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Banner Image */}
-          <ImageUploadSection type="banner" currentImage={createImageData(initialData.bannerImage)} />
-
-          {/* Profile Image */}
-          <ImageUploadSection type="profile" currentImage={createImageData(initialData.profileImage)} />
+            </form>
+          </div>
         </div>
-
-        {/* Right Column */}
-        <div className="lg:col-span-8">
-          {!initialData.isVerified && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertDescription className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>Your shop is not verified. Complete your profile to request verification.</span>
-                </div>
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit();
-            }}
-            className="space-y-6"
-          >
-            {/* Shop Information Section */}
-            <ShopInformation form={form} />
-
-            {/* Social Links Section */}
-            <SocialLinksSection form={form} />
-
-            <div className="flex justify-end gap-4">
-              <Button variant="outline" type="button" onClick={() => form.reset()} disabled={isSaving}>
-                Cancel
-              </Button>
-              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
-                {([canSubmit, isSubmitting, isValidating]) => (
-                  <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating || isSaving}>
-                    {isSubmitting || isSaving ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Saving Changes...
-                      </>
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </Button>
-                )}
-              </form.Subscribe>
-            </div>
-          </form>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

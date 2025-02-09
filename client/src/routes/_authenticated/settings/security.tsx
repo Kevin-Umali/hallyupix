@@ -14,9 +14,16 @@ function RouteComponent() {
   const { auth } = useRouteContext({
     strict: false,
   });
-  const { data: sessionList, isPending: isLoadingSessions } = useSuspenseQuery(getSessionListQueryOptions());
+  const { data: sessionList, isPending: isLoadingSessions, dataUpdatedAt } = useSuspenseQuery(getSessionListQueryOptions());
 
   const currentSession = auth?.currentSession ?? null;
 
-  return <SecuritySettings currentSession={currentSession} sessionList={sessionList?.data ?? []} isLoadingSessions={isLoadingSessions} />;
+  return (
+    <SecuritySettings
+      key={`security-settings-${dataUpdatedAt}`}
+      currentSession={currentSession}
+      sessionList={sessionList?.data ?? []}
+      isLoadingSessions={isLoadingSessions}
+    />
+  );
 }

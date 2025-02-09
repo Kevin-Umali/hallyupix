@@ -6,13 +6,15 @@ import ProcessingForm from "@/components/custom/shop/shipping/processing";
 import ShippingMethodForm from "@/components/custom/shop/shipping/method";
 import ShippingPoliciesForm from "@/components/custom/shop/shipping/policies";
 import { ShopShipping } from "@/shared/types/shop.types";
-import ShippingCustomPolicies from "./custom-policies";
+import ShippingCustomPolicies from "@/components/custom/shop/shipping/custom-policies";
+import CustomLoader from "@/components/custom/custom-loader";
 
 interface ShopShippingSettingsProps {
   initialData: Partial<ShopShipping>;
+  isLoading: boolean;
 }
 
-const ShopShippingSettings: React.FC<ShopShippingSettingsProps> = ({ initialData }) => {
+const ShopShippingSettings: React.FC<ShopShippingSettingsProps> = ({ initialData, isLoading }) => {
   return (
     <div className="mx-auto w-full max-w-screen-xl space-y-8 p-6">
       <div className="flex flex-col space-y-1">
@@ -39,19 +41,26 @@ const ShopShippingSettings: React.FC<ShopShippingSettingsProps> = ({ initialData
             <span>Custom</span>
           </TabsTrigger>
         </TabsList>
-
-        <TabsContent value="processing">
-          <ProcessingForm processingTimes={initialData.processingTimes} />
-        </TabsContent>
-        <TabsContent value="methods">
-          <ShippingMethodForm shippingMethod={initialData.shippingMethods} />
-        </TabsContent>
-        <TabsContent value="policies">
-          <ShippingPoliciesForm policies={initialData.shippingPolicies} />
-        </TabsContent>
-        <TabsContent value="custom">
-          <ShippingCustomPolicies customPolicies={initialData.customPolicies} />
-        </TabsContent>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-[200px]">
+            <CustomLoader text="Loading shipping settings..." />
+          </div>
+        ) : (
+          <>
+            <TabsContent value="processing">
+              <ProcessingForm processingTimes={initialData.processingTimes} />
+            </TabsContent>
+            <TabsContent value="methods">
+              <ShippingMethodForm shippingMethod={initialData.shippingMethods} />
+            </TabsContent>
+            <TabsContent value="policies">
+              <ShippingPoliciesForm policies={initialData.shippingPolicies} />
+            </TabsContent>
+            <TabsContent value="custom">
+              <ShippingCustomPolicies customPolicies={initialData.customPolicies} />
+            </TabsContent>
+          </>
+        )}
       </Tabs>
     </div>
   );

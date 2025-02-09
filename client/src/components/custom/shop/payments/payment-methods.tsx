@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Plus, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import PaymentMethodItem from "./payment-method-item";
+import PaymentMethodItem from "@/components/custom/shop/payments/payment-method-item";
 import { PaymentMethod } from "@/shared/types/shop.types";
 import { useSaveShopPaymentMethodsMutation, SaveShopPaymentMethodsRequest } from "@/lib/mutation/shop.mutation";
 import { useGetSignedUrlMutation } from "@/lib/mutation/cloudinary.mutation";

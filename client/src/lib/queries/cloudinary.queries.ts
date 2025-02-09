@@ -6,6 +6,7 @@ const createSignedUrlQuery = <TResponse>(key: string[], queryFn: () => Promise<T
   queryOptions({
     queryKey: key,
     queryFn,
+    staleTime: 1000 * 60 * 5,
   });
 
 export type GetSignedUrlResponse = APIInferResponseType<typeof api.cloudinary.signed.url.$get, 200>["data"] | null;

@@ -47,9 +47,12 @@ export const saveStatusFlows: HonoRouteHandler<SaveStatusFlows> = async (c) => {
   const { flows } = c.req.valid("json");
   const userId = c.get("user")?.id ?? "";
 
-  await db.transaction(async (trx) => {
+  const statusFlows = await db.transaction(async (trx) => {
+    const updatedOrInsertedRecords = [];
+
     for (const flow of flows) {
       if (flow.id) {
+        // Validate data before updating
         const { success, data: parsedData } = await updateSellerStatusFlowSchema.safeParseAsync({
           ...flow,
           sellerId: userId,
@@ -59,8 +62,28 @@ export const saveStatusFlows: HonoRouteHandler<SaveStatusFlows> = async (c) => {
           throw new CustomHTTPException(400, { code: "BAD_REQUEST", message: "Invalid data, please check the data" });
         }
 
-        await trx.update(sellerStatusFlows).set(parsedData).where(eq(sellerStatusFlows.sellerId, userId));
+        const { sellerId: _, ...rest } = parsedData;
+
+        // Perform update and store updated record
+        await trx
+          .update(sellerStatusFlows)
+          .set(rest)
+          .where(and(eq(sellerStatusFlows.sellerId, userId), eq(sellerStatusFlows.id, flow.id)));
+
+        // Fetch updated record
+        const updatedFlow = await trx
+          .select()
+          .from(sellerStatusFlows)
+          .where(and(eq(sellerStatusFlows.sellerId, userId), eq(sellerStatusFlows.id, flow.id)))
+          .limit(1);
+
+        if (updatedFlow.length) {
+          updatedOrInsertedRecords.push(updatedFlow[0]);
+        }
       } else {
+        console.log("insert");
+
+        // Validate data before inserting
         const { success, data: parsedData } = await insertSellerStatusFlowSchema.safeParseAsync({
           ...flow,
           sellerId: userId,
@@ -70,15 +93,28 @@ export const saveStatusFlows: HonoRouteHandler<SaveStatusFlows> = async (c) => {
           throw new CustomHTTPException(400, { code: "BAD_REQUEST", message: "Invalid data, please check the data" });
         }
 
-        await trx.insert(sellerStatusFlows).values(parsedData);
+        // Perform insert and store inserted record
+        const insertedFlow = await trx.insert(sellerStatusFlows).values(parsedData).returning();
+
+        if (insertedFlow.length) {
+          updatedOrInsertedRecords.push(insertedFlow[0]);
+        }
       }
     }
+
+    return updatedOrInsertedRecords.length > 0
+      ? updatedOrInsertedRecords
+      : await trx.select().from(sellerStatusFlows).where(eq(sellerStatusFlows.sellerId, userId));
   });
+
+  const result = selectSellerStatusFlowSchema.array().parse(statusFlows);
+  const dataWithoutIds = result.map(({ sellerId: _, ...rest }) => rest);
 
   return c.json(
     {
       data: {
         status: true,
+        flows: dataWithoutIds,
       },
     },
     200

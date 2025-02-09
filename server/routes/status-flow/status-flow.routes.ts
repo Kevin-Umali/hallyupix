@@ -6,7 +6,7 @@ import { SaveStatusFlowsRequestSchema } from "../../../shared/types/status-flow.
 
 export const getStatusFlows = createRoute({
   method: "get",
-  path: "/status/flows",
+  path: "/",
   summary: "Get all status flows",
   description: "Returns all status flows.",
   request: {},
@@ -29,7 +29,7 @@ export const getStatusFlows = createRoute({
 
 export const deleteStatusFlow = createRoute({
   method: "delete",
-  path: "/status/flows",
+  path: "/",
   summary: "Delete status flow",
   description: "Delete status flow.",
   request: {
@@ -48,7 +48,7 @@ export const deleteStatusFlow = createRoute({
 
 export const saveStatusFlows = createRoute({
   method: "patch",
-  path: "/status/flows",
+  path: "/",
   summary: "Save status flows",
   description: "Save status flows.",
   request: {
@@ -60,8 +60,40 @@ export const saveStatusFlows = createRoute({
       },
     },
   },
-  responses: DEFAULT_RESPONSES,
+  responses: {
+    ...DEFAULT_RESPONSES,
+    200: {
+      content: {
+        "application/json": {
+          schema: ApiResponseSchema(
+            z.object({
+              status: z.boolean(),
+              flows: z.array(StatusFlowSchema),
+            })
+          ),
+        },
+      },
+      description: "Status flows",
+    },
+  },
 });
+
+// export const saveStatusFlowAllowedTransitions = createRoute({
+//   method: "patch",
+//   path: "/transitions",
+//   summary: "Save status flow allowed transitions",
+//   description: "Save status flow allowed transitions.",
+//   request: {
+//     body: {
+//       content: {
+//         "application/json": {
+//           schema: SaveStatusFlowAllowedTransitionsRequestSchema,
+//         },
+//       },
+//     },
+//   },
+//   responses: DEFAULT_RESPONSES,
+// });
 
 export type GetStatusFlows = typeof getStatusFlows;
 export type DeleteStatusFlow = typeof deleteStatusFlow;

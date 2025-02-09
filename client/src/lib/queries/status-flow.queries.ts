@@ -6,8 +6,8 @@ const createStatusFlowQuery = <TResponse>(key: string[], queryFn: () => Promise<
   queryOptions({
     queryKey: key,
     queryFn,
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 5,
   });
 
 export type StatusFlowResponse = APIInferResponseType<typeof api.status.flows.$get, 200>["data"] | null;
-export const gettatusFlowQueryOptions = () => createStatusFlowQuery(["status-flow"], createQueryFn<StatusFlowResponse>(api.status.flows.$get));
+export const getStatusFlowQueryOptions = () => createStatusFlowQuery(["status-flow"], createQueryFn<StatusFlowResponse>(api.status.flows.$get));

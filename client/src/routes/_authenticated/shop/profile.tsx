@@ -1,21 +1,16 @@
 import ShopProfileSettings from "@/components/custom/shop/profile/profile";
 import { getShopProfileQueryOptions } from "@/lib/queries/shop.queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/shop/profile")({
   loader: async ({ context }) => {
-    const result = await context.queryClient.ensureQueryData(getShopProfileQueryOptions());
-
-    return {
-      shopProfile: result,
-    };
+    await context.queryClient.ensureQueryData(getShopProfileQueryOptions());
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-   
-  const { shopProfile } = Route.useLoaderData();
-   
-  return <ShopProfileSettings initialData={shopProfile ?? {}} />;
+  const { data: shopProfile, isLoading, dataUpdatedAt } = useSuspenseQuery(getShopProfileQueryOptions());
+  return <ShopProfileSettings key={`shop-profile-${dataUpdatedAt}`} initialData={shopProfile ?? {}} isLoading={isLoading} />;
 }

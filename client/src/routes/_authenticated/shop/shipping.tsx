@@ -1,18 +1,16 @@
 import ShopShippingSettings from "@/components/custom/shop/shipping/shipping";
 import { getShopShippingQueryOptions } from "@/lib/queries/shop.queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/shop/shipping")({
   loader: async ({ context }) => {
-    const shopShipping = await context.queryClient.ensureQueryData(getShopShippingQueryOptions());
-    return { shopShipping };
+    await context.queryClient.ensureQueryData(getShopShippingQueryOptions());
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  /* eslint-disable react-hooks/rules-of-hooks */
-  const { shopShipping } = Route.useLoaderData();
-  /* eslint-enable react-hooks/rules-of-hooks */
+  const { data: shopShipping, isLoading } = useSuspenseQuery(getShopShippingQueryOptions());
   return <ShopShippingSettings initialData={shopShipping ?? {}} />;
 }
