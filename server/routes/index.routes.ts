@@ -6,6 +6,7 @@ import type { HonoOpenAPI } from "../lib/types";
 
 import cloudinaryRoutes from "./cloudinary/cloudinary.index";
 import shopRoutes from "./shop/shop.index";
+import statusFlowRoutes from "./status-flow/status-flow.index";
 
 export const registerRoutes = (app: HonoOpenAPI) => {
   return app
@@ -34,7 +35,8 @@ export const registerRoutes = (app: HonoOpenAPI) => {
       return auth.handler(c.req.raw);
     })
     .route("/cloudinary", cloudinaryRoutes)
-    .route("/shop", shopRoutes);
+    .route("/shop", shopRoutes)
+    .route("/status/flows", statusFlowRoutes);
 };
 
 export const router = registerRoutes(createRouter().basePath(BASE_PATH));

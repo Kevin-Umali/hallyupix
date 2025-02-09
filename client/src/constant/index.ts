@@ -433,8 +433,8 @@ export const NAV_ITEMS = [
     icon: LayoutTemplate,
     description: "Customize order status workflows",
     subItems: [
+      { title: "Status Flows", to: "/status-flows", icon: ScrollText },
       { title: "Flow Templates", to: "/status-flows/templates", icon: FileStack },
-      { title: "Status Rules", to: "/status-flows/rules", icon: ScrollText },
       { title: "Tracking Setup", to: "/status-flows/tracking", icon: TrendingUp },
     ],
   },
@@ -470,3 +470,174 @@ export const NAV_ITEMS = [
     ],
   },
 ];
+
+const COLORS = [
+  {
+    id: "red",
+    value: "bg-red-100 text-red-700 border-red-200",
+    label: "Red",
+  },
+  {
+    id: "yellow",
+    value: "bg-yellow-100 text-yellow-700 border-yellow-200",
+    label: "Yellow",
+  },
+  {
+    id: "green",
+    value: "bg-green-100 text-green-700 border-green-200",
+    label: "Green",
+  },
+  {
+    id: "blue",
+    value: "bg-blue-100 text-blue-700 border-blue-200",
+    label: "Blue",
+  },
+  {
+    id: "purple",
+    value: "bg-purple-100 text-purple-700 border-purple-200",
+    label: "Purple",
+  },
+  {
+    id: "pink",
+    value: "bg-pink-100 text-pink-700 border-pink-200",
+    label: "Pink",
+  },
+  {
+    id: "orange",
+    value: "bg-orange-100 text-orange-700 border-orange-200",
+    label: "Orange",
+  },
+  {
+    id: "gray",
+    value: "bg-gray-100 text-gray-700 border-gray-200",
+    label: "Gray",
+  },
+  {
+    id: "indigo",
+    value: "bg-indigo-100 text-indigo-700 border-indigo-200",
+    label: "Indigo",
+  },
+  {
+    id: "teal",
+    value: "bg-teal-100 text-teal-700 border-teal-200",
+    label: "Teal",
+  },
+  {
+    id: "cyan",
+    value: "bg-cyan-100 text-cyan-700 border-cyan-200",
+    label: "Cyan",
+  },
+  {
+    id: "lime",
+    value: "bg-lime-100 text-lime-700 border-lime-200",
+    label: "Lime",
+  },
+  {
+    id: "amber",
+    value: "bg-amber-100 text-amber-700 border-amber-200",
+    label: "Amber",
+  },
+  {
+    id: "emerald",
+    value: "bg-emerald-100 text-emerald-700 border-emerald-200",
+    label: "Emerald",
+  },
+  {
+    id: "sky",
+    value: "bg-sky-100 text-sky-700 border-sky-200",
+    label: "Sky",
+  },
+];
+
+const PAYMENT_INDICATORS = [
+  {
+    type: "requirePaymentProof",
+    color: "bg-green-500",
+    label: "Payment Proof Required",
+    description: "Customer must provide proof of payment",
+  },
+  {
+    type: "requireLSF",
+    color: "bg-blue-500",
+    label: "Local Shipping Fee Required",
+    description: "Local shipping fee must be paid",
+  },
+  {
+    type: "requireISF",
+    color: "bg-purple-500",
+    label: "International Shipping Fee Required",
+    description: "International shipping fee must be paid",
+  },
+  {
+    type: "requirePF",
+    color: "bg-orange-500",
+    label: "Packaging Fee Required",
+    description: "Packaging fee must be paid",
+  },
+];
+
+const DEFAULT_PAYMENT_VERIFICATION = {
+  requireLSF: false,
+  requireISF: false,
+  requirePF: false,
+  requirePaymentProof: false,
+};
+
+const DEFAULT_STATUS_FLOWS = [
+  {
+    id: undefined,
+    tempId: "temp-1",
+    name: "New Order",
+    order: 1,
+    allowedTransitions: [],
+    paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
+    color: COLORS[0].value,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    description: "",
+  },
+  {
+    id: undefined,
+    tempId: "temp-2",
+    name: "Pending Payment",
+    order: 2,
+    allowedTransitions: [],
+    paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
+    color: COLORS[1].value,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    description: "",
+  },
+  {
+    id: undefined,
+    tempId: "temp-3",
+    name: "Processing",
+    order: 3,
+    allowedTransitions: [],
+    paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
+    color: COLORS[2].value,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    description: "",
+  },
+  {
+    id: undefined,
+    tempId: "temp-4",
+    name: "Completed",
+    order: 4,
+    allowedTransitions: [],
+    paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
+    color: COLORS[3].value,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    description: "",
+  },
+];
+
+// 5. Final Export: STATUS_FLOW
+export const STATUS_FLOW = {
+  COLORS,
+  PAYMENT_INDICATORS,
+  DEFAULT_PAYMENT_VERIFICATION,
+  DEFAULT_STATUS_FLOWS,
+} as const;

@@ -19,10 +19,10 @@ import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthenticatedDashboardImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedStatusFlowsIndexImport } from './routes/_authenticated/status-flows/index'
 import { Route as AuthenticatedOrdersIndexImport } from './routes/_authenticated/orders/index'
 import { Route as AuthenticatedStatusFlowsTrackingImport } from './routes/_authenticated/status-flows/tracking'
 import { Route as AuthenticatedStatusFlowsTemplatesImport } from './routes/_authenticated/status-flows/templates'
-import { Route as AuthenticatedStatusFlowsRulesImport } from './routes/_authenticated/status-flows/rules'
 import { Route as AuthenticatedShopVerificationImport } from './routes/_authenticated/shop/verification'
 import { Route as AuthenticatedShopShippingImport } from './routes/_authenticated/shop/shipping'
 import { Route as AuthenticatedShopProfileImport } from './routes/_authenticated/shop/profile'
@@ -96,6 +96,13 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
+const AuthenticatedStatusFlowsIndexRoute =
+  AuthenticatedStatusFlowsIndexImport.update({
+    id: '/status-flows/',
+    path: '/status-flows/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
 const AuthenticatedOrdersIndexRoute = AuthenticatedOrdersIndexImport.update({
   id: '/orders/',
   path: '/orders/',
@@ -113,13 +120,6 @@ const AuthenticatedStatusFlowsTemplatesRoute =
   AuthenticatedStatusFlowsTemplatesImport.update({
     id: '/status-flows/templates',
     path: '/status-flows/templates',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-
-const AuthenticatedStatusFlowsRulesRoute =
-  AuthenticatedStatusFlowsRulesImport.update({
-    id: '/status-flows/rules',
-    path: '/status-flows/rules',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -404,13 +404,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedShopVerificationImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/status-flows/rules': {
-      id: '/_authenticated/status-flows/rules'
-      path: '/status-flows/rules'
-      fullPath: '/status-flows/rules'
-      preLoaderRoute: typeof AuthenticatedStatusFlowsRulesImport
-      parentRoute: typeof AuthenticatedImport
-    }
     '/_authenticated/status-flows/templates': {
       id: '/_authenticated/status-flows/templates'
       path: '/status-flows/templates'
@@ -430,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof AuthenticatedOrdersIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/status-flows/': {
+      id: '/_authenticated/status-flows/'
+      path: '/status-flows'
+      fullPath: '/status-flows'
+      preLoaderRoute: typeof AuthenticatedStatusFlowsIndexImport
       parentRoute: typeof AuthenticatedImport
     }
   }
@@ -455,10 +455,10 @@ interface AuthenticatedRouteChildren {
   AuthenticatedShopProfileRoute: typeof AuthenticatedShopProfileRoute
   AuthenticatedShopShippingRoute: typeof AuthenticatedShopShippingRoute
   AuthenticatedShopVerificationRoute: typeof AuthenticatedShopVerificationRoute
-  AuthenticatedStatusFlowsRulesRoute: typeof AuthenticatedStatusFlowsRulesRoute
   AuthenticatedStatusFlowsTemplatesRoute: typeof AuthenticatedStatusFlowsTemplatesRoute
   AuthenticatedStatusFlowsTrackingRoute: typeof AuthenticatedStatusFlowsTrackingRoute
   AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
+  AuthenticatedStatusFlowsIndexRoute: typeof AuthenticatedStatusFlowsIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -479,11 +479,11 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedShopProfileRoute: AuthenticatedShopProfileRoute,
   AuthenticatedShopShippingRoute: AuthenticatedShopShippingRoute,
   AuthenticatedShopVerificationRoute: AuthenticatedShopVerificationRoute,
-  AuthenticatedStatusFlowsRulesRoute: AuthenticatedStatusFlowsRulesRoute,
   AuthenticatedStatusFlowsTemplatesRoute:
     AuthenticatedStatusFlowsTemplatesRoute,
   AuthenticatedStatusFlowsTrackingRoute: AuthenticatedStatusFlowsTrackingRoute,
   AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
+  AuthenticatedStatusFlowsIndexRoute: AuthenticatedStatusFlowsIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -515,10 +515,10 @@ export interface FileRoutesByFullPath {
   '/shop/profile': typeof AuthenticatedShopProfileRoute
   '/shop/shipping': typeof AuthenticatedShopShippingRoute
   '/shop/verification': typeof AuthenticatedShopVerificationRoute
-  '/status-flows/rules': typeof AuthenticatedStatusFlowsRulesRoute
   '/status-flows/templates': typeof AuthenticatedStatusFlowsTemplatesRoute
   '/status-flows/tracking': typeof AuthenticatedStatusFlowsTrackingRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
+  '/status-flows': typeof AuthenticatedStatusFlowsIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -546,10 +546,10 @@ export interface FileRoutesByTo {
   '/shop/profile': typeof AuthenticatedShopProfileRoute
   '/shop/shipping': typeof AuthenticatedShopShippingRoute
   '/shop/verification': typeof AuthenticatedShopVerificationRoute
-  '/status-flows/rules': typeof AuthenticatedStatusFlowsRulesRoute
   '/status-flows/templates': typeof AuthenticatedStatusFlowsTemplatesRoute
   '/status-flows/tracking': typeof AuthenticatedStatusFlowsTrackingRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
+  '/status-flows': typeof AuthenticatedStatusFlowsIndexRoute
 }
 
 export interface FileRoutesById {
@@ -578,10 +578,10 @@ export interface FileRoutesById {
   '/_authenticated/shop/profile': typeof AuthenticatedShopProfileRoute
   '/_authenticated/shop/shipping': typeof AuthenticatedShopShippingRoute
   '/_authenticated/shop/verification': typeof AuthenticatedShopVerificationRoute
-  '/_authenticated/status-flows/rules': typeof AuthenticatedStatusFlowsRulesRoute
   '/_authenticated/status-flows/templates': typeof AuthenticatedStatusFlowsTemplatesRoute
   '/_authenticated/status-flows/tracking': typeof AuthenticatedStatusFlowsTrackingRoute
   '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
+  '/_authenticated/status-flows/': typeof AuthenticatedStatusFlowsIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -611,10 +611,10 @@ export interface FileRouteTypes {
     | '/shop/profile'
     | '/shop/shipping'
     | '/shop/verification'
-    | '/status-flows/rules'
     | '/status-flows/templates'
     | '/status-flows/tracking'
     | '/orders'
+    | '/status-flows'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -641,10 +641,10 @@ export interface FileRouteTypes {
     | '/shop/profile'
     | '/shop/shipping'
     | '/shop/verification'
-    | '/status-flows/rules'
     | '/status-flows/templates'
     | '/status-flows/tracking'
     | '/orders'
+    | '/status-flows'
   id:
     | '__root__'
     | '/'
@@ -671,10 +671,10 @@ export interface FileRouteTypes {
     | '/_authenticated/shop/profile'
     | '/_authenticated/shop/shipping'
     | '/_authenticated/shop/verification'
-    | '/_authenticated/status-flows/rules'
     | '/_authenticated/status-flows/templates'
     | '/_authenticated/status-flows/tracking'
     | '/_authenticated/orders/'
+    | '/_authenticated/status-flows/'
   fileRoutesById: FileRoutesById
 }
 
@@ -740,10 +740,10 @@ export const routeTree = rootRoute
         "/_authenticated/shop/profile",
         "/_authenticated/shop/shipping",
         "/_authenticated/shop/verification",
-        "/_authenticated/status-flows/rules",
         "/_authenticated/status-flows/templates",
         "/_authenticated/status-flows/tracking",
-        "/_authenticated/orders/"
+        "/_authenticated/orders/",
+        "/_authenticated/status-flows/"
       ]
     },
     "/reset-password": {
@@ -829,10 +829,6 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/shop/verification.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/status-flows/rules": {
-      "filePath": "_authenticated/status-flows/rules.tsx",
-      "parent": "/_authenticated"
-    },
     "/_authenticated/status-flows/templates": {
       "filePath": "_authenticated/status-flows/templates.tsx",
       "parent": "/_authenticated"
@@ -843,6 +839,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/orders/": {
       "filePath": "_authenticated/orders/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/status-flows/": {
+      "filePath": "_authenticated/status-flows/index.tsx",
       "parent": "/_authenticated"
     }
   }
