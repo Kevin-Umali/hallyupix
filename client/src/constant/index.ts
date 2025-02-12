@@ -1,3 +1,4 @@
+import { VerificationTypeEnum } from "@/shared/types/status-flow.types";
 import {
   BadgeCheck,
   BarChart2,
@@ -549,87 +550,320 @@ const COLORS = [
   },
 ];
 
-const PAYMENT_INDICATORS = [
-  {
-    type: "requirePaymentProof",
-    color: "bg-green-500",
-    label: "Payment Proof Required",
-    description: "Customer must provide proof of payment",
+const VERIFICATION_GROUPS = {
+  PAYMENT: {
+    label: "Payment Verifications",
+    types: [
+      {
+        value: VerificationTypeEnum.enum.PAYMENT_PROOF,
+        description: "Payment screenshot/photo from customer",
+      },
+      {
+        value: VerificationTypeEnum.enum.PAYMENT_CONFIRMATION,
+        description: "Seller confirms payment received",
+      },
+      {
+        value: VerificationTypeEnum.enum.PAYMENT_AMOUNT_MATCH,
+        description: "Verify payment matches invoice amount",
+      },
+      {
+        value: VerificationTypeEnum.enum.REMAINING_BALANCE,
+        description: "Balance payment verification",
+      },
+      {
+        value: VerificationTypeEnum.enum.SHIPPING_FEE_PAYMENT,
+        description: "Payment for shipping fees",
+      },
+      {
+        value: VerificationTypeEnum.enum.ADDITIONAL_FEE_PAYMENT,
+        description: "Additional fees payment verification",
+      },
+    ],
   },
-  {
-    type: "requireLSF",
-    color: "bg-blue-500",
-    label: "Local Shipping Fee Required",
-    description: "Local shipping fee must be paid",
+  SHIPPING: {
+    label: "Shipping & Tracking",
+    types: [
+      {
+        value: VerificationTypeEnum.enum.KR_TRACKING_NUMBER,
+        description: "Korean tracking number",
+      },
+      {
+        value: VerificationTypeEnum.enum.JP_TRACKING_NUMBER,
+        description: "Japan tracking number",
+      },
+      {
+        value: VerificationTypeEnum.enum.CN_TRACKING_NUMBER,
+        description: "China tracking number",
+      },
+      {
+        value: VerificationTypeEnum.enum.PH_TRACKING_NUMBER,
+        description: "Philippines tracking number",
+      },
+      {
+        value: VerificationTypeEnum.enum.SHIPPING_SCREENSHOT,
+        description: "Screenshot of shipping status",
+      },
+      {
+        value: VerificationTypeEnum.enum.SHIPPING_LABEL,
+        description: "Shipping label verification",
+      },
+    ],
   },
-  {
-    type: "requireISF",
-    color: "bg-purple-500",
-    label: "International Shipping Fee Required",
-    description: "International shipping fee must be paid",
+  ITEM_STATUS: {
+    label: "Item Status",
+    types: [
+      {
+        value: VerificationTypeEnum.enum.STOCK_CONFIRMATION,
+        description: "Verify item stock status",
+      },
+      {
+        value: VerificationTypeEnum.enum.PO_CONFIRMATION,
+        description: "Pre-order confirmation",
+      },
+      {
+        value: VerificationTypeEnum.enum.ARRIVAL_PROOF,
+        description: "Item arrival verification",
+      },
+      {
+        value: VerificationTypeEnum.enum.ITEM_INSPECTION,
+        description: "Item condition check",
+      },
+      {
+        value: VerificationTypeEnum.enum.PACKAGE_PROOF,
+        description: "Package preparation proof",
+      },
+    ],
   },
-  {
-    type: "requirePF",
-    color: "bg-orange-500",
-    label: "Packaging Fee Required",
-    description: "Packaging fee must be paid",
+  DELIVERY: {
+    label: "Delivery Verifications",
+    types: [
+      {
+        value: VerificationTypeEnum.enum.PICKUP_CONFIRMATION,
+        description: "Pickup arrangement confirmation",
+      },
+      {
+        value: VerificationTypeEnum.enum.DELIVERY_CONFIRMATION,
+        description: "Successful delivery verification",
+      },
+      {
+        value: VerificationTypeEnum.enum.HANDCARRY_DETAILS,
+        description: "Hand-carry arrangement details",
+      },
+    ],
   },
-];
-
-const DEFAULT_PAYMENT_VERIFICATION = {
-  requireLSF: false,
-  requireISF: false,
-  requirePF: false,
-  requirePaymentProof: false,
+  CUSTOMER: {
+    label: "Customer Communications",
+    types: [
+      {
+        value: VerificationTypeEnum.enum.CUSTOMER_CONFIRMATION,
+        description: "Customer confirmation on details",
+      },
+      {
+        value: VerificationTypeEnum.enum.SHIPPING_PREFERENCES,
+        description: "Customer shipping preferences",
+      },
+      {
+        value: VerificationTypeEnum.enum.CANCELLATION_REQUEST,
+        description: "Order cancellation request",
+      },
+    ],
+  },
+  ADMIN: {
+    label: "Administrative",
+    types: [
+      {
+        value: VerificationTypeEnum.enum.REFUND_PROOF,
+        description: "Proof of refund processed",
+      },
+      {
+        value: VerificationTypeEnum.enum.BATCH_CONFIRMATION,
+        description: "Batch shipping confirmation",
+      },
+      {
+        value: VerificationTypeEnum.enum.MANUAL_OVERRIDE,
+        description: "Administrative override",
+      },
+    ],
+  },
 };
 
-const DEFAULT_STATUS_FLOWS = [
-  {
-    id: undefined,
-    name: "New Order",
-    order: 1,
-    paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
-    color: COLORS[0].value,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    description: "",
-  },
-  {
-    id: undefined,
-    name: "Pending Payment",
-    order: 2,
-    paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
-    color: COLORS[1].value,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    description: "",
-  },
-  {
-    id: undefined,
-    name: "Processing",
-    order: 3,
-    paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
-    color: COLORS[2].value,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    description: "",
-  },
-  {
-    id: undefined,
-    name: "Completed",
-    order: 4,
-    paymentVerification: { ...DEFAULT_PAYMENT_VERIFICATION },
-    color: COLORS[3].value,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    description: "",
-  },
-];
+const DEFAULT_STATUS_FLOW = {
+  name: "K-pop Shop Status Flow",
+  description: "Standard order processing flow for K-pop merchandise",
+  isDefault: true,
+  isActive: true,
+  statuses: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      name: "New Order",
+      color: "red",
+      description: "New order received, awaiting payment details",
+      order: 1,
+      verifications: [
+        { type: "STOCK_CONFIRMATION", required: true },
+        { type: "CUSTOMER_CONFIRMATION", required: true },
+      ],
+      allowedTransitions: ["661f9511-8b77-45f4-9c52-73dd31112222", "cc7f1239-4567-4ff4-4i91-34ghi9012345"],
+      isTerminal: false,
+    },
+    {
+      id: "661f9511-8b77-45f4-9c52-73dd31112222",
+      name: "Payment Details Sent",
+      color: "amber",
+      description: "Payment details sent to customer",
+      order: 2,
+      verifications: [
+        { type: "PAYMENT_AMOUNT_MATCH", required: true },
+        { type: "SHIPPING_PREFERENCES", required: true },
+      ],
+      allowedTransitions: ["8a97a6b1-b3d5-4c5d-9127-0e3a88888888", "cc7f1239-4567-4ff4-4i91-34ghi9012345"],
+      isTerminal: false,
+    },
+    {
+      id: "8a97a6b1-b3d5-4c5d-9127-0e3a88888888",
+      name: "Pending Payment",
+      color: "blue",
+      description: "Awaiting payment confirmation",
+      order: 3,
+      verifications: [
+        { type: "PAYMENT_PROOF", required: true },
+        { type: "PAYMENT_CONFIRMATION", required: true },
+      ],
+      allowedTransitions: ["30f40382-9f55-4687-b8c5-2b6d1c444444", "cc7f1239-4567-4ff4-4i91-34ghi9012345"],
+      isTerminal: false,
+    },
+    {
+      id: "30f40382-9f55-4687-b8c5-2b6d1c444444",
+      name: "Processing",
+      color: "cyan",
+      description: "Order processing with supplier",
+      order: 4,
+      verifications: [
+        { type: "PO_CONFIRMATION", required: true },
+        { type: "BATCH_CONFIRMATION", required: false },
+      ],
+      allowedTransitions: [
+        "772a5684-1234-4aa9-9d56-89abc1234567",
+        "883b6795-5678-4bb0-0e67-90bcd5678901",
+        "994c7806-9012-4cc1-1f78-01cde6789012",
+        "cc7f1239-4567-4ff4-4i91-34ghi9012345",
+      ],
+      isTerminal: false,
+    },
+    {
+      id: "772a5684-1234-4aa9-9d56-89abc1234567",
+      name: "Arrived at KR Address",
+      color: "purple",
+      description: "Item received at Korean address",
+      order: 5,
+      verifications: [
+        { type: "KR_TRACKING_NUMBER", required: true },
+        { type: "ARRIVAL_PROOF", required: true },
+        { type: "ITEM_INSPECTION", required: true },
+      ],
+      allowedTransitions: ["aa5d8917-3456-4dd2-2g89-12def7890123", "cc7f1239-4567-4ff4-4i91-34ghi9012345"],
+      isTerminal: false,
+    },
+    {
+      id: "883b6795-5678-4bb0-0e67-90bcd5678901",
+      name: "Arrived at JP Address",
+      color: "purple",
+      description: "Item received at Japan address",
+      order: 5,
+      verifications: [
+        { type: "JP_TRACKING_NUMBER", required: true },
+        { type: "ARRIVAL_PROOF", required: true },
+        { type: "ITEM_INSPECTION", required: true },
+      ],
+      allowedTransitions: ["aa5d8917-3456-4dd2-2g89-12def7890123", "cc7f1239-4567-4ff4-4i91-34ghi9012345"],
+      isTerminal: false,
+    },
+    {
+      id: "994c7806-9012-4cc1-1f78-01cde6789012",
+      name: "Arrived at CN Address",
+      color: "purple",
+      description: "Item received at China address",
+      order: 5,
+      verifications: [
+        { type: "CN_TRACKING_NUMBER", required: true },
+        { type: "ARRIVAL_PROOF", required: true },
+        { type: "ITEM_INSPECTION", required: true },
+      ],
+      allowedTransitions: ["aa5d8917-3456-4dd2-2g89-12def7890123", "cc7f1239-4567-4ff4-4i91-34ghi9012345"],
+      isTerminal: false,
+    },
+    {
+      id: "aa5d8917-3456-4dd2-2g89-12def7890123",
+      name: "Pending Shipping Fees",
+      color: "indigo",
+      description: "Awaiting shipping fee payment",
+      order: 6,
+      verifications: [
+        { type: "SHIPPING_FEE_PAYMENT", required: true },
+        { type: "ADDITIONAL_FEE_PAYMENT", required: false },
+        { type: "REMAINING_BALANCE", required: false },
+      ],
+      allowedTransitions: ["bb6e9028-7890-4ee3-3h90-23efg8901234", "cc7f1239-4567-4ff4-4i91-34ghi9012345"],
+      isTerminal: false,
+    },
+    {
+      id: "bb6e9028-7890-4ee3-3h90-23efg8901234",
+      name: "Shipping to PH",
+      color: "orange",
+      description: "Package in transit to Philippines",
+      order: 7,
+      verifications: [
+        { type: "SHIPPING_LABEL", required: true },
+        { type: "PACKAGE_PROOF", required: true },
+        { type: "SHIPPING_SCREENSHOT", required: true },
+      ],
+      allowedTransitions: ["dd8g3450-0123-4ff5-5j02-45hij0123456", "cc7f1239-4567-4ff4-4i91-34ghi9012345"],
+      isTerminal: false,
+    },
+    {
+      id: "dd8g3450-0123-4ff5-5j02-45hij0123456",
+      name: "For Pickup/Delivery",
+      color: "sky",
+      description: "Ready for pickup or out for delivery",
+      order: 8,
+      verifications: [
+        { type: "PH_TRACKING_NUMBER", required: true },
+        { type: "PICKUP_CONFIRMATION", required: false },
+        { type: "HANDCARRY_DETAILS", required: false },
+      ],
+      allowedTransitions: ["f5b1d4e8-89e7-4b96-9845-ff1237777777", "cc7f1239-4567-4ff4-4i91-34ghi9012345"],
+      isTerminal: false,
+    },
+    {
+      id: "f5b1d4e8-89e7-4b96-9845-ff1237777777",
+      name: "Completed",
+      color: "green",
+      description: "Order successfully delivered",
+      order: 9,
+      verifications: [{ type: "DELIVERY_CONFIRMATION", required: true }],
+      allowedTransitions: [],
+      isTerminal: true,
+    },
+    {
+      id: "cc7f1239-4567-4ff4-4i91-34ghi9012345",
+      name: "Cancelled",
+      color: "gray",
+      description: "Order has been cancelled",
+      order: 99,
+      verifications: [
+        { type: "CANCELLATION_REQUEST", required: true },
+        { type: "REFUND_PROOF", required: false },
+      ],
+      allowedTransitions: [],
+      isTerminal: true,
+    },
+  ],
+  initialStatus: "550e8400-e29b-41d4-a716-446655440000",
+};
 
 // 5. Final Export: STATUS_FLOW
 export const STATUS_FLOW = {
   COLORS,
-  PAYMENT_INDICATORS,
-  DEFAULT_PAYMENT_VERIFICATION,
-  DEFAULT_STATUS_FLOWS,
+  VERIFICATION_GROUPS,
+  DEFAULT_STATUS_FLOW,
 } as const;

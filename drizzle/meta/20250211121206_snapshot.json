@@ -1,5 +1,5 @@
 {
-  "id": "74e90889-607b-4df8-9850-2ce74ae67535",
+  "id": "cd3ea870-1796-4931-9ffe-05bd522fe91b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -811,7 +811,7 @@
           "name": "sku",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "price": {
           "name": "price",
@@ -927,7 +927,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -1024,10 +1024,9 @@
         },
         "fee": {
           "name": "fee",
-          "type": "numeric(5, 2)",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
-          "notNull": false,
-          "default": "'0.00'"
+          "notNull": true
         },
         "deadline_of_down_payment": {
           "name": "deadline_of_down_payment",
@@ -1439,14 +1438,7 @@
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false,
-          "default": "'{\"description\":\"\",\"processingTime\":\"\",\"estimatedDelivery\":\"\",\"cost\":0,\"restrictions\":[],\"notes\":\"\"}'::jsonb"
-        },
-        "international_shipping": {
-          "name": "international_shipping",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{\"description\":\"\",\"processingTime\":\"\",\"estimatedDelivery\":\"\",\"cost\":0,\"restrictions\":[],\"notes\":\"\"}'::jsonb"
+          "default": "'{\"domestic\":{\"name\":\"\",\"description\":\"\",\"processingTime\":\"\",\"estimatedDelivery\":\"\",\"baseRate\":0,\"isActive\":true,\"areas\":[],\"conditions\":[],\"notes\":\"\"},\"international\":{\"name\":\"\",\"description\":\"\",\"processingTime\":\"\",\"estimatedDelivery\":\"\",\"baseRate\":0,\"isActive\":true,\"areas\":[],\"conditions\":[],\"notes\":\"\"}}'::jsonb"
         },
         "processing_times": {
           "name": "processing_times",
@@ -1460,7 +1452,7 @@
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false,
-          "default": "'{}'::jsonb"
+          "default": "'{\"general\":\"\",\"domestic\":{\"deliveryGuarantees\":[],\"restrictions\":[],\"returnPolicy\":\"\",\"isActive\":true},\"international\":{\"customsClearance\":[],\"restrictions\":[],\"returnPolicy\":\"\",\"isActive\":true}}'::jsonb"
         },
         "custom_policies": {
           "name": "custom_policies",
@@ -1530,12 +1522,44 @@
           "primaryKey": false,
           "notNull": true
         },
-        "statuses": {
-          "name": "statuses",
-          "type": "jsonb",
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_default": {
+          "name": "is_default",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": true,
-          "default": "'[{\"name\":\"Pending\",\"order\":1,\"allowedTransitions\":[\"For Review\",\"Processing\"],\"requiresPaymentVerification\":true},{\"name\":\"For Review\",\"order\":2,\"allowedTransitions\":[\"Processing\",\"Pending\"]},{\"name\":\"Processing\",\"order\":3,\"allowedTransitions\":[\"Shipped\",\"For Review\"]},{\"name\":\"Shipped\",\"order\":4,\"allowedTransitions\":[\"Completed\"]},{\"name\":\"Completed\",\"order\":5,\"allowedTransitions\":[]}]'"
+          "default": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "allowed_transitions": {
+          "name": "allowed_transitions",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "initial_status": {
+          "name": "initial_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -1558,6 +1582,36 @@
           "columns": [
             {
               "expression": "seller_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "seller_status_flows_is_default_idx": {
+          "name": "seller_status_flows_is_default_idx",
+          "columns": [
+            {
+              "expression": "is_default",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "seller_status_flows_is_active_idx": {
+          "name": "seller_status_flows_is_active_idx",
+          "columns": [
+            {
+              "expression": "is_active",
               "isExpression": false,
               "asc": true,
               "nulls": "last"

@@ -11,6 +11,6 @@ export const Route = createFileRoute("/_authenticated/shop/shipping")({
 });
 
 function RouteComponent() {
-  const { data: shopShipping, isLoading } = useSuspenseQuery(getShopShippingQueryOptions());
-  return <ShopShippingSettings initialData={shopShipping ?? {}} />;
+  const { data: shopShipping, isLoading, dataUpdatedAt } = useSuspenseQuery(getShopShippingQueryOptions());
+  return <ShopShippingSettings key={`shop-shipping-${dataUpdatedAt}`} initialData={shopShipping ?? {}} isLoading={isLoading} />;
 }

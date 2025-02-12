@@ -1,10 +1,9 @@
 // orders.model.ts
-import { index, jsonb, numeric, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { index, jsonb, decimal, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { users } from "./users.model";
 import { sellerStatusFlows } from "./status-flow.model";
 import { platformEnum, paymentStatusEnum, isfPaymentEnum, sfPaymentEnum, pfPaymentEnum } from "./enums";
-import { z } from "zod";
 
 export const orders = pgTable(
   "orders",
@@ -26,10 +25,10 @@ export const orders = pgTable(
     trackingNumber: varchar("tracking_number", { length: 100 }),
     trackingLink: varchar("tracking_link", { length: 1000 }),
     additionalLinks: jsonb("additional_links").default("[]"),
-    totalAmount: numeric("total_amount", { precision: 10, scale: 2 }).notNull(),
-    isf: numeric("isf", { precision: 10, scale: 2 }).default("0.00"), // International shipping fee
-    lsf: numeric("lsf", { precision: 10, scale: 2 }).default("0.00"), // Local shipping fee
-    pf: numeric("pf", { precision: 10, scale: 2 }).default("0.00"), // Packaging fee
+    totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+    isf: decimal("isf", { precision: 10, scale: 2 }).default("0.00"), // International shipping fee
+    lsf: decimal("lsf", { precision: 10, scale: 2 }).default("0.00"), // Local shipping fee
+    pf: decimal("pf", { precision: 10, scale: 2 }).default("0.00"), // Packaging fee
     isfPaymentStatus: isfPaymentEnum("isf_payment_status"),
     lsfPaymentStatus: sfPaymentEnum("lsf_payment_status"),
     pfPaymentStatus: pfPaymentEnum("pf_payment_status"),

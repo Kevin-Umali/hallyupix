@@ -1,9 +1,8 @@
 // order-items.model.ts
-import { index, integer, jsonb, numeric, pgTable, serial, timestamp } from "drizzle-orm/pg-core";
+import { index, integer, jsonb, decimal, pgTable, serial, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { orders } from "./orders.model";
 import { productVariants } from "./product-variants.model";
-import { z } from "zod";
 
 export const orderItems = pgTable(
   "order_items",
@@ -16,8 +15,8 @@ export const orderItems = pgTable(
       .references(() => productVariants.id)
       .notNull(),
     quantity: integer("quantity").notNull(),
-    price: numeric("price", { precision: 10, scale: 2 }).notNull(), // Unit price
-    totalPrice: numeric("total_price", { precision: 10, scale: 2 }).notNull(), // Quantity x Unit price
+    price: decimal("price", { precision: 10, scale: 2 }).notNull(), // Unit price
+    totalPrice: decimal("total_price", { precision: 10, scale: 2 }).notNull(), // Quantity x Unit price
     metadata: jsonb("metadata").default("{}"), // Optional details (e.g., size, color)
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),

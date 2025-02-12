@@ -1,8 +1,7 @@
 // users.model.ts
-import { boolean, pgTable, text, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { roleEnum } from "./enums";
-import { z } from "zod";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),

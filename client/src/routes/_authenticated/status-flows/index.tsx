@@ -12,5 +12,5 @@ export const Route = createFileRoute("/_authenticated/status-flows/")({
 
 function RouteComponent() {
   const { data: statusFlows, isLoading, dataUpdatedAt } = useSuspenseQuery(getStatusFlowQueryOptions());
-  return <StatusFlowForm key={`status-flows-${dataUpdatedAt}`} initialData={statusFlows?.flows ?? []} isLoading={isLoading} />;
+  return <StatusFlowForm key={`status-flows-${dataUpdatedAt}`} initialData={statusFlows ?? {}} isLoading={isLoading} />;
 }

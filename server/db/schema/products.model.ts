@@ -1,9 +1,12 @@
 // products.model.ts
-import { pgTable, text, varchar, jsonb, timestamp, serial, numeric, integer, index } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, jsonb, timestamp, serial, decimal, integer, index } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { productStatusEnum, productVisibilityEnum } from "./enums";
-import { users } from "./users.model";
 import { z } from "zod";
+import { users } from "./users.model";
+import { ProductStatusEnum, ProductVisibilityEnum } from "../../../shared/types/product.types";
+import { relations } from "drizzle-orm";
+import { productVariants } from "./product-variants.model";
 
 export const products = pgTable(
   "products",
@@ -21,7 +24,7 @@ export const products = pgTable(
     visibility: productVisibilityEnum("visibility").default("Private"),
     inventoryStatus: varchar("inventory_status", { length: 50 }).notNull(),
     minimumStockAlert: integer("minimum_stock_alert").default(0),
-    fee: numeric("fee", { precision: 5, scale: 2 }).default("0.00"),
+    fee: decimal("fee", { precision: 10, scale: 2 }).notNull(),
     deadlineOfDownPayment: timestamp("deadline_of_down_payment"),
     estimatedTimeOfArrival: timestamp("estimated_time_of_arrival"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -35,6 +38,25 @@ export const products = pgTable(
   ]
 );
 
-export const selectProductSchema = createSelectSchema(products);
-export const insertProductSchema = createInsertSchema(products);
-export const updateProductSchema = createUpdateSchema(products);
+export const productsRelations = relations(products, ({ many }) => ({
+  variants: many(productVariants),
+}));
+
+export const selectProductSchema = createSelectSchema(products, {
+  tags: z.array(z.string()),
+  platforms: z.array(z.string()),
+  productStatus: ProductStatusEnum,
+  visibility: ProductVisibilityEnum,
+});
+export const insertProductSchema = createInsertSchema(products, {
+  tags: z.array(z.string()),
+  platforms: z.array(z.string()),
+  productStatus: ProductStatusEnum,
+  visibility: ProductVisibilityEnum,
+});
+export const updateProductSchema = createUpdateSchema(products, {
+  tags: z.array(z.string()),
+  platforms: z.array(z.string()),
+  productStatus: ProductStatusEnum,
+  visibility: ProductVisibilityEnum,
+});

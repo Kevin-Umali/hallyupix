@@ -348,11 +348,7 @@ export const getShopShipping: HonoRouteHandler<GetShopShipping> = async (c) => {
     });
   }
 
-  console.log(shopShippingData);
-
   const result = selectShopShippingSchema.parse(shopShippingData);
-
-  console.log(result);
 
   const { userId: _, id: __, ...dataWithoutIds } = result;
 

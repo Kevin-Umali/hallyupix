@@ -73,7 +73,7 @@ export const ProcessingForm: React.FC<ProcessingFormProps> = ({ processingTimes 
             <form.Field name="preOrder">
               {(field) => (
                 <div className="space-y-2">
-                  <Label>Pre-order Processing Time</Label>
+                  <Label htmlFor={field.name}>Pre-order Processing Time</Label>
                   <Input placeholder="e.g., 2-3 weeks" value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
                   <FieldInfo field={field} />
                 </div>
@@ -83,7 +83,7 @@ export const ProcessingForm: React.FC<ProcessingFormProps> = ({ processingTimes 
             <form.Field name="regular">
               {(field) => (
                 <div className="space-y-2">
-                  <Label>Regular Processing Time</Label>
+                  <Label htmlFor={field.name}>Regular Processing Time</Label>
                   <Input placeholder="e.g., 1-2 business days" value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
                   <FieldInfo field={field} />
                 </div>
@@ -94,7 +94,7 @@ export const ProcessingForm: React.FC<ProcessingFormProps> = ({ processingTimes 
           <form.Field name="express">
             {(field) => (
               <div className="space-y-2">
-                <Label>Express Processing Time</Label>
+                <Label htmlFor={field.name}>Express Processing Time</Label>
                 <Input placeholder="e.g., Same day processing" value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
                 <FieldInfo field={field} />
               </div>
@@ -136,7 +136,7 @@ export const ProcessingForm: React.FC<ProcessingFormProps> = ({ processingTimes 
                         <form.Field name={`customRules[${index}].name`}>
                           {(nameField) => (
                             <div className="space-y-2">
-                              <Label>Rule Name</Label>
+                              <Label htmlFor={nameField.name}>Rule Name</Label>
                               <Input
                                 placeholder="e.g., Express Processing"
                                 value={nameField.state.value}
@@ -148,7 +148,7 @@ export const ProcessingForm: React.FC<ProcessingFormProps> = ({ processingTimes 
                         <form.Field name={`customRules[${index}].time`}>
                           {(timeField) => (
                             <div className="space-y-2">
-                              <Label>Processing Time</Label>
+                              <Label htmlFor={timeField.name}>Processing Time</Label>
                               <Input
                                 placeholder="e.g., 2-3 business days"
                                 value={timeField.state.value}
@@ -161,7 +161,7 @@ export const ProcessingForm: React.FC<ProcessingFormProps> = ({ processingTimes 
                         <form.Field name={`customRules[${index}].description`}>
                           {(descField) => (
                             <div className="space-y-2">
-                              <Label>Description</Label>
+                              <Label htmlFor={descField.name}>Description</Label>
                               <RichEditor
                                 placeholder="Describe the conditions for this rule..."
                                 key={descField.name}

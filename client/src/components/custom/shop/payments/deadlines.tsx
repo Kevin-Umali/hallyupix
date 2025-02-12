@@ -78,7 +78,7 @@ export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ deadlineSettings })
             <form.Field name="preOrderPayment">
               {(field) => (
                 <div className="space-y-2">
-                  <Label>Pre-order Payment (hours)</Label>
+                  <Label htmlFor={field.name}>Pre-order Payment (hours)</Label>
                   <Input type="number" value={field.state.value} onChange={(e) => field.handleChange(parseInt(e.target.value))} />
                   <FieldInfo field={field} />
                 </div>
@@ -88,7 +88,7 @@ export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ deadlineSettings })
             <form.Field name="regularOrderPayment">
               {(field) => (
                 <div className="space-y-2">
-                  <Label>Regular Order Payment (hours)</Label>
+                  <Label htmlFor={field.name}>Regular Order Payment (hours)</Label>
                   <Input type="number" value={field.state.value} onChange={(e) => field.handleChange(parseInt(e.target.value))} />
                   <FieldInfo field={field} />
                 </div>
@@ -99,7 +99,7 @@ export const DeadlinesForm: React.FC<DeadlineFormProps> = ({ deadlineSettings })
           <form.Field name="paymentReminderInterval">
             {(field) => (
               <div className="space-y-2">
-                <Label>Reminder Interval (hours)</Label>
+                <Label htmlFor={field.name}>Reminder Interval (hours)</Label>
                 <Input type="number" value={field.state.value?.toString() || ""} onChange={(e) => field.handleChange(parseInt(e.target.value))} />
                 <FieldInfo field={field} />
               </div>

@@ -2,7 +2,6 @@
 import { text, timestamp, pgTable } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { users } from "./users.model";
-import { z } from "zod";
 
 export const accounts = pgTable("accounts", {
   id: text("id").primaryKey(),

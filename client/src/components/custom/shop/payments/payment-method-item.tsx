@@ -73,7 +73,7 @@ const PaymentMethodItem = ({ form, index, onRemove }: PaymentMethodItemProps) =>
         <form.Field name={`paymentMethods[${index}].name`}>
           {(field) => (
             <div className="space-y-2">
-              <Label>Method Name</Label>
+              <Label htmlFor={field.name}>Method Name</Label>
               <Input placeholder="e.g., Bank Transfer" value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
               <FieldInfo field={field} />
             </div>
@@ -83,7 +83,7 @@ const PaymentMethodItem = ({ form, index, onRemove }: PaymentMethodItemProps) =>
         <form.Field name={`paymentMethods[${index}].type`}>
           {(field) => (
             <div className="space-y-2">
-              <Label>Type</Label>
+              <Label htmlFor={field.name}>Type</Label>
               <Select value={field.state.value} onValueChange={(value) => field.handleChange(value as "BANK" | "EWALLET" | "CRYPTO")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select type" />
@@ -102,7 +102,7 @@ const PaymentMethodItem = ({ form, index, onRemove }: PaymentMethodItemProps) =>
         <form.Field name={`paymentMethods[${index}].accountName`}>
           {(field) => (
             <div className="space-y-2">
-              <Label>Account Name</Label>
+              <Label htmlFor={field.name}>Account Name</Label>
               <Input placeholder="Enter account name" value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
               <FieldInfo field={field} />
             </div>
@@ -112,7 +112,7 @@ const PaymentMethodItem = ({ form, index, onRemove }: PaymentMethodItemProps) =>
         <form.Field name={`paymentMethods[${index}].accountNumber`}>
           {(field) => (
             <div className="space-y-2">
-              <Label>Account Number</Label>
+              <Label htmlFor={field.name}>Account Number</Label>
               <Input placeholder="Enter account number" value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
               <FieldInfo field={field} />
             </div>
@@ -123,7 +123,7 @@ const PaymentMethodItem = ({ form, index, onRemove }: PaymentMethodItemProps) =>
       <form.Field name={`paymentMethods[${index}].qrCodeImage`}>
         {(field) => (
           <div className="space-y-2">
-            <Label>QR Code</Label>
+            <Label htmlFor={field.name}>QR Code</Label>
             <div className="border rounded-lg p-4 bg-card">
               <div className="flex items-center space-x-4 justify-center">
                 {field.state.value ? (

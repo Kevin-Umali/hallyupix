@@ -1,4 +1,4 @@
-// types/shared/shop.types.ts
+// /shared/types/shop.types.ts
 import { z } from "zod";
 
 // Common schemas

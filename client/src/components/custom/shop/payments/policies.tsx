@@ -92,7 +92,7 @@ export const PoliciesForm: React.FC<PoliciesFormProps> = ({ policies, customPoli
           <form.Field name="refundPolicy">
             {(field) => (
               <div className="space-y-2">
-                <Label>Refund Policy</Label>
+                <Label htmlFor={field.name}>Refund Policy</Label>
                 <RichEditor key={field.name} name={field.name} initialContent={field.state.value} onChange={(html) => field.handleChange(html)} />
                 <FieldInfo field={field} />
               </div>
@@ -102,7 +102,7 @@ export const PoliciesForm: React.FC<PoliciesFormProps> = ({ policies, customPoli
           <form.Field name="cancellationPolicy">
             {(field) => (
               <div className="space-y-2">
-                <Label>Cancellation Policy</Label>
+                <Label htmlFor={field.name}>Cancellation Policy</Label>
                 <RichEditor key={field.name} name={field.name} initialContent={field.state.value} onChange={(html) => field.handleChange(html)} />
                 <FieldInfo field={field} />
               </div>
@@ -113,7 +113,7 @@ export const PoliciesForm: React.FC<PoliciesFormProps> = ({ policies, customPoli
             {(field) => (
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Allow Partial Payments</Label>
+                  <Label htmlFor={field.name}>Allow Partial Payments</Label>
                   <p className="text-sm text-muted-foreground">Enable customers to make partial payments</p>
                 </div>
                 <Switch checked={field.state.value} onCheckedChange={field.handleChange} />
@@ -124,7 +124,7 @@ export const PoliciesForm: React.FC<PoliciesFormProps> = ({ policies, customPoli
           <form.Field name="minimumPartialPayment">
             {(field) => (
               <div className="space-y-2">
-                <Label>Minimum Partial Payment (%)</Label>
+                <Label htmlFor={field.name}>Minimum Partial Payment (%)</Label>
                 <Input
                   type="number"
                   placeholder="e.g., 50"

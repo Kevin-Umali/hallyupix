@@ -1,4 +1,4 @@
-// types/api/common.ts
+// shared/types/api.types.ts
 import { z } from "zod";
 
 // Common API response schemas

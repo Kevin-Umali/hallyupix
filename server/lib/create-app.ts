@@ -9,6 +9,7 @@ import { prettyJSON } from "hono/pretty-json";
 import { enhancedLogger } from "../middlewares/custom-logger";
 import { auth } from "./auth";
 import type { HonoOpenAPIConfig } from "./types";
+import { ZodError } from "zod";
 import { BASE_PATH } from "../constants";
 import { protect } from "../middlewares/auth-guard";
 import { CustomHTTPException } from "./custom-error";
@@ -115,6 +116,10 @@ const createApp = () => {
   app.onError((err, c) => {
     if (process.env.NODE_ENV === "development") {
       console.error(err);
+    }
+
+    if (err instanceof ZodError) {
+      return c.json({ sucess: false, error: err.flatten() }, 422);
     }
 
     if (err instanceof CustomHTTPException) {

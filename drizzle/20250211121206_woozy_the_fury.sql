@@ -101,7 +101,7 @@ CREATE TABLE "product_variants" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"product_id" serial NOT NULL,
 	"variant_name" varchar(255) NOT NULL,
-	"sku" varchar(100),
+	"sku" varchar(100) NOT NULL,
 	"price" numeric(10, 2) NOT NULL,
 	"quantity_available" integer DEFAULT 0 NOT NULL,
 	"metadata" jsonb DEFAULT '{}',
@@ -122,7 +122,7 @@ CREATE TABLE "products" (
 	"visibility" "product_visibility" DEFAULT 'Private',
 	"inventory_status" varchar(50) NOT NULL,
 	"minimum_stock_alert" integer DEFAULT 0,
-	"fee" numeric(5, 2) DEFAULT '0.00',
+	"fee" numeric(10, 2) NOT NULL,
 	"deadline_of_down_payment" timestamp,
 	"estimated_time_of_arrival" timestamp,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -171,10 +171,9 @@ CREATE TABLE "shop_profiles" (
 CREATE TABLE "shop_shipping" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
-	"domestic_shipping" jsonb DEFAULT '{"description":"","processingTime":"","estimatedDelivery":"","cost":0,"restrictions":[],"notes":""}'::jsonb,
-	"international_shipping" jsonb DEFAULT '{"description":"","processingTime":"","estimatedDelivery":"","cost":0,"restrictions":[],"notes":""}'::jsonb,
+	"domestic_shipping" jsonb DEFAULT '{"domestic":{"name":"","description":"","processingTime":"","estimatedDelivery":"","baseRate":0,"isActive":true,"areas":[],"conditions":[],"notes":""},"international":{"name":"","description":"","processingTime":"","estimatedDelivery":"","baseRate":0,"isActive":true,"areas":[],"conditions":[],"notes":""}}'::jsonb,
 	"processing_times" jsonb DEFAULT '{"preOrder":"","regular":"","express":"","customRules":[]}'::jsonb,
-	"shipping_policies" jsonb DEFAULT '{}'::jsonb,
+	"shipping_policies" jsonb DEFAULT '{"general":"","domestic":{"deliveryGuarantees":[],"restrictions":[],"returnPolicy":"","isActive":true},"international":{"customsClearance":[],"restrictions":[],"returnPolicy":"","isActive":true}}'::jsonb,
 	"custom_policies" jsonb DEFAULT '[]'::jsonb,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -184,7 +183,12 @@ CREATE TABLE "shop_shipping" (
 CREATE TABLE "seller_status_flows" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"seller_id" text NOT NULL,
-	"statuses" jsonb DEFAULT '[{"name":"Pending","order":1,"allowedTransitions":["For Review","Processing"],"requiresPaymentVerification":true},{"name":"For Review","order":2,"allowedTransitions":["Processing","Pending"]},{"name":"Processing","order":3,"allowedTransitions":["Shipped","For Review"]},{"name":"Shipped","order":4,"allowedTransitions":["Completed"]},{"name":"Completed","order":5,"allowedTransitions":[]}]' NOT NULL,
+	"name" text NOT NULL,
+	"description" text,
+	"is_default" boolean DEFAULT false NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"allowed_transitions" jsonb DEFAULT '[]'::jsonb,
+	"initial_status" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -224,7 +228,7 @@ ALTER TABLE "order_items" ADD CONSTRAINT "order_items_variant_id_product_variant
 ALTER TABLE "orders" ADD CONSTRAINT "orders_seller_id_users_id_fk" FOREIGN KEY ("seller_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "orders" ADD CONSTRAINT "orders_seller_status_flow_id_seller_status_flows_id_fk" FOREIGN KEY ("seller_status_flow_id") REFERENCES "public"."seller_status_flows"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "payment_submissions" ADD CONSTRAINT "payment_submissions_order_id_orders_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."orders"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "product_variants" ADD CONSTRAINT "product_variants_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product_variants" ADD CONSTRAINT "product_variants_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "products" ADD CONSTRAINT "products_seller_id_users_id_fk" FOREIGN KEY ("seller_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "shop_payment" ADD CONSTRAINT "shop_payment_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -246,4 +250,6 @@ CREATE INDEX "products_seller_id_idx" ON "products" USING btree ("seller_id");--
 CREATE INDEX "products_title_idx" ON "products" USING btree ("title");--> statement-breakpoint
 CREATE INDEX "products_status_idx" ON "products" USING btree ("product_status");--> statement-breakpoint
 CREATE INDEX "products_visibility_idx" ON "products" USING btree ("visibility");--> statement-breakpoint
-CREATE INDEX "seller_status_flows_seller_id_idx" ON "seller_status_flows" USING btree ("seller_id");
+CREATE INDEX "seller_status_flows_seller_id_idx" ON "seller_status_flows" USING btree ("seller_id");--> statement-breakpoint
+CREATE INDEX "seller_status_flows_is_default_idx" ON "seller_status_flows" USING btree ("is_default");--> statement-breakpoint
+CREATE INDEX "seller_status_flows_is_active_idx" ON "seller_status_flows" USING btree ("is_active");

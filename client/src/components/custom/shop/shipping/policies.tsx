@@ -95,7 +95,7 @@ export const ShippingPoliciesForm: React.FC<ShippingPoliciesFormProps> = ({ poli
           <form.Field name="general">
             {(field) => (
               <div className="space-y-2">
-                <Label>General Policy</Label>
+                <Label htmlFor={field.name}>General Policy</Label>
                 <RichEditor key={field.name} name={field.name} initialContent={field.state.value} onChange={(html) => field.handleChange(html)} />
                 <FieldInfo field={field} />
               </div>
@@ -113,7 +113,7 @@ export const ShippingPoliciesForm: React.FC<ShippingPoliciesFormProps> = ({ poli
               {(activeField) => (
                 <div className="flex items-center space-x-2">
                   <Switch checked={activeField.state.value} onCheckedChange={activeField.handleChange} />
-                  <Label>{activeField.state.value ? "Active" : "Inactive"}</Label>
+                  <Label htmlFor={activeField.name}>{activeField.state.value ? "Active" : "Inactive"}</Label>
                 </div>
               )}
             </form.Field>
@@ -122,7 +122,7 @@ export const ShippingPoliciesForm: React.FC<ShippingPoliciesFormProps> = ({ poli
           <form.Field name="domestic.returnPolicy">
             {(policyField) => (
               <div className="space-y-2">
-                <Label>Return Policy</Label>
+                <Label htmlFor={policyField.name}>Return Policy</Label>
                 <RichEditor
                   key={policyField.name}
                   name={policyField.name}
@@ -237,7 +237,7 @@ export const ShippingPoliciesForm: React.FC<ShippingPoliciesFormProps> = ({ poli
               {(activeField) => (
                 <div className="flex items-center space-x-2">
                   <Switch checked={activeField.state.value} onCheckedChange={activeField.handleChange} />
-                  <Label>{activeField.state.value ? "Active" : "Inactive"}</Label>
+                  <Label htmlFor={activeField.name}>{activeField.state.value ? "Active" : "Inactive"}</Label>
                 </div>
               )}
             </form.Field>
@@ -246,7 +246,7 @@ export const ShippingPoliciesForm: React.FC<ShippingPoliciesFormProps> = ({ poli
           <form.Field name="international.returnPolicy">
             {(policyField) => (
               <div className="space-y-2">
-                <Label>Return Policy</Label>
+                <Label htmlFor={policyField.name}>Return Policy</Label>
                 <RichEditor
                   key={policyField.name}
                   name={policyField.name}

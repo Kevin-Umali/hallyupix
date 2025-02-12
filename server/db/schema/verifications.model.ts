@@ -1,7 +1,6 @@
 // verifications.model.ts
 import { text, timestamp, pgTable } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const verifications = pgTable("verifications", {
   id: text("id").primaryKey(),

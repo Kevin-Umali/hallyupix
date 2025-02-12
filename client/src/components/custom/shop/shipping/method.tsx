@@ -93,7 +93,7 @@ export const ShippingMethodForm: React.FC<ShippingMethodFormProps> = ({ shipping
             {(field) => (
               <div className="flex items-center space-x-2">
                 <Switch checked={field.state.value} onCheckedChange={field.handleChange} />
-                <Label>{field.state.value ? "Active" : "Inactive"}</Label>
+                <Label htmlFor={field.name}>{field.state.value ? "Active" : "Inactive"}</Label>
               </div>
             )}
           </form.Field>
@@ -103,7 +103,7 @@ export const ShippingMethodForm: React.FC<ShippingMethodFormProps> = ({ shipping
           <form.Field name={`${type}.name`}>
             {(field) => (
               <div className="space-y-2">
-                <Label>Method Name</Label>
+                <Label htmlFor={field.name}>Method Name</Label>
                 <Input placeholder="e.g., Standard Shipping" value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
                 <FieldInfo field={field} />
               </div>
@@ -113,7 +113,7 @@ export const ShippingMethodForm: React.FC<ShippingMethodFormProps> = ({ shipping
           <form.Field name={`${type}.baseRate`}>
             {(field) => (
               <div className="space-y-2">
-                <Label>Base Rate</Label>
+                <Label htmlFor={field.name}>Base Rate</Label>
                 <Input
                   type="number"
                   min="0"
@@ -132,7 +132,7 @@ export const ShippingMethodForm: React.FC<ShippingMethodFormProps> = ({ shipping
           <form.Field name={`${type}.processingTime`}>
             {(field) => (
               <div className="space-y-2">
-                <Label>Processing Time</Label>
+                <Label htmlFor={field.name}>Processing Time</Label>
                 <Input placeholder="e.g., 1-2 business days" value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
                 <FieldInfo field={field} />
               </div>
@@ -142,7 +142,7 @@ export const ShippingMethodForm: React.FC<ShippingMethodFormProps> = ({ shipping
           <form.Field name={`${type}.estimatedDelivery`}>
             {(field) => (
               <div className="space-y-2">
-                <Label>Estimated Delivery</Label>
+                <Label htmlFor={field.name}>Estimated Delivery</Label>
                 <Input placeholder="e.g., 3-5 business days" value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
                 <FieldInfo field={field} />
               </div>
@@ -153,7 +153,7 @@ export const ShippingMethodForm: React.FC<ShippingMethodFormProps> = ({ shipping
         <form.Field name={`${type}.description`}>
           {(field) => (
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label htmlFor={field.name}>Description</Label>
               <RichEditor
                 placeholder="Describe your shipping method..."
                 key={field.name}
@@ -203,7 +203,7 @@ export const ShippingMethodForm: React.FC<ShippingMethodFormProps> = ({ shipping
                         <form.Field name={`${type}.areas[${index}].name`}>
                           {(nameField) => (
                             <div className="space-y-2">
-                              <Label>Area Name</Label>
+                              <Label htmlFor={nameField.name}>Area Name</Label>
                               <Input placeholder="e.g., Remote Region" value={nameField.state.value} onChange={(e) => nameField.handleChange(e.target.value)} />
                             </div>
                           )}
@@ -212,7 +212,7 @@ export const ShippingMethodForm: React.FC<ShippingMethodFormProps> = ({ shipping
                         <form.Field name={`${type}.areas[${index}].additionalFee`}>
                           {(feeField) => (
                             <div className="space-y-2">
-                              <Label>Additional Fee</Label>
+                              <Label htmlFor={feeField.name}>Additional Fee</Label>
                               <Input
                                 type="number"
                                 min="0"
@@ -228,7 +228,7 @@ export const ShippingMethodForm: React.FC<ShippingMethodFormProps> = ({ shipping
                         <form.Field name={`${type}.areas[${index}].additionalTime`}>
                           {(timeField) => (
                             <div className="space-y-2">
-                              <Label>Additional Time</Label>
+                              <Label htmlFor={timeField.name}>Additional Time</Label>
                               <Input placeholder="e.g., +2-3 days" value={timeField.state.value} onChange={(e) => timeField.handleChange(e.target.value)} />
                             </div>
                           )}
@@ -250,7 +250,7 @@ export const ShippingMethodForm: React.FC<ShippingMethodFormProps> = ({ shipping
         <form.Field name={`${type}.notes`}>
           {(field) => (
             <div className="space-y-2">
-              <Label>Additional Notes</Label>
+              <Label htmlFor={field.name}>Additional Notes</Label>
               <RichEditor
                 placeholder="Any additional information about this shipping method..."
                 key={field.name}

@@ -15,35 +15,12 @@ export const getStatusFlows = createRoute({
     200: {
       content: {
         "application/json": {
-          schema: ApiResponseSchema(
-            z.object({
-              flows: z.array(StatusFlowSchema),
-            })
-          ),
+          schema: ApiResponseSchema(StatusFlowSchema),
         },
       },
       description: "Status flows",
     },
   },
-});
-
-export const deleteStatusFlow = createRoute({
-  method: "delete",
-  path: "/",
-  summary: "Delete status flow",
-  description: "Delete status flow.",
-  request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            id: z.number(),
-          }),
-        },
-      },
-    },
-  },
-  responses: DEFAULT_RESPONSES,
 });
 
 export const saveStatusFlows = createRoute({
@@ -68,7 +45,7 @@ export const saveStatusFlows = createRoute({
           schema: ApiResponseSchema(
             z.object({
               status: z.boolean(),
-              flows: z.array(StatusFlowSchema),
+              flow: StatusFlowSchema,
             })
           ),
         },
@@ -78,23 +55,5 @@ export const saveStatusFlows = createRoute({
   },
 });
 
-// export const saveStatusFlowAllowedTransitions = createRoute({
-//   method: "patch",
-//   path: "/transitions",
-//   summary: "Save status flow allowed transitions",
-//   description: "Save status flow allowed transitions.",
-//   request: {
-//     body: {
-//       content: {
-//         "application/json": {
-//           schema: SaveStatusFlowAllowedTransitionsRequestSchema,
-//         },
-//       },
-//     },
-//   },
-//   responses: DEFAULT_RESPONSES,
-// });
-
 export type GetStatusFlows = typeof getStatusFlows;
-export type DeleteStatusFlow = typeof deleteStatusFlow;
 export type SaveStatusFlows = typeof saveStatusFlows;

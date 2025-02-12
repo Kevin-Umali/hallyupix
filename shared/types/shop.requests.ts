@@ -1,4 +1,4 @@
-// types/shared/shop.requests.ts
+// shared/types/shop.requests.ts
 import { z } from "zod";
 import {
   SocialLinksSchema,
