@@ -1,6 +1,5 @@
 // users.model.ts
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { roleEnum } from "./enums";
 
 export const users = pgTable("users", {
@@ -15,7 +14,3 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
-
-export const selectUserSchema = createSelectSchema(users);
-export const insertUserSchema = createInsertSchema(users);
-export const updateUserSchema = createUpdateSchema(users);

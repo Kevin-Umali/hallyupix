@@ -3,7 +3,6 @@ import { pgTable, serial, varchar, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { products } from "./products.model";
 import { productVariants } from "./product-variants.model";
-import { z } from "zod";
 
 export const images = pgTable("images", {
   id: serial("id").primaryKey(),

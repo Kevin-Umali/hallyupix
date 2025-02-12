@@ -9,10 +9,9 @@ import { prettyJSON } from "hono/pretty-json";
 import { enhancedLogger } from "../middlewares/custom-logger";
 import { auth } from "./auth";
 import type { HonoOpenAPIConfig } from "./types";
-import { ZodError } from "zod";
-import { BASE_PATH } from "../constants";
 import { protect } from "../middlewares/auth-guard";
 import { CustomHTTPException } from "./custom-error";
+import { ZodError } from "zod";
 
 const createRouter = () => {
   return new OpenAPIHono<HonoOpenAPIConfig>({
@@ -36,22 +35,6 @@ const createRouter = () => {
 
 const createApp = () => {
   const app = createRouter();
-
-  app
-    .use("*", async (c, next) => {
-      if (c.req.path.startsWith(BASE_PATH)) {
-        return next();
-      }
-
-      return c.json(
-        {
-          message: "Not Found",
-          requestUrl: c.req.raw.url,
-        },
-        404
-      );
-    })
-    .basePath(BASE_PATH);
 
   app.use(secureHeaders());
   app.use(enhancedLogger({ level: "debug", excludePaths: ["/health"], mode: "pretty" }));
@@ -103,7 +86,7 @@ const createApp = () => {
     return next();
   });
 
-  app.use(protect({ protectedPaths: ["/api/v1/auth/use-session"] }));
+  app.use(protect({ protectedPaths: ["/api/v1/auth/use-session", "/api/v1/shop/**"] }));
 
   app.notFound((c) => {
     return c.json(
@@ -114,6 +97,7 @@ const createApp = () => {
     );
   });
   app.onError((err, c) => {
+    console.log(process.env);
     if (process.env.NODE_ENV === "development") {
       console.error(err);
     }

@@ -19,7 +19,7 @@ export const getCloudinarySignedUploadURL: HonoRouteHandler<CloudinarySignedURL>
       timestamp,
       folder: `hallyupix/${userId}`,
     },
-    process.env.CLOUDINARY_API_SECRET
+    process.env.CLOUDINARY_API_SECRET as string
   );
 
   if (!signature) {

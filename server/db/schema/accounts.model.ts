@@ -1,6 +1,5 @@
 // accounts.model.ts
 import { text, timestamp, pgTable } from "drizzle-orm/pg-core";
-import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { users } from "./users.model";
 
 export const accounts = pgTable("accounts", {
@@ -19,7 +18,3 @@ export const accounts = pgTable("accounts", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
-
-export const selectAccountSchema = createSelectSchema(accounts);
-export const insertAccountSchema = createInsertSchema(accounts);
-export const updateAccountSchema = createUpdateSchema(accounts);

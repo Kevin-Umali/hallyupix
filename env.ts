@@ -2,9 +2,9 @@ import { z } from "zod";
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production"]).default("development"),
-  PORT: z.string().default("3000"),
+  PORT: z.number().default(3000),
   POSTGRES_HOST: z.string().default("localhost"),
-  POSTGRES_PORT: z.string().default("5432"),
+  POSTGRES_PORT: z.number().default(5432),
   POSTGRES_USER: z.string().default("postgres"),
   POSTGRES_PASSWORD: z.string().default("user"),
   DATABASE_URL: z.string().url(),
@@ -18,7 +18,7 @@ const envSchema = z.object({
 });
 
 const env = {
-  NODE_ENV: process.env.NODE_ENV,
+  NODE_ENV: process.env.NODE_ENV ?? "development",
   PORT: process.env.PORT ? Number(process.env.PORT) : 3000,
   POSTGRES_HOST: process.env.POSTGRES_HOST,
   POSTGRES_PORT: process.env.POSTGRES_PORT ? Number(process.env.POSTGRES_PORT) : 5432,
@@ -32,6 +32,7 @@ const env = {
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
   CLOUDINARY_API_URL: process.env.CLOUDINARY_API_URL,
+  NEW_API_KEY: process.env.NEW_API_KEY,
 };
 
 const parsedEnvResults = envSchema.safeParse(env);
@@ -45,8 +46,12 @@ export const parsedEnv = parsedEnvResults.data;
 
 export type EnvironmentSchemaType = z.infer<typeof envSchema>;
 
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv extends EnvironmentSchemaType {}
-  }
+declare module "bun" {
+  interface Env extends z.infer<typeof envSchema> {}
 }
+
+// declare global {
+//   namespace NodeJS {
+//     interface ProcessEnv extends EnvironmentSchemaType {}
+//   }
+// }

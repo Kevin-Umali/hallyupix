@@ -13,7 +13,7 @@ import variantRoutes from "./product/variant/variant.index";
 export const registerRoutes = (app: HonoOpenAPI) => {
   return app
     .route(
-      "/health",
+      `${BASE_PATH}/health`,
       createRouter().openapi(
         createRoute({
           method: "get",
@@ -33,16 +33,16 @@ export const registerRoutes = (app: HonoOpenAPI) => {
         (c) => c.text("OK")
       )
     )
-    .on(["POST", "GET"], "/auth/**", (c) => {
+    .on(["POST", "GET"], `${BASE_PATH}/auth/**`, (c) => {
       return auth.handler(c.req.raw);
     })
-    .route("/cloudinary", cloudinaryRoutes)
-    .route("/shop", shopRoutes)
-    .route("/status/flows", statusFlowRoutes)
-    .route("/product", productRoutes)
-    .route("/product/variant", variantRoutes);
+    .route(`${BASE_PATH}/cloudinary`, cloudinaryRoutes)
+    .route(`${BASE_PATH}/shop`, shopRoutes)
+    .route(`${BASE_PATH}/status/flows`, statusFlowRoutes)
+    .route(`${BASE_PATH}/product`, productRoutes)
+    .route(`${BASE_PATH}/product/variant`, variantRoutes);
 };
 
-export const router = registerRoutes(createRouter().basePath(BASE_PATH));
+export const router = registerRoutes(createRouter());
 
 export type HonoAppType = typeof router;

@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { oAuthProxy, openAPI, username } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db/index";
-import { schema } from "../db/schema/better-auth.model";
+import { betterAuthSchema } from "../db/schema/better-auth.model";
 import resend from "./resend";
 import { populateTemplate } from "./email-templates";
 
@@ -32,8 +32,8 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: {
-      ...schema,
-      user: schema.users,
+      ...betterAuthSchema,
+      user: betterAuthSchema.users,
     },
     usePlural: true,
   }),

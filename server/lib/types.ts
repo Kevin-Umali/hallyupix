@@ -1,6 +1,5 @@
 import type { OpenAPIHono, RouteConfig, RouteHandler } from "@hono/zod-openapi";
 import type { auth } from "./auth";
-import type { BASE_PATH } from "../constants";
 
 export type HonoOpenAPIConfig = {
   Variables: {
@@ -11,6 +10,6 @@ export type HonoOpenAPIConfig = {
   };
 };
 
-export type HonoOpenAPI = OpenAPIHono<HonoOpenAPIConfig, {}, typeof BASE_PATH>;
+export type HonoOpenAPI = OpenAPIHono<HonoOpenAPIConfig, {}>;
 
 export type HonoRouteHandler<R extends RouteConfig> = RouteHandler<R, HonoOpenAPIConfig>;

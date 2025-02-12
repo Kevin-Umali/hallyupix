@@ -13,7 +13,7 @@ import {
 
 // Profile Requests
 export const SaveShopProfileRequestSchema = z.object({
-  shopName: z.string(),
+  shopName: z.string().min(1, "Shop name is required"),
   description: z.string().optional(),
   socialLinks: SocialLinksSchema,
 });
