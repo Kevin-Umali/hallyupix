@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../../db";
-import { insertShopProfileSchema, shopProfiles, selectShopProfileSchema, updateShopProfileImageSchema } from "../../../db/schema";
+import { insertShopProfileSchema, shopProfiles, selectShopProfileSchema, updateShopProfileImageSchema } from "../../../db/schema/shop-profiles.model";
 import { CustomHTTPException } from "../../../lib/custom-error";
 import type { HonoRouteHandler } from "../../../lib/types";
 import type { GetShopProfile, SaveShopProfile, UpdateShopProfileImage } from "./profile.routes";

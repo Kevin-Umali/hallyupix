@@ -1,8 +1,11 @@
-import { queryOptions } from "@tanstack/react-query";
+import { QueryFunctionContext, queryOptions } from "@tanstack/react-query";
 import { api, APIInferResponseType } from "@/lib/api";
 import { createQueryFn } from "@/lib/api-utils";
 
-const createShopQuery = <TResponse>(key: string[], queryFn: () => Promise<TResponse | null>) =>
+const createShopQuery = <TResponse, TKey extends [string, ...unknown[]]>(
+  key: TKey,
+  queryFn: (context: QueryFunctionContext<TKey>) => Promise<TResponse | null>
+) =>
   queryOptions({
     queryKey: key,
     queryFn,

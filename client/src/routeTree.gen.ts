@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TestImport } from './routes/test'
 import { Route as SignUpImport } from './routes/sign-up'
 import { Route as SignInImport } from './routes/sign-in'
 import { Route as ResetPasswordImport } from './routes/reset-password'
@@ -60,6 +61,12 @@ const VerifiedEmailLazyRoute = VerifiedEmailLazyImport.update({
 } as any).lazy(() =>
   import('./routes/verified-email.lazy').then((d) => d.Route),
 )
+
+const TestRoute = TestImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const SignUpRoute = SignUpImport.update({
   id: '/sign-up',
@@ -269,6 +276,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-up'
       fullPath: '/sign-up'
       preLoaderRoute: typeof SignUpImport
+      parentRoute: typeof rootRoute
+    }
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestImport
       parentRoute: typeof rootRoute
     }
     '/verified-email': {
@@ -496,6 +510,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/test': typeof TestRoute
   '/verified-email': typeof VerifiedEmailLazyRoute
   '/verify-email': typeof VerifyEmailLazyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -527,6 +542,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/test': typeof TestRoute
   '/verified-email': typeof VerifiedEmailLazyRoute
   '/verify-email': typeof VerifyEmailLazyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -559,6 +575,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/test': typeof TestRoute
   '/verified-email': typeof VerifiedEmailLazyRoute
   '/verify-email': typeof VerifyEmailLazyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -592,6 +609,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/test'
     | '/verified-email'
     | '/verify-email'
     | '/dashboard'
@@ -622,6 +640,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/test'
     | '/verified-email'
     | '/verify-email'
     | '/dashboard'
@@ -652,6 +671,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/test'
     | '/verified-email'
     | '/verify-email'
     | '/_authenticated/dashboard'
@@ -684,6 +704,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
+  TestRoute: typeof TestRoute
   VerifiedEmailLazyRoute: typeof VerifiedEmailLazyRoute
   VerifyEmailLazyRoute: typeof VerifyEmailLazyRoute
 }
@@ -694,6 +715,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
+  TestRoute: TestRoute,
   VerifiedEmailLazyRoute: VerifiedEmailLazyRoute,
   VerifyEmailLazyRoute: VerifyEmailLazyRoute,
 }
@@ -713,6 +735,7 @@ export const routeTree = rootRoute
         "/reset-password",
         "/sign-in",
         "/sign-up",
+        "/test",
         "/verified-email",
         "/verify-email"
       ]
@@ -754,6 +777,9 @@ export const routeTree = rootRoute
     },
     "/sign-up": {
       "filePath": "sign-up.tsx"
+    },
+    "/test": {
+      "filePath": "test.tsx"
     },
     "/verified-email": {
       "filePath": "verified-email.lazy.tsx"

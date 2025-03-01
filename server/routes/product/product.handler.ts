@@ -57,14 +57,10 @@ export const updateProduct: HonoRouteHandler<UpdateProduct> = async (c) => {
     throw new CustomHTTPException(404, { code: "PRODUCT_NOT_FOUND", message: "Product not found" });
   }
 
-  const validatedResult = selectProductSchema.parse(updatedProduct);
-  const { sellerId: _, ...dataWithoutIds } = validatedResult;
-
   return c.json(
     {
       data: {
         status: true,
-        product: dataWithoutIds,
       },
     },
     200

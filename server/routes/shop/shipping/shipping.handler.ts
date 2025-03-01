@@ -7,7 +7,7 @@ import {
   insertShopShippingProcessingTimesSchema,
   insertShopShippingPoliciesSchema,
   insertShopShippingCustomPoliciesSchema,
-} from "../../../db/schema";
+} from "../../../db/schema/shop-shipping.model";
 import { CustomHTTPException } from "../../../lib/custom-error";
 import type { HonoRouteHandler } from "../../../lib/types";
 import type {

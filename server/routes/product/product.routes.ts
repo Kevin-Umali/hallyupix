@@ -52,19 +52,6 @@ export const updateProduct = createRoute({
   },
   responses: {
     ...DEFAULT_RESPONSES,
-    200: {
-      content: {
-        "application/json": {
-          schema: ApiResponseSchema(
-            z.object({
-              status: z.boolean(),
-              product: ProductSchema,
-            })
-          ),
-        },
-      },
-      description: "Product",
-    },
   },
 });
 

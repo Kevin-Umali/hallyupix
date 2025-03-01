@@ -14,9 +14,9 @@ export const productVariants = pgTable(
       .notNull(),
     variantName: varchar("variant_name", { length: 255 }).notNull(),
     sku: varchar("sku", { length: 100 }).notNull().unique(), // SKU for inventory tracking
-    price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+    price: decimal("price", { precision: 10, scale: 2 }).notNull().default("1.00"),
     quantityAvailable: integer("quantity_available").notNull().default(0),
-    metadata: jsonb("metadata").default("{}"), // Additional details (e.g., weight, dimensions)
+    metadata: jsonb("metadata").$type<Array<{ key: string; value: string }>>().default([]),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
@@ -36,11 +36,11 @@ export const productVariantsRelations = relations(productVariants, ({ one }) => 
 }));
 
 export const selectProductVariantSchema = createSelectSchema(productVariants, {
-  metadata: z.record(z.string()),
+  metadata: z.array(z.object({ key: z.string(), value: z.string() })),
 });
 export const insertProductVariantSchema = createInsertSchema(productVariants, {
-  metadata: z.record(z.string()),
+  metadata: z.array(z.object({ key: z.string(), value: z.string() })),
 });
 export const updateProductVariantSchema = createUpdateSchema(productVariants, {
-  metadata: z.record(z.string()),
+  metadata: z.array(z.object({ key: z.string(), value: z.string() })),
 });

@@ -109,7 +109,7 @@ export const ShippingCustomPolicies: React.FC<ShippingCustomPoliciesProps> = ({ 
                   </Button>
                 </div>
 
-                {policiesField.state.value.length > 0 ? (
+                {Array.isArray(policiesField.state.value) && policiesField.state.value.length > 0 ? (
                   <div className="space-y-4">
                     {policiesField.state.value.map((_, index) => (
                       <div key={index} className="space-y-4 p-4 border rounded-lg">
@@ -205,7 +205,7 @@ export const ShippingCustomPolicies: React.FC<ShippingCustomPoliciesProps> = ({ 
                           <form.Field name={`customPolicies[${index}].conditions`} mode="array">
                             {(conditionsField) => (
                               <div className="space-y-2">
-                                {conditionsField.state.value.length > 0 ? (
+                                {Array.isArray(conditionsField.state.value) && conditionsField.state.value.length > 0 ? (
                                   conditionsField.state.value.map((_, condIndex) => (
                                     <div key={condIndex} className="flex items-center gap-2">
                                       <form.Field name={`customPolicies[${index}].conditions[${condIndex}]`}>

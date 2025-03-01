@@ -1,81 +1,98 @@
-// components/product-form/index.tsx
 import { useForm } from "@tanstack/react-form";
-import { z } from "zod";
+import { useState, useMemo } from "react";
+import { CreateProductWithVariantsRequest, CreateProductWithVariantsRequestSchema } from "@/shared/types/product-variant.request";
+import { Stepper, StepperDescription, StepperIndicator, StepperItem, StepperSeparator, StepperTitle, StepperTrigger } from "@/components/custom/stepper";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BasicInfoFields } from "./basic-info";
-import { CategoryStatusFields } from "./category-status";
-import { VariantFields } from "./variant-fields";
-import { PreOrderFields } from "./pre-order";
+import { Loader2 } from "lucide-react";
+import BasicInfoFields from "@/components/custom/products/basic-info-fields";
+import VariantFields from "@/components/custom/products/variant-fields";
+import ProductSettingFields from "@/components/custom/products/product-setting-fields";
+import AvailabilityFields from "./availability-fields";
+import ProductReview from "./product-overview";
 
-import { Separator } from "@/components/ui/separator";
-import CloudinaryImageUploader from "../cloudinary-image-uploader";
-import { Label } from "@/components/ui/label";
+export const ProductForm = () => {
+  // Memoize the steps so they don't get recreated on each render.
+  const steps = useMemo(
+    () => [
+      {
+        step: 1,
+        title: "Basic Information",
+        description: "Product name, description, and categories",
+        component: BasicInfoFields,
+      },
+      {
+        step: 2,
+        title: "Variants",
+        description: "Add product variants and pricing",
+        component: VariantFields,
+      },
+      {
+        step: 3,
+        title: "Product Settings",
+        description: "Configure special product settings",
+        component: ProductSettingFields,
+      },
+      {
+        step: 4,
+        title: "Availability",
+        description: "Set stock and visibility",
+        component: AvailabilityFields,
+      },
+      {
+        step: 5,
+        title: "Review",
+        description: "Review product information",
+        component: ProductReview,
+      },
+    ],
+    []
+  );
 
-const variantSchema = z.object({
-  variantName: z.string().min(1, "Variant name is required"),
-  sku: z.string().min(1, "SKU is required"),
-  price: z.number().min(0, "Price must be 0 or greater"),
-  quantityAvailable: z.number().min(0, "Quantity must be 0 or greater"),
-  metadata: z.record(z.unknown()).default({}),
-});
+  const [activeStep, setActiveStep] = useState(1);
 
-const productSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  originCategory: z.string().min(1, "Category is required"),
-  productStatus: z.enum(["Pre-order", "On-hand", "Reserved", "Sold Out"]),
-  visibility: z.enum(["Public", "Private", "Hidden"]).default("Private"),
-  minimumStockAlert: z.number().min(0),
-  fee: z.number().min(0),
-  platforms: z.array(z.string()).default([]),
-  tags: z.array(z.string()).default([]),
-  deadlineOfDownPayment: z.string().optional(),
-  estimatedTimeOfArrival: z.string().optional(),
-  variants: z.array(variantSchema).min(1, "At least one variant is required"),
-});
-
-interface ProductFormProps {
-  initialData?: z.infer<typeof productSchema>;
-  onSubmit: (data: z.infer<typeof productSchema>) => Promise<void>;
-  onClose: () => void;
-}
-
-export const ProductForm = ({ initialData, onSubmit, onClose }: ProductFormProps) => {
-  const form = useForm({
+  const form = useForm<CreateProductWithVariantsRequest>({
     defaultValues: {
-      title: initialData?.title ?? "",
-      description: initialData?.description ?? "",
-      originCategory: initialData?.originCategory ?? "",
-      productStatus: initialData?.productStatus ?? "Pre-order",
-      visibility: initialData?.visibility ?? "Private",
-      minimumStockAlert: initialData?.minimumStockAlert ?? 0,
-      fee: initialData?.fee ?? 0,
-      platforms: initialData?.platforms ?? [],
-      tags: initialData?.tags ?? [],
-      deadlineOfDownPayment: initialData?.deadlineOfDownPayment ?? "",
-      estimatedTimeOfArrival: initialData?.estimatedTimeOfArrival ?? "",
-      variants: initialData?.variants ?? [
+      title: "",
+      description: "",
+      tags: [],
+      origin: "",
+      artist: "",
+      merchType: "",
+      productStatus: "Pre-order",
+      visibility: "Private",
+      inventoryStatus: "",
+      minimumStockAlert: 0,
+      releaseDate: "",
+      isLimitedEdition: false,
+      variants: [
         {
           variantName: "",
           sku: "",
           price: 0,
           quantityAvailable: 0,
-          metadata: {},
+          metadata: [],
         },
       ],
     },
-    onSubmit: async ({ value }) => {
-      await onSubmit(value);
-      onClose();
+    onSubmit: (values) => {
+      console.log("values", values);
     },
     validators: {
-      onChange: productSchema,
+      onChange: CreateProductWithVariantsRequestSchema,
     },
   });
 
-  const handleImageUpload = (images: Array<{ url: string; publicId: string }>) => {
-    console.log("Uploaded images:", images);
-    // You can store these in form state or handle them separately
+  const handleNext = () => {
+    if (activeStep < steps.length) {
+      setActiveStep(activeStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (activeStep > 1) {
+      setActiveStep(activeStep - 1);
+    }
   };
 
   return (
@@ -85,67 +102,64 @@ export const ProductForm = ({ initialData, onSubmit, onClose }: ProductFormProps
         e.stopPropagation();
         void form.handleSubmit();
       }}
-      className="space-y-6"
+      className="space-y-8"
     >
-      {/* Basic Information Section */}
-      <div>
-        <h3 className="text-lg font-medium">Basic Information</h3>
-        <p className="text-sm text-muted-foreground">Add the main details of your product.</p>
-        <Separator className="my-4" />
-        <BasicInfoFields form={form} />
-      </div>
+      <Stepper value={activeStep} onValueChange={setActiveStep}>
+        {steps.map((stepItem) => (
+          <StepperItem key={stepItem.step} step={stepItem.step} className="relative flex-1 !flex-col">
+            <StepperTrigger type="button" className="flex-col gap-3">
+              <StepperIndicator />
+              <div className="space-y-0.5 px-2">
+                <StepperTitle>{stepItem.title}</StepperTitle>
+                <StepperDescription className="max-sm:hidden">{stepItem.description}</StepperDescription>
+              </div>
+            </StepperTrigger>
+            {stepItem.step !== steps[steps.length - 1].step && (
+              <StepperSeparator className="absolute inset-x-0 left-[calc(50%+0.75rem+0.125rem)] top-3 -order-1 m-0 -translate-y-1/2 group-data-[orientation=horizontal]/stepper:w-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=horizontal]/stepper:flex-none" />
+            )}
+          </StepperItem>
+        ))}
+      </Stepper>
 
-      {/* Category and Status Section */}
-      <div>
-        <h3 className="text-lg font-medium">Category & Status</h3>
-        <p className="text-sm text-muted-foreground">Set the product category and current status.</p>
-        <Separator className="my-4" />
-        <CategoryStatusFields form={form} />
-      </div>
-
-      {/* Variants Section */}
-      <div>
-        <h3 className="text-lg font-medium">Product Variants</h3>
-        <p className="text-sm text-muted-foreground">Add different versions of your product with their own SKUs and prices.</p>
-        <Separator className="my-4" />
-        <VariantFields form={form} />
-      </div>
-
-      {/* Pre-order Fields */}
-      {form.getFieldValue("productStatus") === "Pre-order" && (
-        <div>
-          <h3 className="text-lg font-medium">Pre-order Details</h3>
-          <p className="text-sm text-muted-foreground">Set important dates for pre-order management.</p>
-          <Separator className="my-4" />
-          <PreOrderFields form={form} />
-        </div>
-      )}
-
-      {/* Product Images */}
-      <div>
-        <h3 className="text-lg font-medium">Product Images</h3>
-        <p className="text-sm text-muted-foreground">Upload images of your product. You can add multiple images.</p>
-        <Separator className="my-4" />
-        <div className="space-y-2">
-          <Label>Product Images</Label>
-          <CloudinaryImageUploader multiple showPreview onUploadComplete={handleImageUpload} />
-        </div>
-      </div>
-
-      {/* Form Actions */}
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onClose}>
-          Cancel
-        </Button>
-        <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
-            <Button type="submit" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? "Saving..." : initialData ? "Update Product" : "Create Product"}
+      <Card>
+        <CardContent className="pt-4">
+          {/* Render all steps but show only the active one */}
+          {steps.map((stepItem) => (
+            <div key={stepItem.step} style={{ display: activeStep === stepItem.step ? "block" : "none" }}>
+              <stepItem.component form={form} />
+            </div>
+          ))}
+          <div className="mt-6 flex justify-between">
+            <Button type="button" variant="outline" onClick={handleBack} disabled={activeStep === 1}>
+              Back
             </Button>
-          )}
-        />
-      </div>
+            {activeStep === steps.length ? (
+              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting, state.isValidating]}>
+                {([canSubmit, isSubmitting, isValidating]) => (
+                  <Button type="submit" disabled={!canSubmit || isSubmitting || isValidating}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Product"
+                    )}
+                  </Button>
+                )}
+              </form.Subscribe>
+            ) : (
+              <Button type="button" onClick={handleNext}>
+                Next
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <p className="mt-2 text-xs text-muted-foreground text-center" aria-live="polite">
+        Step {activeStep} of {steps.length}
+      </p>
     </form>
   );
 };

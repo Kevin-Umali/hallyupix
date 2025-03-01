@@ -1,8 +1,11 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { QueryFunctionContext, queryOptions, useQuery } from "@tanstack/react-query";
 import { api, APIInferResponseType } from "@/lib/api";
 import { createQueryFn } from "@/lib/api-utils";
 
-const createSignedUrlQuery = <TResponse>(key: string[], queryFn: () => Promise<TResponse | null>) =>
+const createSignedUrlQuery = <TResponse, TKey extends [string, ...unknown[]]>(
+  key: TKey,
+  queryFn: (context: QueryFunctionContext<TKey>) => Promise<TResponse | null>
+) =>
   queryOptions({
     queryKey: key,
     queryFn,

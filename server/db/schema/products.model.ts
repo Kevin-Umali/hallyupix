@@ -1,5 +1,5 @@
 // products.model.ts
-import { pgTable, text, varchar, jsonb, timestamp, serial, decimal, integer, index } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, jsonb, timestamp, serial, integer, index, boolean } from "drizzle-orm/pg-core";
 import { createSelectSchema, createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { productStatusEnum, productVisibilityEnum } from "./enums";
 import { z } from "zod";
@@ -17,16 +17,16 @@ export const products = pgTable(
     sellerId: text("seller_id")
       .references(() => users.id)
       .notNull(),
-    tags: jsonb("tags").default("[]"),
-    platforms: jsonb("platforms").default("[]"), // Platforms where this product is available
-    originCategory: varchar("origin_category", { length: 50 }).notNull(), // Where did this product originate from
+    tags: jsonb("tags").$type<Array<string>>().default([]),
+    origin: varchar("origin", { length: 100 }).notNull(),
+    artist: varchar("artist", { length: 100 }).notNull(),
+    merchType: varchar("merch_type", { length: 50 }).notNull(),
     productStatus: productStatusEnum("product_status").default("Pre-order"),
     visibility: productVisibilityEnum("visibility").default("Private"),
     inventoryStatus: varchar("inventory_status", { length: 50 }).notNull(),
     minimumStockAlert: integer("minimum_stock_alert").default(0),
-    fee: decimal("fee", { precision: 10, scale: 2 }).notNull(),
-    deadlineOfDownPayment: timestamp("deadline_of_down_payment"),
-    estimatedTimeOfArrival: timestamp("estimated_time_of_arrival"),
+    releaseDate: timestamp("release_date"),
+    isLimitedEdition: boolean("is_limited_edition").default(false),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
@@ -44,19 +44,16 @@ export const productsRelations = relations(products, ({ many }) => ({
 
 export const selectProductSchema = createSelectSchema(products, {
   tags: z.array(z.string()),
-  platforms: z.array(z.string()),
   productStatus: ProductStatusEnum,
   visibility: ProductVisibilityEnum,
 });
 export const insertProductSchema = createInsertSchema(products, {
   tags: z.array(z.string()),
-  platforms: z.array(z.string()),
   productStatus: ProductStatusEnum,
   visibility: ProductVisibilityEnum,
 });
 export const updateProductSchema = createUpdateSchema(products, {
   tags: z.array(z.string()),
-  platforms: z.array(z.string()),
   productStatus: ProductStatusEnum,
   visibility: ProductVisibilityEnum,
 });

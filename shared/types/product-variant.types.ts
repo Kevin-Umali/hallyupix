@@ -8,7 +8,7 @@ export const ProductVariantSchema = z.object({
   sku: z.string(),
   price: z.string(),
   quantityAvailable: z.number(),
-  metadata: z.record(z.string()),
+  metadata: z.array(z.record(z.object({ key: z.string(), value: z.string() }))),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
